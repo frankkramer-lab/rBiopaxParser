@@ -1,6 +1,7 @@
 # rBiopaxParser
 
 Parses BioPax level 2 files and represents them in R.
+https://github.com/frankkramer/rBiopaxParser
 
 More concretely, `rBiopaxParser`:
 

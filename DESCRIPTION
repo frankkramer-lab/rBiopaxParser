@@ -12,7 +12,7 @@ Imports:
     graph,
     Rgraphviz,
     RCurl
-URL: http://somewhereongithub.com
+URL: https://github.com/frankkramer/rBiopaxParser
 Collate:
     'biopax2Classes.R'
     'downloadBiopaxData.R'

@@ -4,10 +4,11 @@ Parses BioPax level 2 files and represents them in R.
 https://github.com/frankkramer/rBiopaxParser
 
 Installation from github:
-install.packages("devtools")
-library(devtools)
-install_github(repo="rBiopaxParser", username="frankkramer")
-
+<code>
+	install.packages("devtools")
+	library(devtools)
+	install_github(repo="rBiopaxParser", username="frankkramer")
+</code>
 
 More concretely, `rBiopaxParser`:
 

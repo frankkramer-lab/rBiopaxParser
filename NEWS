@@ -1,0 +1,32 @@
+rBiopaxParser 0.09
+===========
+
+* Provided some more documentation.
+
+* getNeighborhood: a function to build a neigborhood graph for molecules
+
+rBiopaxParser 0.08
+===========
+
+* First version on GitHub! Code still needs some cleaning up but everything works, longer examples comming next!
+
+rBiopaxParser 0.06
+===========
+
+* Visualization & Layouting added. Check out new functions 
+
+* layoutRegulatoryBiopaxGraph, plotRegulatoryBiopaxGraph
+
+* intersectGraphs, uniteGraphs, diffGraphs
+
+rBiopaxParser 0.04
+===========
+
+* Building regulatory graphs from biopax model works now!
+
+* pathway2adjacancyMatrix, pathway2RegulatoryGraph, 
+
+rBiopaxParser 0.01
+===========
+
+* Parsing works! Alot of thing changing quickly now, still bugs to fix.

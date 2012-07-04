@@ -1,0 +1,25 @@
+Package: rBiopaxParser
+Type: Package
+Title: Parses BioPax level 2 files and represents them in R
+Version: 0.09
+Date: 2012-07-01
+Author: Frank Kramer
+Maintainer: Frank Kramer <mail@frankkramer.de>
+Description: Parses BioPax level 2 files and represents them in R.
+License: GPL (>= 2)
+Imports:
+    XML,
+    graph,
+    Rgraphviz,
+    RCurl
+URL: http://somewhereongithub.com
+Collate:
+    'biopax2Classes.R'
+    'downloadBiopaxData.R'
+    'helperFunctions.R'
+    'modifyBiopax.R'
+    'parseBiopax.R'
+    'rBiopaxParser-package.R'
+    'selectBiopax.R'
+    'visualizeBiopax.R'
+    'writeBiopax.R'

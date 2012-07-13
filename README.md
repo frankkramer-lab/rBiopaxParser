@@ -24,4 +24,5 @@ More concretely, `rBiopaxParser`:
  
  * Can write out the (modified) parsed Biopax models 
  
+ * Check out the preliminary package vignette to get you started using rBiopaxParser
  

@@ -1,6 +1,8 @@
 rBiopaxParser 0.09
 ===========
 
+* Check out the preliminary package vignette to get you started.
+
 * Provided some more documentation.
 
 * getNeighborhood: a function to build a neigborhood graph for molecules

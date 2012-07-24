@@ -17,7 +17,7 @@
 \dontrun{readBiopax(file="biopaxmodel.owl)"}
 }
 \author{
-  Frank Kramer \email{rdev@frankkramer.de}
+  Frank Kramer \email{dev@frankkramer.de}
 }
 \keyword{package}
 

@@ -1,7 +1,19 @@
-rBiopaxParser 0.09
+rBiopaxParser 0.11
 ===========
 
-* Check out the preliminary package vignette to get you started.
+* Set packages RCurl and Rgraphviz from imports to suggests. This means you will not have to have these installed to run most of the commands. However layouting the graphs requires Rgraphviz and downloading data requires RCurl. 
+
+rBiopaxParser 0.10
+===========
+
+* Detailed installation instructions are available now. rBiopaxParser depends on some packages which might be a hassle to install. Check out the README or github front page for instructions!
+
+* Provided some more documentation.
+
+* Fixed a very embarrassing typo in downloadBiopaxData.
+
+rBiopaxParser 0.09
+===========
 
 * Provided some more documentation.
 

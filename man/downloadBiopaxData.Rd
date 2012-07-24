@@ -3,8 +3,8 @@
 \title{This function downloads Biopax data from online databases}
 \usage{
   downloadBiopaxData(database = "NCI",
-    model = c("pid", "biocarta", "reactome", outputfile = ""),
-    version = "biopax2")
+    model = c("pid", "biocarta", "reactome"),
+    outputfile = "", version = "biopax2")
 }
 \arguments{
   \item{database}{string. Select which database you want to

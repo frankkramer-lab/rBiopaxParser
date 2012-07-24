@@ -10,7 +10,7 @@
 #' License: \tab GPL (>= 2)\cr
 #' }
 #'
-#' @author Frank Kramer \email{rdev@@frankkramer.de}
+#' @author Frank Kramer \email{dev@@frankkramer.de}
 #' @name rBiopaxParser-package
 #' @aliases rBiopaxParser
 #' @docType package

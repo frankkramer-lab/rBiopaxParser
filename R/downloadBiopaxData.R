@@ -22,7 +22,7 @@
 #' @return none. Check output for the name of the unzipped biopax .owl file.
 #' @author fkramer
 #' @export
-downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome", outputfile=""), version="biopax2") {
+downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome"), outputfile="", version="biopax2") {
 	
 	links = data.frame(database=c("NCI"), model=c("pid"), version=c("biopax2"), link=c("ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz"), stringsAsFactors=FALSE)
 	links = rbind(links,c("NCI","biocarta","biopax2","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/BioCarta.bp2.owl.gz"))
@@ -32,6 +32,11 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	
 	m <- regexec("^(([^:]+)://)?([^:/]+)(:([0-9]+))?(/.*/)?(.*)", link)
 	filename = regmatches(link, m)[[1]][length(m[[1]])]
+
+	if(!require(RCurl)) {
+		cat(paste("This functions needs the RCurl library installed, albeit it cannot be found. Check out the installation instructions or manually download the file you wanted at: ",filename,"\n"))
+		return(0)
+	}
 	
 	cat(paste("Trying to download:",filename,"\n"))
 	content = RCurl::getBinaryURL(link)

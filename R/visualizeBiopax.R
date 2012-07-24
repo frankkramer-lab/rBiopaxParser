@@ -222,6 +222,12 @@ transitiveReduction <- function(mygraph) {
 layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2, node.fontsize=20, node.labelfontsize=20, node.fixedsize=FALSE,
 		edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
 		subgraphs=list(), subgraphs.colors=c("#B3E2CD","#FDCDAC","#F4CAE4","#E6F5C9","#FFF2AE")) {
+
+	if(!require(Rgraphviz)) {
+		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+		
 	#GRAPH
 	# graph rendering info
 	if(label != "")	graph::graphRenderInfo(mygraph) <- list(label=label, labelJust="l", labelLoc="t")
@@ -278,6 +284,12 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2
 #' @author Frank Kramer
 #' @export
 plotRegulatoryGraph <- function(mygraph, subgraphs=list()) {
+	
+	if(!require(Rgraphviz)) {
+		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
 	Rgraphviz::renderGraph(layoutRegulatoryGraph(mygraph, subgraphs=subgraphs))
 }
 
@@ -348,6 +360,12 @@ diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDC
 #' @author Frank Kramer
 #' @export
 uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDCDAC","#F4CAE4")) {   #color: yellow, lightblue, lightgreen
+	
+	if(!require(Rgraphviz)) {
+		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
 	temp = graph1
 	graph::graphRenderInfo(temp)$laidout <- FALSE
 	

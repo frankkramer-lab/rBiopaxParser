@@ -2,7 +2,6 @@
 
 Parses BioPax level 2 files and represents them in R.  
 https://github.com/frankkramer/rBiopaxParser  
-
   
 More concretely, `rBiopaxParser`:
 
@@ -17,9 +16,8 @@ More concretely, `rBiopaxParser`:
  * Visualization functions to layout ina a (more or less) beautiful way
  
  * Can write out the (modified) parsed Biopax models 
-
   
-*Prerequisites:  
+*Prerequisites:*  
 This package uses package RCurl to download Biopax files from the web.  
 This package uses package XML to parse the Biopax .owl files.  
 This package uses package graph and package Rgraphviz to visualize networks.  
@@ -27,7 +25,7 @@ To install directly from github you need package devtools installed.
   
 Installation or running certain functions MIGHT fail if these are not met. Please read through the following instructions.   
   
-*Installing prerequisites for Linux users:  
+*Installing prerequisites for Linux users:*  
 XML:   
 Make sure your linux has library libxml2 installed. This is almost always the case. Otherwise run in your shell  
 <code>
@@ -89,7 +87,7 @@ Package devtools is available at CRAN. Call
 to install it.  
   
   
-*Installing prerequisites for Windows users:  
+*Installing prerequisites for Windows users:*  
 XML & RCurl:   
 These packages depend on linux libraries, however Brian Ripley has put some work into this to enable Windows users.  
 Check out  http://www.stats.ox.ac.uk/pub/RWin/bin/windows/contrib/ for these two packages for your R version.  
@@ -128,7 +126,7 @@ To install R package devtools call
   
   
 Finally:    
-*Installaing rBiopaxParser from github: <br />
+*Installing rBiopaxParser from github:*  
 <code>
 	install.packages("devtools")
 	library(devtools)

@@ -1,0 +1,6 @@
+%\VignetteIndexEntry{rBiopaxParser Short Vignette}
+%\VignetteDepends{rBiopaxParser}
+%\VignettePackage{rBiopaxParser}
+\documentclass{article}
+\begin{document}
+\end{document}

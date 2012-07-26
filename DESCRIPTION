@@ -1,7 +1,7 @@
 Package: rBiopaxParser
 Type: Package
 Title: Parses BioPax level 2 files and represents them in R
-Version: 0.11
+Version: 0.12
 Date: 2012-07-23
 Author: Frank Kramer
 Maintainer: Frank Kramer <dev@frankkramer.de>
@@ -14,6 +14,7 @@ Suggests:
     Rgraphviz,
     RCurl
 URL: https://github.com/frankkramer/rBiopaxParser
+BuildVignettes: false
 Collate:
     'biopax2Classes.R'
     'downloadBiopaxData.R'

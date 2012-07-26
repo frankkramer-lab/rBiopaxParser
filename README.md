@@ -17,15 +17,16 @@ More concretely, `rBiopaxParser`:
  
  * Can write out the (modified) parsed Biopax models 
   
-*Prerequisites:*  
-This package uses package RCurl to download Biopax files from the web.  
-This package uses package XML to parse the Biopax .owl files.  
-This package uses package graph and package Rgraphviz to visualize networks.  
-To install directly from github you need package devtools installed.
+### Prerequisites:  
+This package suggests package RCurl to download Biopax files from the web.  
+This package needs package XML to parse the Biopax .owl files.  
+This package needs package graph to build graphs/networks from the data.  
+This package suggests package Rgraphviz to visualize networks.    
+To install directly from github you need package devtools.  
   
 Installation or running certain functions MIGHT fail if these are not met. Please read through the following instructions.   
   
-*Installing prerequisites for Linux users:*  
+### Installing prerequisites for Linux users:  
 XML:   
 Make sure your linux has library libxml2 installed. This is almost always the case. Otherwise run in your shell  
 <code>
@@ -58,7 +59,7 @@ graph:
 Package graph has moved from CRAN to Bioconductor recently, you might encounter an error saying that package graph is not available for your distribution when calling install.packages("graph").  
 Check out http://bioconductor.org/packages/release/bioc/html/graph.html or call
 <code>
-	source("http://bioconductor.org/biocLite.R")
+	source("http://bioconductor.org/biocLite.R")  
     biocLite("graph")
 </code>  
 to install it.  
@@ -73,7 +74,7 @@ If this is not the case, many linux users can usually fix this by running
 </code>    
 You will now be able to install R package Rgraphviz using:  
 <code>
-	source("http://bioconductor.org/biocLite.R")
+	source("http://bioconductor.org/biocLite.R")  
     biocLite("Rgraphviz")
 </code>  
 If you encounter more problems check out http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html  
@@ -87,7 +88,7 @@ Package devtools is available at CRAN. Call
 to install it.  
   
   
-*Installing prerequisites for Windows users:*  
+### Installing prerequisites for Windows users:  
 XML & RCurl:   
 These packages depend on linux libraries, however Brian Ripley has put some work into this to enable Windows users.  
 Check out  http://www.stats.ox.ac.uk/pub/RWin/bin/windows/contrib/ for these two packages for your R version.  
@@ -98,7 +99,7 @@ graph:
 Package graph has moved from CRAN to Bioconductor recently, you might encounter an error saying that package graph is not available for your distribution when calling install.packages("graph").  
 Check out http://bioconductor.org/packages/release/bioc/html/graph.html or call
 <code>
-	source("http://bioconductor.org/biocLite.R")
+	source("http://bioconductor.org/biocLite.R")  
     biocLite("graph")
 </code>  
 to install it.  
@@ -110,7 +111,7 @@ Make sure your  machine has Graphviz installed, it can be found at: http://www.g
 Click on Download -> Windows. 
 After installing graphviz you will now be able to install R package Rgraphviz using:  
 <code>
-	source("http://bioconductor.org/biocLite.R")
+	source("http://bioconductor.org/biocLite.R")  
     biocLite("Rgraphviz")
 </code>  
 If you encounter more problems check out http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html  
@@ -126,10 +127,10 @@ To install R package devtools call
   
   
 Finally:    
-*Installing rBiopaxParser from github:*  
+## Installing rBiopaxParser from github:  
 <code>
-	install.packages("devtools")
-	library(devtools)
+	install.packages("devtools")  
+	library(devtools)  
 	install_github(repo="rBiopaxParser", username="frankkramer")
 </code>
 

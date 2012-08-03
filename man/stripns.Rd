@@ -15,6 +15,6 @@
   Strips a namespace tag off a supplied classname string
 }
 \author{
-  Frank Kramer
+  Frank Kramer #
 }
 

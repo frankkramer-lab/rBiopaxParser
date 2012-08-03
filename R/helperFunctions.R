@@ -17,7 +17,7 @@
 #' @returnType data.frame
 #' @return The data.frame is returned using strings instead of factors.
 #' @author Frank Kramer
-#' @export
+# #' @export
 unfactorize <- function (df) {
 	if(!(class(df)=="data.frame")) { stop("Error: unfactorize: data.frame as argument expected") }
 	
@@ -40,7 +40,7 @@ unfactorize <- function (df) {
 #' @returnType logical
 #' @return This function returns TRUE if the supplied classname string is preceeded with the supplied namespace string, and FALSE if not.
 #' @author Frank Kramer
-#' @export
+# #' @export
 isOfNamespace <- function(classname, namespace="bp") {
 	if(is.null(namespace) | is.na(namespace) | namespace == "" ) {
 		!grepl(":",classname,ignore.case = FALSE)
@@ -58,7 +58,7 @@ isOfNamespace <- function(classname, namespace="bp") {
 #' @returnType string
 #' @return If the classname is not preceeded by a namespace yet, the supplied namespace is pasted in front of it and returned.
 #' @author Frank Kramer
-#' @export
+# #' @export
 addns <- function(classname, namespace="bp") {
 	sel=!is.na(classname) & !(nchar(classname)==0) & !grepl(":",classname,ignore.case = FALSE)
 	classname[sel] = paste(namespace,":",classname[sel],sep="")
@@ -74,7 +74,7 @@ addns <- function(classname, namespace="bp") {
 #' @returnType string
 #' @return The classname with the namespace tag stripped off it.
 #' @author Frank Kramer
-#' @export
+# #' @export
 stripns <- function(classname) {
 	gsub(".*:", "", classname, perl=TRUE)
 }
@@ -87,7 +87,7 @@ stripns <- function(classname) {
 #' @returnType string
 #' @return The supplied string with a hash "#" pasted in front of it.
 #' @author Frank Kramer
-#' @export
+# #' @export
 addhash <- function(x) {
 	paste("#",x,sep="")
 }
@@ -99,7 +99,7 @@ addhash <- function(x) {
 #' @returnType string
 #' @return The supplied string with a hash "#" stripped off front.
 #' @author Frank Kramer
-#' @export
+# #' @export
 striphash <- function(x) {
 	sub("#","",x)
 }

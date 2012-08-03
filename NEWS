@@ -1,3 +1,10 @@
+rBiopaxParser 0.13
+===========
+
+* Added functions removeInstance, removeProperties, addPhysicalEntity, addPhysicalEntityParticipant, addBiochemicalReaction, addControl.
+
+* See new examples for modifying a biopax model with R in the short vignette! 
+
 rBiopaxParser 0.12
 ===========
 

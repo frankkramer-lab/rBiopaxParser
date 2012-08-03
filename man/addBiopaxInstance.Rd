@@ -3,7 +3,7 @@
 \title{This function adds a new instance an existing biopax model.}
 \usage{
   addBiopaxInstance(biopax, instancetype, instanceid,
-    properties = list(NAME = c()))
+    properties = list(NAME = c()), verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -13,6 +13,8 @@
   \item{instanceid}{string. ID of the instance}
 
   \item{properties}{named list of properties.}
+
+  \item{verbose}{logical. Be verbose about what was added.}
 }
 \value{
   Returns the supplied biopax model with the new instance

@@ -292,10 +292,10 @@ getInstanceClass <- function(biopax, instanceid) {
 #' @param instanceid string
 #' @param property string. Attention: All properties in Biopax Level 2 are all upper case. 
 #' @returnType character vector
-#' @return Returns a character vector with all properties of the selected type for this instance.
+#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
 #' @author fkramer
 #' @export
-getInstanceProperties <- function(biopax, instanceid, property="NAME") {
+getInstanceProperty <- function(biopax, instanceid, property="NAME") {
 	
 	#get class of the instance
 	instancetype = getInstanceClass(biopax,instanceid)
@@ -305,10 +305,14 @@ getInstanceProperties <- function(biopax, instanceid, property="NAME") {
 	property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
 	
 	#value
-	if(property_type %in% c("http://www.w3.org/2001/XMLSchema#string","http://www.w3.org/2001/XMLSchema#double","http://www.w3.org/2001/XMLSchema#float", "http://www.w3.org/2001/XMLSchema#integer" )) {
-		as.character(biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_value"])
-	} else { #reference
-		as.character(biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_attr_value"])
+	if(length(property_type)>0) {
+		if(property_type %in% c("http://www.w3.org/2001/XMLSchema#string","http://www.w3.org/2001/XMLSchema#double","http://www.w3.org/2001/XMLSchema#float", "http://www.w3.org/2001/XMLSchema#integer" )) {
+			as.character(biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_value"])
+		} else { #reference
+			as.character(biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_attr_value"])
+		}
+	} else {
+		return(NULL)
 	}
 }
 

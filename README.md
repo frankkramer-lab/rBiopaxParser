@@ -15,7 +15,7 @@ More concretely, `rBiopaxParser`:
  
  * Visualization functions to layout ina a (more or less) beautiful way
  
- * Can write out the (modified) parsed Biopax models 
+ * Can export the (modified) Biopax models to OWL 
   
 ### Prerequisites:  
 This package suggests package RCurl to download Biopax files from the web.  

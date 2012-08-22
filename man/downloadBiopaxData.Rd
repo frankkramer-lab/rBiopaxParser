@@ -32,7 +32,11 @@
   some online databases. It will retrieve the selected
   model from the selected database using RCurl. The
   downloaded file is (if needed) unzipped and ready to be
-  used as input for rBiopaxParser::readBiopax.
+  used as input for rBiopaxParser::readBiopax. This
+  function requires package RCurl to run. Automatically
+  unzipping the downloaded BioPAX file requires Linux. You
+  can easily skip this step by downloading the exported
+  file yourself and continuing with readBiopax.
 }
 \author{
   fkramer

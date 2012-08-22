@@ -4,7 +4,7 @@
 \usage{
   pathway2RegulatoryGraph(biopax, pwid,
     expandSubpathways = TRUE, splitComplexMolecules = TRUE,
-    verbose = TRUE)
+    useIDasNodenames = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -20,6 +20,11 @@
   splitting a single node with name of the complex into
   several nodes with names of the components, these
   components all have identical edges.}
+
+  \item{useIDasNodenames}{logical. If TRUE nodes of the
+  graph are named by their molecule IDs instead of using
+  the NAME property. This can help with badly
+  annotated/formatted databases.}
 
   \item{verbose}{logical}
 }

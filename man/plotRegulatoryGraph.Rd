@@ -2,13 +2,18 @@
 \alias{plotRegulatoryGraph}
 \title{This function layouts a regulatory graph and plots it using Rgraphviz.}
 \usage{
-  plotRegulatoryGraph(mygraph, subgraphs = list())
+  plotRegulatoryGraph(mygraph, subgraphs = list(),
+    layoutGraph = TRUE)
 }
 \arguments{
   \item{mygraph}{graphNEL, regulatory graph}
 
   \item{subgraphs}{list of character vectors with node
   names}
+
+  \item{layoutGraph}{logical. If FALSE the graph is not
+  laid out again but send directly to
+  Rgraphviz::renderGraph.}
 }
 \value{
   none

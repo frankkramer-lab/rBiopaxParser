@@ -35,15 +35,32 @@
 #' @export
 readBiopax <- function(file, verbose=TRUE, generateSummary=TRUE, generateDF=TRUE)  {
 	ret = list(biopaxxml = XML::xmlInternalTreeParse(file))
-	class(ret) <- c("biopax2",class(ret))
+	class(ret) <- c("biopax",class(ret))
 	ret$namespaces = XML::xmlNamespaceDefinitions(XML::xmlRoot(ret$biopaxxml), recursive = TRUE, simplify = TRUE)
-	# deal with namespaces, we're intersted in owl, rdf, biopax
+	
+	# deal with namespaces, we're interested in owl, rdf, biopax
 	ret$ns_rdf = names(grep("rdf-syntax",ret$namespaces,ignore.case=TRUE, value=TRUE))
 	ret$ns_owl = names(grep("/owl#",ret$namespaces,ignore.case=TRUE, value=TRUE))
-	ret$ns_bp = names(grep("biopax-level2",ret$namespaces,ignore.case=TRUE, value=TRUE))
+	ret$ns_bp = names(grep("biopax-level",ret$namespaces,ignore.case=TRUE, value=TRUE))
 	ret$file = file
-	if(generateSummary)	ret$summary = summary_biopax(ret, verbose=verbose)
-	if(generateDF) ret$df = internal_getBiopaxModelAsDataFrame(ret, verbose=verbose)
+	
+	if(any(grepl("biopax-level1",ret$namespaces,ignore.case=TRUE))) {
+		if(verbose) cat("Found a BioPAX level 1 OWL. Unfortunatly this is not supported.\n")
+		ret$biopaxlevel = 1
+		if(generateSummary)	ret$summary = summary_biopax(ret, verbose=verbose)
+	}
+	if(any(grepl("biopax-level2",ret$namespaces,ignore.case=TRUE))) {
+		if(verbose) cat("Found a BioPAX level 2 OWL. Parsing...\n")
+		ret$biopaxlevel = 2
+		if(generateSummary)	ret$summary = summary_biopax(ret, verbose=verbose)
+		if(generateDF) ret$df = internal_getBiopaxModelAsDataFrame(ret, verbose=verbose)
+	}
+	if(any(grepl("biopax-level3",ret$namespaces,ignore.case=TRUE))) {
+		if(verbose) cat("Found a BioPAX level 3 OWL. Unfortunatly this is not supported yet, but support will be added in the near future!\n")
+		ret$biopaxlevel = 3
+		if(generateSummary)	ret$summary = summary_biopax(ret, verbose=verbose)
+	}
+	
 	ret
 }
 
@@ -77,7 +94,7 @@ summary_biopax <- function(object, verbose=TRUE) {
 	}
 	if(verbose)	cat("Done!\n")
 	ret = list(size=modellength,instances=nodenames_summary)
-	class(ret) <- c("biopax2_summary",class(ret))
+	class(ret) <- c("biopax_summary",class(ret))
 	ret
 }
 

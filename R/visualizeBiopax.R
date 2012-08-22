@@ -20,14 +20,20 @@
 #' @param pwid string
 #' @param expandSubpathways logical. If TRUE subpathways are expanded into this graph, otherwise only this very pathway is used.
 #' @param splitComplexMolecules logical. If TRUE every complex is split up into its components. This leads to splitting a single node with name of the complex into several nodes with names of the components, these components all have identical edges.   
+#' @param useIDasNodenames logical. If TRUE nodes of the graph are named by their molecule IDs instead of using the NAME property. This can help with badly annotated/formatted databases.
 #' @param verbose logical 
 #' @returnType matrix
 #' @return Returns the adjacency matrix representing the regulatory graph of the supplied pathway.
 #' @author Frank Kramer
 #' @export
-pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, verbose=TRUE) {
+pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
-	mygraph = pathway2RegulatoryGraph(biopax, pwid, splitComplexMolecules, verbose)
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	mygraph = pathway2RegulatoryGraph(biopax, pwid, splitComplexMolecules, useIDasNodenames, verbose)
 	ttt = as(mygraph,"graphAM")
 	as(ttt,"matrix")
 	
@@ -50,12 +56,19 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #' @param pwid string
 #' @param expandSubpathways logical. If TRUE subpathways are expanded into this graph, otherwise only this very pathway is used.
 #' @param splitComplexMolecules logical. If TRUE every complex is split up into its components. This leads to splitting a single node with name of the complex into several nodes with names of the components, these components all have identical edges.   
+#' @param useIDasNodenames logical. If TRUE nodes of the graph are named by their molecule IDs instead of using the NAME property. This can help with badly annotated/formatted databases.
 #' @param verbose logical 
 #' @returnType graphNEL
 #' @return Returns the representing the regulatory graph of the supplied pathway in a node-edge-list graph.
 #' @author Frank Kramer
 #' @export
-pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, verbose=TRUE) {
+pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
+	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
 	pwid = unique(striphash(pwid))
 	#first make an node edge list, because its easier
 	mygraph = new(getClassDef("graphNEL", package="graph"))
@@ -89,9 +102,17 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 				#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
 				c_instance = getBiopaxInstancesByID(biopax, c_instance[c_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
 				if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
-					controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$property_value )))
+					if(useIDasNodenames) {
+						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$instanceid )))
+					} else {
+						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$property_value )))						
+					}
 				} else {
-					controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","property_value"])))
+					if(useIDasNodenames) {
+						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","instanceid"])))
+					} else {
+						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","property_value"])))						
+					}
 				}	
 			}
 			
@@ -113,16 +134,24 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 						leftrights_instance = getBiopaxInstancesByID(biopax, leftrights_instance[leftrights_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
 						#split complexes?
 						if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
-							controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$property_value )))
+							if(useIDasNodenames) {
+								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$instanceid )))
+							} else {
+								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$property_value )))						
+							}
 						} else {
-							controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","property_value"])))
+							if(useIDasNodenames) {
+								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","instanceid"])))
+							} else {
+								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","property_value"])))						
+							}
 						}
 					}
 				}
 			}
 			
-			controllers = controllers[!is.na(controllers)]
-			controlleds = controlleds[!is.na(controlleds)]
+			controllers = controllers[!is.na(controllers) & !is.null(controllers) & nchar(controllers) > 0 ]
+			controlleds = controlleds[!is.na(controlleds) & !is.null(controlleds) & nchar(controlleds) > 0 ]
 			#only add viable directed edges:
 			if(length(controllers)==0 | length(controlleds)==0) {
 				next
@@ -134,7 +163,9 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 								"Controllers: ", paste(controllers, collapse=" "), "Controlleds: ", paste(controlleds, collapse=" "),"\n"))
 			}
 			#now we have the controllers and controlleds lists, add edge
+			# leave out duplicates
 			newnodes = unique(c(controllers,controlleds))
+			# only add new nodes that are not null, na or empty strings
 			newnodes = newnodes[!(newnodes %in% graph::nodes(mygraph))]
 			mygraph = graph::addNode(newnodes,mygraph)
 			#set weight: activation 1, inhibition = -1
@@ -177,6 +208,21 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 #' @author Frank Kramer
 #' @export
 transitiveClosure <- function(mygraph) {
+	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	accessibles = acc(mygraph,graph::nodes(mygraph))
+	for(n in names(accessibles)) {
+		for(c in names(accessibles[[n]])) {
+			if(accessibles[[n]][[c]]>1) {
+				#cat(paste("adding",n,c,"\n"))
+				mygraph = graph::addEdge(from=n,to=c, graph=mygraph, weights=1) ###FIX! XXX
+			}
+		}
+	}
 	mygraph
 }
 
@@ -191,7 +237,37 @@ transitiveClosure <- function(mygraph) {
 #' @author Frank Kramer
 #' @export
 transitiveReduction <- function(mygraph) {
+
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	temp=mygraph
+	#remove temps wedge weights
+	for(e in names(graph::edges(temp))) {
+		for(t in graph::edges(temp)[[e]]) {
+			graph::edgeData(temp,e,t,attr="weight") <-  1
+		}
+	}
+	
+	#enumarte pathws and remove all paths that have longer equivalents and same end node
+	
+#	ttt = as(mygraph,"graphAM")
+#	as(ttt,"matrix")
+#	# order by outdegree
+#	# check crossing between every 2 edges?
+#	
+#	accessibles = acc(mygraph,nodes(mygraph))
+#	for(n in names(accessibles)) {
+#		for(c in names(accessibles[[n]])) {
+#			if(accessibles[[n]][[c]]>1) {
+#				graph::removeEdge(from=n,to=c, mygraph)
+#			}
+#		}
+#	}
 	mygraph
+	
 }
 
 #' This function generates a (more or less) beautiful layout for a regulatory graph.
@@ -223,6 +299,11 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2
 		edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
 		subgraphs=list(), subgraphs.colors=c("#B3E2CD","#FDCDAC","#F4CAE4","#E6F5C9","#FFF2AE")) {
 
+	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
 	if(!require(Rgraphviz)) {
 		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
@@ -255,9 +336,10 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2
 	
 	#NODES
 	#shape size and fill of nodes
-	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", height=node.height, width=node.width, fill="#e0e0e0") 
+	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", fill="#e0e0e0", fixedsize=TRUE)
+	#graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", height=node.height, width=node.width, fill="#e0e0e0") 
 	#fontsizes
-	graph::nodeRenderInfo(mygraph) <- list(fontsize=node.fontsize, labelfontsize=node.labelfontsize, fixedsize=node.fixedsize)
+	#graph::nodeRenderInfo(mygraph) <- list(fontsize=node.fontsize, labelfontsize=node.labelfontsize)
 	
 	#SUBGRAPHS
 	if(length(subgraphs) > 0) {
@@ -279,18 +361,45 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2
 #' 
 #' @param mygraph graphNEL, regulatory graph
 #' @param subgraphs list of character vectors with node names
+#' @param layoutGraph logical. If FALSE the graph is not laid out again but send directly to Rgraphviz::renderGraph.
 #' @returnType none
 #' @return none
 #' @author Frank Kramer
 #' @export
-plotRegulatoryGraph <- function(mygraph, subgraphs=list()) {
+plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
 	
 	if(!require(Rgraphviz)) {
 		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
+	temp = mygraph
+	if(layoutGraph) {
+		temp = layoutRegulatoryGraph(mygraph, subgraphs=subgraphs)
+	}
+	Rgraphviz::renderGraph(temp)
+}
+
+#' This function calculates the overlap of 2 graphs
+#' 
+#' This function calculates the overlap of supplied graph1 wtih graph2.
+#' Layout and weights of graph1 are kept.
+#' 
+#' @param graph1 graphNEL
+#' @param graph2 graphNEL
+#' @returnType list
+#' @return Returns a list containing the compared graphs and edge- and node-wise overlap between them.
+#' @author Frank Kramer
+#' @export
+calcGraphOverlap <- function(graph1, graph2) {
+
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
 	
-	Rgraphviz::renderGraph(layoutRegulatoryGraph(mygraph, subgraphs=subgraphs))
+	edges_overlap = (length(graph::edgeNames(graph1)) - length(setdiff(graph::edgeNames(graph1), graph::edgeNames(graph1)))) / length(graph::edgeNames(graph1))
+	nodes_overlap = (length(graph::nodes(graph1)) - length(setdiff(graph::nodes(graph1), graph::nodes(graph1)))) / length(graph::nodes(graph1))
+	list(graph1=graph1, graph2=graph2, edges_overlap = edges_overlap , nodes_overlap = nodes_overlap)	
 }
 
 #' This function returns a graph computed by the insection of supplied graph1 and graph2.
@@ -305,6 +414,12 @@ plotRegulatoryGraph <- function(mygraph, subgraphs=list()) {
 #' @author Frank Kramer
 #' @export
 intersectGraphs <- function(graph1, graph2) {
+	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
 	temp = graph1
 	e1 = strsplit(graph::edgeNames(graph1), split="~")
 	e2 = strsplit(graph::edgeNames(graph2), split="~")
@@ -333,6 +448,12 @@ intersectGraphs <- function(graph1, graph2) {
 #' @author Frank Kramer
 #' @export
 diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDCDAC") ) {
+	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
 	temp = graph1
 	e1 = strsplit(graph::edgeNames(graph1), split="~")
 	e2 = strsplit(graph::edgeNames(graph2), split="~")
@@ -361,6 +482,10 @@ diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDC
 #' @export
 uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDCDAC","#F4CAE4")) {   #color: yellow, lightblue, lightgreen
 	
+	if(!require(graph)) {
+		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
 	if(!require(Rgraphviz)) {
 		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
@@ -441,4 +566,94 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 	
 	Rgraphviz::layoutGraph(temp)	
 }
+
+
+#
+##' This function colors the nodes of a graph.
+##' 
+##' This function colors nodes of a graph, usually this is used to color subgraphs 
+##' or add a color hue correlating with the expression level or fold change to the molecules. 
+##' 
+##' @param graph1 graphNEL
+##' @param colorNodes logical
+##' @param colors colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
+##' @returnType graphNEL
+##' @return Return a graph generated by uniting the two supplied graphs
+##' @author Frank Kramer
+##' @export
+#colorGraphNodes <- function(graph1, nodes=NA, colors=NA, textColors=NA) {
+#	
+#	if(!require(graph)) {
+#		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+#		return(NULL)
+#	}
+#	if(!require(Rgraphviz)) {
+#		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+#		return(NULL)
+#	}
+#	
+#	graph::graphRenderInfo(temp)$laidout <- FALSE
+#	
+#	
+#	#shape size and fill of nodes
+#	nodevector = as.vector(rep(1,length(graph::nodes(graph1))))
+#	names(nodevector) = graph::nodes(graph1)
+#	
+#	node.fill = nodevector
+#	if(nodes == NA)	{
+#		node.fill[TRUE] = colors
+#		graph::nodeRenderInfo(graph)$fill <- node.fill
+#	} else {
+#		
+#	}
+#	
+#	graph::nodeRenderInfo(temp)$shape <- node.shape
+#	graph::nodeRenderInfo(temp)$fill <- node.fill
+#	graph::nodeRenderInfo(temp)$height <- node.height
+#	graph::nodeRenderInfo(temp)$width <- node.width
+#	graph::nodeRenderInfo(temp)$fontsize <- node.fontsize
+#	graph::nodeRenderInfo(temp)$labelfontsize <- node.labelfontsize
+#	graph::nodeRenderInfo(temp)$fixedsize <- node.fixedsize
+#	
+#	#COLOR SUBGRAPHS
+#	#only graph1
+#	for(n in setdiff(graph::nodes(graph1), graph::nodes(graph2))) {
+#		graph::nodeRenderInfo(temp)$fill[n] <- colors[2]
+#	}
+#	#only graph2
+#	for(n in setdiff(graph::nodes(graph2), graph::nodes(graph1))) {
+#		graph::nodeRenderInfo(temp)$fill[n] <- colors[3]
+#	}
+#	
+#	#EDGES	
+#	e1 = strsplit(graph::edgeNames(graph1), split="~")
+#	e2 = strsplit(graph::edgeNames(graph2), split="~")
+#	i  = setdiff(e2,e1)
+#	for(x in 1:length(i)) {
+#		temp = graph::addEdge(i[[x]][1],i[[x]][2], temp, as.numeric(graph::edgeData(graph2,i[[x]][1],i[[x]][2], "weight")))
+#	}
+#	# generate a list of all edges, preinitialized with the weights
+#	edge.weights=c("green","black","red")
+#	x = unlist(graph::edgeData(temp))
+#	names(x) = gsub(".weight","",names(x))
+#	names(x) = gsub("|","~",names(x), fixed=TRUE)
+#	
+#	#set edge arrowheads
+#	edge.arrowheads=c("normal","tee")
+#	arrowhead = x
+#	arrowhead[TRUE] = rep(edge.arrowheads[1],length(x))
+#	arrowhead[x==1] = edge.arrowheads[1]
+#	arrowhead[x==-1] = edge.arrowheads[2]
+#	graph::edgeRenderInfo(temp) <- list(arrowhead=arrowhead)
+#	
+#	#set edge colors
+#	color = x
+#	color[TRUE] = rep(edge.weights[2],length(x))
+#	color[x==1] = edge.weights[1]
+#	color[x==-1] = edge.weights[3]
+#	graph::edgeRenderInfo(temp) <- list(col=color)
+#	
+#	Rgraphviz::layoutGraph(temp)	
+#}
+#
 

@@ -1,3 +1,18 @@
+rBiopaxParser 0.14
+===========
+
+* Some more sanity checks added to fix sloppy BioPAX models 
+
+* Added functions getBiopaxIDsByName, which does as the name suggests, and getXrefAnnotations, which returns all Xref annontations of given Biopax IDs.
+
+* Function pathway2RegulatoryGraph now has the optional parameter useIDasNodenames, this causes a regulatory graph to be created with the Biopax IDs used instead of the instance names.
+
+* Function plotRegulatoryGraph can be passed logical argument layoutGraph, which can be used to stop the function from re-layouting the graph in case you modified it.
+
+* Added a check for BioPAX Levels different from Level 2 and started to build a foundation to enable those too.
+
+* Unzipping functionality of downloadBiopaxData only works using Linux. Added checks and instructions for Windows users. 
+ 
 rBiopaxParser 0.13
 ===========
 

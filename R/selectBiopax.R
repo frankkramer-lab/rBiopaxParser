@@ -93,6 +93,21 @@ getBiopaxInstancesByName <- function(biopax, name) {
 	biopax$df[biopax$df$instanceid %in% id,]
 }
 
+#' Returns all ids of instances with a certain name.
+#' 
+#' Returns all ids of instances with a certain name.
+#' 
+#' @param biopax A biopax model 
+#' @param name string. Name of the instance
+#' @returnType character vector
+#' @return Returns a vector containing all instance ids with the supplied name.
+#' @author Frank Kramer
+#' @export
+getBiopaxIDsByName <- function(biopax, name) {
+	id = as.character(biopax$df[biopax$df$property=="NAME" & biopax$df$property_value == name,]$instanceid)
+	unique(id)
+}
+
 #' This function returns a list of all pathway ids.
 #' 
 #' This function returns a vector of all pathway ids.
@@ -170,6 +185,20 @@ getPathwayComponents <- function(biopax, id) {
 	getBiopaxInstancesByID(biopax,pwcomp_list)
 }
 
+#' This function lists all components of a given complex.
+#' 
+#' This function returns a vector of all component IDs of the supplied complex.
+#' 
+#' @param biopax A biopax model
+#' @param id string. A complex ID
+#' @returnType character vector
+#' @return Returns a character vector with IDs
+#' @author Frank Kramer
+#' @export
+getComplexComponentList <- function(biopax, id) {
+	unlist(getReferencedIDs(biopax, id, recursive=FALSE, onlyFollowProperties=c("COMPONENTS")))
+}
+
 #' This functions splits up a complex into its components.
 #' 
 #' This function looks up the supplied Complex ID and returns the names of all its components. 
@@ -212,7 +241,7 @@ splitComplex <- function(biopax, complexid, recursive=TRUE) {
 #' 
 #' This function takes an id and a biopax model as input. The id of every instance that is referenced is returned.
 #' If recursive == TRUE this function recurses through all referenced IDs of the referenced instances and so on.
-#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities. (not yet implemented)
+#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities.
 #' 
 #' @param biopax A biopax model 
 #' @param id string. ID of the instance
@@ -255,7 +284,7 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 #' 
 #' This function takes an id and a biopax model as input. A data.frame containing all instances referenced by the supplied instance is returned.
 #' If recursive == TRUE this function recurses through all referenced IDs of the referenced instances and so on. 
-#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities. (not yet implemented)
+#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities.
 #' 
 #' @param biopax A biopax model
 #' @param id string
@@ -266,6 +295,69 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 #' @author Frank Kramer
 #' @export
 getReferencedInstances <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c()) {
+	referencedIDs = getReferencedIDs(biopax, id, recursive, onlyFollowProperties)
+	getBiopaxInstancesByID(biopax, referencedIDs)
+}
+
+#' This function returns a vector of ids of all instances that reference the supplied instanceid.
+#' 
+#' This function takes an id and a biopax model as input. The id of every instance that references the supplied id is returned.
+#' If recursive == TRUE this function recurses through all referencing IDs of the referencing instances and so on.
+#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities.
+#' 
+#' @param biopax A biopax model 
+#' @param id string. ID of the instance
+#' @param recursive logical
+#' @param onlyFollowProperties character vector
+#' @returnType character vector
+#' @return Returns a character vector of IDs referencing the supplied id in the supplied biopax model.
+#' @author Frank Kramer
+#' @export
+getReferencingIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c()) {
+	id = unique(striphash(id))
+	id = addhash(id)
+	referencingIDs = list()
+	#####################################continue here! how to traverse backwards through biopax networks??
+	#every ref in instances of id
+	if(length(onlyFollowProperties) > 0) {
+		newIDs = biopax$df[biopax$df$property_attr_value %in% id & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"instanceid"]	
+	} else {
+		newIDs = biopax$df[biopax$df$property_attr_value %in% id & biopax$df$property_attr == "rdf:resource" ,"instanceid"]	
+	}
+	newIDs = unique(addhash(newIDs))
+	newIDs = newIDs[!(newIDs %in% id)]
+	referencingIDs = c(referencingIDs,newIDs)
+	
+	if(recursive) {
+		while(length(newIDs)>0) {
+			if(length(onlyFollowProperties) > 0) {
+				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"instanceid"]	
+			} else {
+				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & biopax$df$property_attr == "rdf:resource" ,"instanceid"]	
+			}
+			newIDs = unique(striphash(newIDs))
+			newIDs = newIDs[!(newIDs %in% c(referencingIDs,id))]
+			referencingIDs = c(referencingIDs,newIDs)
+		}
+	}
+	striphash(referencingIDs)
+}
+
+#' This function returns a data.frame containing all instances referencing the supplied instance.
+#' 
+#' This function takes an id and a biopax model as input. A data.frame containing all instances referencing the supplied instance is returned.
+#' If recursive == TRUE this function recurses through all referencing IDs of the referencing instances and so on. 
+#' "onlyFollowProperties" limits the recursivness to only certain properties, for example follow only complexes or physicalEntities.
+#' 
+#' @param biopax A biopax model
+#' @param id string
+#' @param recursive logical
+#' @param onlyFollowProperties character vector
+#' @returnType data.frame
+#' @return Returns a data.frame containing all referencing instances.
+#' @author Frank Kramer
+#' @export
+getReferencingInstances <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c()) {
 	referencedIDs = getReferencedIDs(biopax, id, recursive, onlyFollowProperties)
 	getBiopaxInstancesByID(biopax, referencedIDs)
 }
@@ -281,6 +373,7 @@ getReferencedInstances <- function(biopax, id, recursive=TRUE, onlyFollowPropert
 #' @author fkramer
 #' @export
 getInstanceClass <- function(biopax, instanceid) {
+	instanceid = striphash(instanceid)
 	as.character(biopax$df[biopax$df$instanceid == instanceid,"instancetype"][1])
 }
 
@@ -296,7 +389,7 @@ getInstanceClass <- function(biopax, instanceid) {
 #' @author fkramer
 #' @export
 getInstanceProperty <- function(biopax, instanceid, property="NAME") {
-	
+	instanceid = striphash(instanceid)
 	#get class of the instance
 	instancetype = getInstanceClass(biopax,instanceid)
 	#get the properties this instance has
@@ -316,6 +409,18 @@ getInstanceProperty <- function(biopax, instanceid, property="NAME") {
 	}
 }
 
+#' This function resolves physicalEntityParticipantIDs to their corresponding physicalEntityIDs
+#' 
+#' This function resolves physicalEntityParticipantIDs to their corresponding physicalEntityIDs. Every physicalEntityParticipant corresponds exactly to one physicalEntity.
+#' 
+#' @param biopax A biopax model
+#' @param physicalEntityId string. IDs of physicalEntityParticipants to be resolved
+#' @returnType character vector 
+#' @return Returns ids of physicalEntity corresponding to the specified  physicalEntityParticipantIDs
+#' @author fkramer
+internal_resolvePhysicalEntityParticipant <- function(biopax, physicalEntityId) {
+	unlist(getReferencedIDs(biopax, physicalEntityId, recursive=FALSE, onlyFollowProperties=c("PHYSICAL-ENTITY")))
+}
 
 #' This function returns the neighborhood of a physicalEntity
 #' 
@@ -334,7 +439,56 @@ getNeighborhood <- function(biopax, instanceid, depth=1, onlyInPathways=c()) {
 	moleculelist = instanceid
 	for(i in 1:depth) {
 		# add all interaction that includes at least one of the molecules to the interactionlist
-		biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_attr_value"]
+		#biopax$df[biopax$df$instanceid == instanceid & biopax$df$property == property,"property_attr_value"]
+		getReferencedInstances(biopax, instanceid, recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY"))
 	}
 }
+
+#' This function returns the annotations of the supplied IDs
+#' 
+#' This function returns the annotations of the supplied IDs in a data.frame.
+#' 
+#' @param biopax A biopax model
+#' @param id vector of strings. IDs of instances to get annotations
+#' @param splitComplexes logical. If TRUE complexes are split up into their components and the annotation of the components is added.
+#' @param followPhysicalEntityParticipants logical. If TRUE physicalEntityParticipants are resolved to their corresponding physicalEntities and their annotation is added. 
+#' @returnType data.frame
+#' @return Returns data.frame with annotations 
+#' @author fkramer
+#' @export
+getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalEntityParticipants=TRUE) {
+	id = c(striphash(id))
+	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
+	annotations = matrix(nrow=0, ncol=6)
+	colnames(annotations) = c("type", "id","name","annotation_type", "annotation_id", "annotation")
+	
+	for(i in 1:length(id)) {
+		# if its a complex AND we're supposed to split it:
+		if(getInstanceClass(biopax,id[i]) == "complex" & splitComplexes) {
+			referenced = getReferencedInstances(biopax, id[i], recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY"))
+			sel = tolower(referenced$instancetype) %in% tolower(c("dna","rna","protein","smallMolecule"))
+			referenced = as.character(unique(referenced[sel & !(referenced$instanceid %in% id),"instanceid"]))
+			annotations = rbind(annotations, getXrefAnnotations(biopax,referenced, splitComplexes=FALSE, followPhysicalEntityParticipants=FALSE))
+		} else if(getInstanceClass(biopax,id[i]) == "physicalEntityParticipant" & followPhysicalEntityParticipants) {
+			# if its a physicalEntityParticipant
+			peID = internal_resolvePhysicalEntityParticipant(biopax, id[i])
+			if(!(peID %in% id)) {
+				annotations = rbind(annotations, getXrefAnnotations(biopax, peID, splitComplexes=splitComplexes, followPhysicalEntityParticipants=TRUE))
+			}
+		} else {
+			# for any other class do this
+			type = getInstanceClass(biopax, id[i])
+			name = getInstanceProperty(biopax, id[i], property="NAME")[1]
+			xrefs = getInstanceProperty(biopax, id[i], property="XREF")
+			for(xref in xrefs) {
+				annotations = rbind(annotations, c(type, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
+								paste(getInstanceProperty(biopax, xref, property="DB"),	":",
+										getInstanceProperty(biopax, xref, property="ID"), sep="")
+								))
+			}
+		}
+	}
+	annotations
+}
+
 

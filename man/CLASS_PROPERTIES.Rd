@@ -1,15 +1,17 @@
 \docType{data}
 \name{CLASS_PROPERTIES}
 \alias{CLASS_PROPERTIES}
-\title{Class properties in Biopax Level 2.}
+\title{CLASS_PROPERTIES}
 \format{A data frame with 106 rows and 4 columns}
 \description{
+  Class properties in Biopax Level 2.
+}
+\details{
   A data.frame listing all direct properties for every
   Biopax Level 2 class. Together with CLASS_INHERITANCE
   this allows to list all properties, including the
   inherited ones, of every class.
-}
-\details{
+
   The variables are as follows:
 
   \itemize{ \item class. Name of the class \item property.

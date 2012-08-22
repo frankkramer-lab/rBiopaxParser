@@ -26,8 +26,10 @@
 #' @docType data
 #' @keywords datasets
 #' @name CLASS_INHERITANCE
+#' @title CLASS_INHERITANCE
 #' @usage CLASS_INHERITANCE
 #' @format A data frame with 46 rows and 2 columns
+#' @export
 CLASS_INHERITANCE = data.frame(
 		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= list(
 "entity",								"",
@@ -107,8 +109,10 @@ CLASS_INHERITANCE = data.frame(
 #' @docType data
 #' @keywords datasets
 #' @name CLASS_PROPERTIES
+#' @title CLASS_PROPERTIES
 #' @usage CLASS_PROPERTIES
 #' @format A data frame with 106 rows and 4 columns
+#' @export
 CLASS_PROPERTIES = data.frame(
 		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
 "entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",

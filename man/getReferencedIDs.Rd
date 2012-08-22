@@ -25,7 +25,7 @@
   referenced IDs of the referenced instances and so on.
   "onlyFollowProperties" limits the recursivness to only
   certain properties, for example follow only complexes or
-  physicalEntities. (not yet implemented)
+  physicalEntities.
 }
 \author{
   Frank Kramer

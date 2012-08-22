@@ -12,7 +12,9 @@
 #' This function downloads Biopax data from online databases
 #' 
 #' This function has an internal list of download links for some online databases. It will retrieve the selected model from the selected database using RCurl.
-#' The downloaded file is (if needed) unzipped and ready to be used as input for rBiopaxParser::readBiopax. 
+#' The downloaded file is (if needed) unzipped and ready to be used as input for rBiopaxParser::readBiopax.
+#' This function requires package RCurl to run. Automatically unzipping the downloaded BioPAX file requires Linux. 
+#' You can easily skip this step by downloading the exported file yourself and continuing with readBiopax. 
 #' 
 #' @param database string. Select which database you want to download from. Currently only NCI links have been stored.
 #' @param model string. Select which model/file you want to download. Currently NCI versions of the Pathway Interaction Database, Biocarta and Reactome are linked.
@@ -43,8 +45,12 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	if(outputfile=="") outputfile = filename
 	writeBin(content, useBytes = TRUE, con = outputfile )
 	
-	cat("Unzipping using gunzip \n")
-	system(paste("gunzip --verbose",outputfile))
+	if(grepl("linux",Sys.info()[1], ignore.case=TRUE)) {
+		cat("It seems like we're using Linux. Great! Trying to unzip using gunzip \n")
+		system(paste("gunzip --verbose",outputfile))
+	} else {
+		cat(paste("It seems like we aren't using Linux. Please unzip ", outputfile, " and proceed with readBiopax! \n", sep=""))
+	}
 }
 
 

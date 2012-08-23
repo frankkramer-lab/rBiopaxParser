@@ -3,8 +3,7 @@
 \title{This function generates a (more or less) beautiful layout for a regulatory graph.}
 \usage{
   layoutRegulatoryGraph(mygraph, label = "",
-    node.height = 2, node.width = 2, node.fontsize = 20,
-    node.labelfontsize = 20, node.fixedsize = FALSE,
+    node.fixedsize = FALSE,
     edge.weights = c("green", "black", "red"),
     edge.arrowheads = c("normal", "tee"),
     subgraphs = list(),
@@ -14,14 +13,6 @@
   \item{mygraph}{graphNEL}
 
   \item{label}{Label of the graph}
-
-  \item{node.height}{Height of the nodes}
-
-  \item{node.width}{Width of the nodes}
-
-  \item{node.fontsize}{Sets the fontsize of nodes.}
-
-  \item{node.labelfontsize}{Set labelfontsize of nodes}
 
   \item{node.fixedsize}{logical. If font size is fixed or
   variable in regards to the nodes.}

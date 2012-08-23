@@ -24,7 +24,7 @@ This package needs package graph to build graphs/networks from the data.
 This package suggests package Rgraphviz to visualize networks.    
 To install directly from github you need package devtools.  
   
-Installation or running certain functions MIGHT fail if these are not met. Please read through the following instructions.   
+Installation or running certain functions MIGHT fail if these are not met. Please read carefully through the following instructions.   
   
 ### Installing prerequisites for Linux users:  
 XML:   
@@ -133,6 +133,8 @@ Finally:
 	library(devtools)  
 	install_github(repo="rBiopaxParser", username="frankkramer")
 </code>
+
+or download this repository as a .zip file by clicking the "ZIP" button on top of this page!
 
 
  

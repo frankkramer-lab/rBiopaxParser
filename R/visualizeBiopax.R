@@ -282,10 +282,6 @@ transitiveReduction <- function(mygraph) {
 #' 
 #' @param mygraph graphNEL 
 #' @param label Label of the graph
-#' @param node.height Height of the nodes
-#' @param node.width Width of the nodes
-#' @param node.fontsize Sets the fontsize of nodes.
-#' @param node.labelfontsize Set labelfontsize of nodes
 #' @param node.fixedsize logical. If font size is fixed or variable in regards to the nodes.
 #' @param edge.weights vector. which colors to use for weighted edges
 #' @param edge.arrowheads vector. which arrowheads to use for weighted edges
@@ -295,8 +291,7 @@ transitiveReduction <- function(mygraph) {
 #' @return Returns the supplied graph in a layouted form with several parameters set for regulatory graph plotting.
 #' @author Frank Kramer
 #' @export
-layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2, node.fontsize=20, node.labelfontsize=20, node.fixedsize=FALSE,
-		edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
+layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
 		subgraphs=list(), subgraphs.colors=c("#B3E2CD","#FDCDAC","#F4CAE4","#E6F5C9","#FFF2AE")) {
 
 	
@@ -336,7 +331,7 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.height=2, node.width=2
 	
 	#NODES
 	#shape size and fill of nodes
-	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", fill="#e0e0e0", fixedsize=TRUE)
+	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", fill="#e0e0e0", fixedsize=node.fixedsize)
 	#graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", height=node.height, width=node.width, fill="#e0e0e0") 
 	#fontsizes
 	#graph::nodeRenderInfo(mygraph) <- list(fontsize=node.fontsize, labelfontsize=node.labelfontsize)
@@ -505,26 +500,38 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 	
 	node.shape = nodevector
 	node.shape[TRUE] = "ellipse"
+	graph::nodeRenderInfo(temp)$shape <- node.shape
+
 	node.fill = nodevector
 	node.fill[TRUE] = colors[1]
-	node.height = nodevector
-	node.height[TRUE] = graph::nodeRenderInfo(graph1)$height[1]
-	node.width = nodevector
-	node.width[TRUE] = graph::nodeRenderInfo(graph1)$width[1]
-	node.fontsize = nodevector
-	node.fontsize[TRUE] = graph::nodeRenderInfo(graph1)$fontsize[1]
-	node.labelfontsize = nodevector
-	node.labelfontsize[TRUE] = graph::nodeRenderInfo(graph1)$labelfontsize[1]
-	node.fixedsize = nodevector
-	node.fixedsize[TRUE] = graph::nodeRenderInfo(graph1)$fixedsize[1]
-	
-	graph::nodeRenderInfo(temp)$shape <- node.shape
 	graph::nodeRenderInfo(temp)$fill <- node.fill
-	graph::nodeRenderInfo(temp)$height <- node.height
-	graph::nodeRenderInfo(temp)$width <- node.width
-	graph::nodeRenderInfo(temp)$fontsize <- node.fontsize
-	graph::nodeRenderInfo(temp)$labelfontsize <- node.labelfontsize
-	graph::nodeRenderInfo(temp)$fixedsize <- node.fixedsize
+
+	### reuse previous layout of graph1
+	if(!is.null(graph::nodeRenderInfo(graph1)$height[1])) {
+		node.height = nodevector
+		node.height[TRUE] = graph::nodeRenderInfo(graph1)$height[1]
+		graph::nodeRenderInfo(temp)$height <- node.height	
+	}
+	if(!is.null(graph::nodeRenderInfo(graph1)$width[1])) {
+		node.width = nodevector
+		node.width[TRUE] = graph::nodeRenderInfo(graph1)$width[1]
+		graph::nodeRenderInfo(temp)$width <- node.width
+	}
+	if(!is.null(graph::nodeRenderInfo(graph1)$fontsize[1])) {
+		node.fontsize = nodevector
+		node.fontsize[TRUE] = graph::nodeRenderInfo(graph1)$fontsize[1]
+		graph::nodeRenderInfo(temp)$fontsize <- node.fontsize
+	}
+	if(!is.null(graph::nodeRenderInfo(graph1)$labelfontsize[1])) {
+		node.labelfontsize = nodevector
+		node.labelfontsize[TRUE] = graph::nodeRenderInfo(graph1)$labelfontsize[1]
+		graph::nodeRenderInfo(temp)$labelfontsize <- node.labelfontsize
+	}
+	if(!is.null(graph::nodeRenderInfo(graph1)$labelfontsize[1])) {
+		node.fixedsize = nodevector
+		node.fixedsize[TRUE] = graph::nodeRenderInfo(graph1)$fixedsize[1]
+		graph::nodeRenderInfo(temp)$fixedsize <- node.fixedsize
+	}
 	
 	#COLOR SUBGRAPHS
 	#only graph1

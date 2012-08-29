@@ -1,13 +1,65 @@
 ###############################################################################
 #
 # parseBiopax.R: 	This file contains the all functions related to parsing a Biopax model.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 
 # Documentation was created using roxygen
 #
 ###############################################################################
+
+#' This function creates a new Biopax model from scratch
+#' 
+#' This function creates a new Biopax model from scratch. This is not necessary if you want to parse a BioPAX export from a file, please see: readBiopax.
+#' Returns a biopax model, which is a list with named elements: 
+#' \describe{
+#' 		\item{biopaxxml}{NULL}
+#' 		\item{summary}{NULL}
+#' 		\item{df}{The data.frame representing the biopax in R}
+#' 		\item{ns_rdf}{RDF Namespace}
+#'		\item{ns_owl}{OWL Namespace}
+#'		\item{ns_bp}{Biopax Namespace}
+#' 		\item{file}{NULL}
+#'	}
+#'  
+#' @param level integer. Specifies the BioPAX level. 
+#' @returnType A biopax model
+#' @return A biopax model
+#' @author Frank Kramer
+#' @export
+createBiopax <- function(level = 2)  {
+	ret = list(biopaxxml = NULL)
+	ret$summary = NULL
+	ret$file = NULL
+	class(ret) <- c("biopax",class(ret))
+	
+	if(level==1) cat("BioPAX level 1 OWL is unfortunatly not supported.\n")
+	if(level==2) {
+		ret$biopaxlevel = 2
+		df_colnames = c("instancetype","instanceid","property","property_attr","property_attr_value","property_value")
+		ret$df = data.frame(rbind(df_colnames,0))
+		colnames(ret$df) = df_colnames
+		ret$df = ret$df[0,]
+
+		# deal with namespaces, we're interested in owl, rdf, biopax
+		ret$ns_rdf = "rdf"
+		ret$ns_owl = "owl"
+		ret$ns_bp = "bp"
+		ret$namespaces = namespaces = list(
+				'rdf'="http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+				'bp'="http://www.biopax.org/release/biopax-level2.owl#",
+				'rdfs'="http://www.w3.org/2000/01/rdf-schema#",
+				'owl'="http://www.w3.org/2002/07/owl#",
+				'xsd'="http://www.w3.org/2001/XMLSchema#"
+		)
+		
+	} 
+	if(level==3) cat("BioPAX level 3 OWL is not yet supported but work is underway.\n")
+	
+	ret
+}
+
 
 #' This function reads in a Biopax .owl file
 #' 
@@ -64,9 +116,9 @@ readBiopax <- function(file, verbose=TRUE, generateSummary=TRUE, generateDF=TRUE
 	ret
 }
 
-#' This function generates a summary statistics for the biopax model.
+#' This function generates a summary statistic for the biopax model.
 #' 
-#' This function generates a summary statistics for the biopax model.
+#' This function generates a summary statistic for the biopax model.
 #' This function can take a while with really big Biopax files like NCIs Pathway Interaction Database or Reactome.
 #' This function is called internally by readBiopax if generateSummary == TRUE, so just check biopax$summary if it has already been generated. 
 #' 

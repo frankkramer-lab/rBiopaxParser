@@ -10,7 +10,7 @@
   rBiopaxParser is a...
 
   \tabular{ll}{ Package: \tab rBiopaxParser\cr Type: \tab
-  Package\cr Version: \tab 0.09\cr Date: \tab 2012-07-02\cr
+  Package\cr Version: \tab 0.15\cr Date: \tab 2012-08-22\cr
   License: \tab GPL (>= 2)\cr }
 }
 \examples{

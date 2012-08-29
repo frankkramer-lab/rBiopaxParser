@@ -1,7 +1,7 @@
 ###############################################################################
 #
 # downloadBiopaxData.R: 	This file contains all functions related to retrieving Biopax data from the web.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 
@@ -13,7 +13,7 @@
 #' 
 #' This function has an internal list of download links for some online databases. It will retrieve the selected model from the selected database using RCurl.
 #' The downloaded file is (if needed) unzipped and ready to be used as input for rBiopaxParser::readBiopax.
-#' This function requires package RCurl to run. Automatically unzipping the downloaded BioPAX file requires Linux. 
+#' This function requires package RCurl to run. 
 #' You can easily skip this step by downloading the exported file yourself and continuing with readBiopax. 
 #' 
 #' @param database string. Select which database you want to download from. Currently only NCI links have been stored.
@@ -44,13 +44,8 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	content = RCurl::getBinaryURL(link)
 	if(outputfile=="") outputfile = filename
 	writeBin(content, useBytes = TRUE, con = outputfile )
-	
-	if(grepl("linux",Sys.info()[1], ignore.case=TRUE)) {
-		cat("It seems like we're using Linux. Great! Trying to unzip using gunzip \n")
-		system(paste("gunzip --verbose",outputfile))
-	} else {
-		cat(paste("It seems like we aren't using Linux. Please unzip ", outputfile, " and proceed with readBiopax! \n", sep=""))
-	}
+	cat(paste("Downloaded ", outputfile, "! Proceed with readBiopax! \n", sep=""))
+	outputfile
 }
 
 

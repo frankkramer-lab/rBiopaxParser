@@ -5,7 +5,7 @@
 #					representation is based on S3-classes, so there is no real  
 #					type-checking, inheritance, etc possible.
 #					For more information on BioPax please visit biopax.org.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 

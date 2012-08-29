@@ -1,6 +1,6 @@
 \name{summary_biopax}
 \alias{summary_biopax}
-\title{This function generates a summary statistics for the biopax model.}
+\title{This function generates a summary statistic for the biopax model.}
 \usage{
   summary_biopax(object, verbose = TRUE)
 }
@@ -13,7 +13,7 @@
   Returns the summary for the supplied biopax model.
 }
 \description{
-  This function generates a summary statistics for the
+  This function generates a summary statistic for the
   biopax model. This function can take a while with really
   big Biopax files like NCIs Pathway Interaction Database
   or Reactome. This function is called internally by

@@ -3,13 +3,15 @@
 \title{This function generates the xmlTree from the supplied biopax model.}
 \usage{
   internal_generateXMLfromBiopax(biopax,
-    namespaces = namespaces)
+    namespaces = namespaces, verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
   \item{namespaces}{A list of namespaces to use for the
   generated XML/RDF file}
+
+  \item{verbose}{logical}
 }
 \value{
   Returns the xmlTree generated from the supplied biopax

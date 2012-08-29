@@ -1,7 +1,7 @@
 ###############################################################################
 #
 # selectBiopax.R: 	This file contains the all functions related to selecting and retrieving information from a parsed Biopax model within R.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 
@@ -9,24 +9,6 @@
 #
 ###############################################################################
 
-
-########## NO SUPPORT FOR MANIPULATING XML NODES DIRECTLY AT THE MOMENT!!!
-#
-#getBioPaxInstances.owl <- function(owl, type) {
-#	if( !(tolower(substring(type,1,3)) == "bp:") ) {
-#		type = paste("bp:",type,sep="")
-#	}
-#	getNodeSet(owl$biopaxxml,paste("/rdf:RDF/",type,sep=""))
-#}
-#
-#getBioPaxInstance.owl <- function(owl, id) {
-#	getNodeSet(owl$biopaxxml,paste("/rdf:RDF//*[@*='",id,"']",sep=""))		
-#}
-#
-#getPathway.owl <- function(owl, id) {
-#	
-#}
-#
 
 #' Returns all list of all instances of a certain class, or all instances.
 #' 
@@ -119,7 +101,7 @@ getBiopaxIDsByName <- function(biopax, name) {
 #' @export
 getPathwayList <- function(biopax) {
 	#get pw ids, return a unique list
-	biopax$df[tolower(biopax$df$instancetype) == "pathway" & tolower(biopax$df$property) == "name",]
+	biopax$df[tolower(biopax$df$instancetype) == "pathway" & tolower(biopax$df$property) == "name",c("instancetype", "instanceid", "property", "property_value")]
 }
 
 #' This function returns a data.frame containing all pathways.
@@ -491,4 +473,22 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	annotations
 }
 
+
+########## NO SUPPORT FOR MANIPULATING XML NODES DIRECTLY AT THE MOMENT!!!
+#
+#getBioPaxInstances.owl <- function(owl, type) {
+#	if( !(tolower(substring(type,1,3)) == "bp:") ) {
+#		type = paste("bp:",type,sep="")
+#	}
+#	getNodeSet(owl$biopaxxml,paste("/rdf:RDF/",type,sep=""))
+#}
+#
+#getBioPaxInstance.owl <- function(owl, id) {
+#	getNodeSet(owl$biopaxxml,paste("/rdf:RDF//*[@*='",id,"']",sep=""))		
+#}
+#
+#getPathway.owl <- function(owl, id) {
+#	
+#}
+#
 

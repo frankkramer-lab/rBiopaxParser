@@ -1,7 +1,7 @@
 ###############################################################################
 #
 # modifyBiopax.R: 	This file contains the all functions related to modifying a parsed Biopax model within R.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 
@@ -25,11 +25,11 @@ addBiopaxInstances <- function(biopax,newInstancesDF) {
 	biopax
 }
 
-#' This function adds a new instance an existing biopax model.
+#' This function adds a new instance to an existing biopax model.
 #' 
-#' This function adds a new instance an existing biopax model.
+#' This function adds a new instance to an existing biopax model.
 #' "properties" is a named list of vectors, with the vector name as the name of the property and every entry of the vector a property value.
-#' Please note: case sensitivity! In Biopax Level 2 all properties are written in all capital letters.
+#' Please note: case sensitivity! In Biopax Level 2 all properties are written in all capital letters. This will change in Biopax Level 3.
 #' 
 #' @param biopax A biopax model 
 #' @param instancetype string. Class name

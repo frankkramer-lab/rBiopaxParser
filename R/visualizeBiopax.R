@@ -2,7 +2,7 @@
 #
 # visualizeBiopax.R: 	This file contains the all functions related to visualizing a parsed Biopax model.
 #						Generation of graphs, layout, adjacency matrices, modification of graphs.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 

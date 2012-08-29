@@ -1,7 +1,7 @@
 ###############################################################################
 #
 # writeBiopax.R: 	This file contains the all functions related to writing out a parsed Biopax model.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 
@@ -31,13 +31,13 @@ writeBiopax <- function(biopax, file="", verbose=TRUE, overwrite=FALSE, namespac
 				)) {
 	if(file.exists(file) & !overwrite) {stop(paste("Error: File ",file," already exists.",sep=""))}
 	checkValidity(biopax)
-	d = internal_generateXMLfromBiopax(biopax, namespaces)
+	d = internal_generateXMLfromBiopax(biopax, namespaces, verbose=verbose)
 	
 	###output xml to file if supplied or return xmlTree object if file == ""
 	if(file == "") {
 		d
 	} else {
-		XML::saveXML(d, file=file)
+		XML::saveXML(d$value(), file=file)
 		#d
 	}	
 }
@@ -53,7 +53,9 @@ writeBiopax <- function(biopax, file="", verbose=TRUE, overwrite=FALSE, namespac
 #' @author Frank Kramer
 #' @export
 checkValidity <- function(biopax) {
-	TRUE
+	if(! any(grepl("biopax",class(biopax)))) stop("Supplied biopax object doesnt seem to be of class biopax!")
+	if(nrow(biopax$df) < 1) stop("Internal data.frame of supplied biopax object seems to be empty!")
+	if(ncol(biopax$df) != 6) stop("Internal data.frame of supplied biopax object seems to be invalid!")
 }
 
 ### TODO: fix comment: add URL to gibhub
@@ -64,11 +66,12 @@ checkValidity <- function(biopax) {
 #' 
 #' @param biopax A biopax model 
 #' @param namespaces A list of namespaces to use for the generated XML/RDF file
+#' @param verbose logical
 #' @returnType XML::xmlTree
 #' @return Returns the xmlTree generated from the supplied biopax model.
 #' @author Frank Kramer
 #  #' @export
-internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces ) {
+internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbose=TRUE ) {
 	## create new xml document
 	d = XML::xmlTree("rdf:RDF", namespaces=namespaces) #, attrs= c('xml:base'="http://pid.nci.nih.gov/biopax"))
 	
@@ -82,6 +85,7 @@ internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces ) {
 	
 	## add biopax nodes
 	instanceList = unique(biopax$df[,c(1,2)])
+	count = 1
 	for(i in 1:dim(instanceList)[1] ) {
 		instance = biopax$df[biopax$df$instancetype == instanceList$instancetype[i] & biopax$df$instanceid == instanceList$instanceid[i],]
 		
@@ -99,6 +103,12 @@ internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces ) {
 			}	
 		}
 		d$closeTag()
+		
+		### be verbose about the work
+		if(verbose) {
+			if(i%%1000 == 0) cat(paste("INFO: Wrote instance nr",i,"of", (dim(instanceList)[1] - i) ,"with id", instance$instanceid,".")) 
+			count = count + 1
+		}
 	}
 	d
 }

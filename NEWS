@@ -1,3 +1,14 @@
+rBiopaxParser 0.15
+===========
+
+* Added function createBiopax which creates a new Biopax model from scratch.
+
+* Added some more parameter checks.
+
+* Added verbosity to writeBiopax since re-exporting the NCI Pathway Interaction Database took almost 15 minutes.
+
+* Updated the vignette. Nice pictures, text and more!
+
 rBiopaxParser 0.14
 ===========
 

@@ -1,7 +1,7 @@
 ###############################################################################
 #
 # helperFunctions.R: 	This file contains the all helper functions not directly related to any other source file.
-# author: Frank Kramer <mail@frankkramer.de>
+# author: Frank Kramer <dev@frankkramer.de>
 #
 # This is released under GPL-2.
 # 

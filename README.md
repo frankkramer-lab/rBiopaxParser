@@ -134,7 +134,6 @@ Finally:
 	install_github(repo="rBiopaxParser", username="frankkramer")
 </code>
 
-or download this repository as a .zip file by clicking the "ZIP" button on top of this page!
 
 
  

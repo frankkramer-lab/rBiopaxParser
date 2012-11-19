@@ -1,8 +1,8 @@
-\name{getPathwayList}
-\alias{getPathwayList}
+\name{listPathways}
+\alias{listPathways}
 \title{This function returns a list of all pathway ids.}
 \usage{
-  getPathwayList(biopax)
+  listPathways(biopax)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -13,6 +13,11 @@
 }
 \description{
   This function returns a vector of all pathway ids.
+}
+\examples{
+# load data
+ data(biopax2example)
+ listPathways(biopax)
 }
 \author{
   Frank Kramer

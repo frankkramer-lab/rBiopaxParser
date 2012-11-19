@@ -2,13 +2,13 @@
 \alias{internal_propertyListToDF}
 \title{Internal function to build a data.frame from the list of properties for a new instance}
 \usage{
-  internal_propertyListToDF(instancetype, instanceid,
-    properties, namespace_rdf = "rdf")
+  internal_propertyListToDF(class, id, properties,
+    namespace_rdf = "rdf")
 }
 \arguments{
-  \item{instancetype}{string. Class name}
+  \item{class}{string. Class name}
 
-  \item{instanceid}{string. ID of the instance}
+  \item{id}{string. ID of the instance}
 
   \item{properties}{named list of properties.}
 

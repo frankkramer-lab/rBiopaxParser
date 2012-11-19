@@ -4,7 +4,7 @@
 \usage{
   addControl(biopax,
     CONTROL_TYPE = c("ACTIVATION", "INHIBITION"),
-    CONTROLLER = "", CONTROLLED = c(), ID = NULL)
+    CONTROLLER = "", CONTROLLED = c(), id = NULL)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -20,7 +20,7 @@
   interaction and/or pathway instances that are being
   controlled.}
 
-  \item{ID}{string. ID for the control. If NULL a new ID is
+  \item{id}{string. ID for the control. If NULL a new ID is
   generated with prefix "control".}
 }
 \value{
@@ -32,6 +32,18 @@
   controls, internally the function addBiopaxInstance is
   called with properties CONTROL-TYPE, CONTROLLER and
   CONTROLLED set.
+}
+\examples{
+biopax = createBiopax(level=2)
+biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
+biopax = addPhysicalEntityParticipant(biopax, "p_id1", id="PEP_p_id1")
+biopax = addPhysicalEntity(biopax, class="protein", id="p_id2", NAME="protein2")
+biopax = addPhysicalEntityParticipant(biopax, "p_id2", id="PEP_p_id2")
+biopax = addBiochemicalReaction(biopax, LEFT=c("PEP_p_id1"), RIGHT=c("PEP_p_id2"), id="biochem_id_1")
+biopax = addPhysicalEntity(biopax, class="protein", id="p_id3", NAME="controllerProtein1")
+biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
+biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
+biopax$df
 }
 \author{
   fkramer

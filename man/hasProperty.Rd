@@ -12,7 +12,9 @@
 }
 \value{
   Returns TRUE for every row in the data.frame with
-  contains the supplied property
+  contains the supplied property. Logical vector with
+  length corresponding to the number of rows in the
+  data.frame.
 }
 \description{
   Checks if instances in the biopax data.frame have a given

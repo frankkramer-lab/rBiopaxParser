@@ -2,14 +2,14 @@
 \alias{getNeighborhood}
 \title{This function returns the neighborhood of a physicalEntity}
 \usage{
-  getNeighborhood(biopax, instanceid, depth = 1,
+  getNeighborhood(biopax, id, depth = 1,
     onlyInPathways = c())
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{instanceid}{string. ID of a physicalEntity (dna,
-  rna, protein, complex, smallMolecule)}
+  \item{id}{string. ID of a physicalEntity (dna, rna,
+  protein, complex, smallMolecule)}
 
   \item{depth}{integer. Search depth, this specifies how
   far out from the specified molecule the neighborhood

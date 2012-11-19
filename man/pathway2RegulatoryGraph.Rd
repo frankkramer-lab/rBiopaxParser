@@ -44,6 +44,14 @@
   Whenever duplicated edges are generated (especially by
   splitting up complexes) a warning is thrown.
 }
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+ plotRegulatoryGraph(mygraph)
+}
 \author{
   Frank Kramer
 }

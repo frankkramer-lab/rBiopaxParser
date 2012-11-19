@@ -18,10 +18,13 @@
 #' @param verbose logical
 #' @param overwrite logical, if TRUE an already existing file will be overwritten, otherwise an error is thrown
 #' @param namespaces A list of namespaces to use for the generated XML/RDF file
-#' @returnType XML::XMLInternalDOM
 #' @return Returns the xmlTree object generated from the biopax model. If a filename is supplied the XML is written to this file.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  \dontrun{writeBiopax(biopax, file="mybiopax.owl")}
 writeBiopax <- function(biopax, file="", verbose=TRUE, overwrite=FALSE, namespaces = list(
 				'rdf'="http://www.w3.org/1999/02/22-rdf-syntax-ns#",
 				'bp'="http://www.biopax.org/release/biopax-level2.owl#",
@@ -48,10 +51,8 @@ writeBiopax <- function(biopax, file="", verbose=TRUE, overwrite=FALSE, namespac
 #' Not yet implemented. Called internally by writeBiopax.
 #' 
 #' @param biopax A biopax model
-#' @returnType logical
 #' @return logical. Returns TRUE is the biopax model is valid Biopax Level 2, or FALSE otherwise. 
 #' @author Frank Kramer
-#' @export
 checkValidity <- function(biopax) {
 	if(! any(grepl("biopax",class(biopax)))) stop("Supplied biopax object doesnt seem to be of class biopax!")
 	if(nrow(biopax$df) < 1) stop("Internal data.frame of supplied biopax object seems to be empty!")
@@ -67,10 +68,8 @@ checkValidity <- function(biopax) {
 #' @param biopax A biopax model 
 #' @param namespaces A list of namespaces to use for the generated XML/RDF file
 #' @param verbose logical
-#' @returnType XML::xmlTree
 #' @return Returns the xmlTree generated from the supplied biopax model.
 #' @author Frank Kramer
-#  #' @export
 internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbose=TRUE ) {
 	## create new xml document
 	d = XML::xmlTree("rdf:RDF", namespaces=namespaces) #, attrs= c('xml:base'="http://pid.nci.nih.gov/biopax"))
@@ -87,10 +86,10 @@ internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbos
 	instanceList = unique(biopax$df[,c(1,2)])
 	count = 1
 	for(i in 1:dim(instanceList)[1] ) {
-		instance = biopax$df[biopax$df$instancetype == instanceList$instancetype[i] & biopax$df$instanceid == instanceList$instanceid[i],]
+		instance = biopax$df[biopax$df$class == instanceList$class[i] & biopax$df$id == instanceList$id[i],]
 		
 		#add class instance
-		d$addNode(as.character(instance$instancetype[1]), namespace="bp", attrs=c('rdf:ID'=as.character(instance$instanceid[1])), close=FALSE)
+		d$addNode(as.character(instance$class[1]), namespace="bp", attrs=c('rdf:ID'=as.character(instance$id[1])), close=FALSE)
 		
 		#add properties
 		for(p in 1:dim(instance)[1]) {
@@ -106,7 +105,7 @@ internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbos
 		
 		### be verbose about the work
 		if(verbose) {
-			if(i%%1000 == 0) cat(paste("INFO: Wrote instance nr",i,"of", (dim(instanceList)[1] - i) ,"with id", instance$instanceid,".")) 
+			if(i%%1000 == 0) message(paste("INFO: Wrote instance nr",i,"of", (dim(instanceList)[1] - i) ,"with id", instance$id,".")) 
 			count = count + 1
 		}
 	}

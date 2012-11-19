@@ -18,6 +18,6 @@
   Biopax Level 2 XMLNode.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

@@ -16,6 +16,6 @@
   of nodes and child nodes of an XMLNode.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

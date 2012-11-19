@@ -27,6 +27,14 @@
   colors. This can be done by passing parameter subgraph a
   list of character vectors with node names.
 }
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+ plotRegulatoryGraph(mygraph)
+}
 \author{
   Frank Kramer
 }

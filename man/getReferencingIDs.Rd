@@ -1,6 +1,6 @@
 \name{getReferencingIDs}
 \alias{getReferencingIDs}
-\title{This function returns a vector of ids of all instances that reference the supplied instanceid.}
+\title{This function returns a vector of ids of all instances that reference the supplied id.}
 \usage{
   getReferencingIDs(biopax, id, recursive = TRUE,
     onlyFollowProperties = c())
@@ -26,6 +26,13 @@
   and so on. "onlyFollowProperties" limits the recursivness
   to only certain properties, for example follow only
   complexes or physicalEntities.
+}
+\examples{
+# load data
+ data(biopax2example)
+ listComplexComponents(biopax, id="ex_m_100650")
+ getReferencingIDs(biopax, id="ex_m_100650", recursive=FALSE)
+ getReferencingIDs(biopax, id="ex_m_100650", recursive=TRUE)
 }
 \author{
   Frank Kramer

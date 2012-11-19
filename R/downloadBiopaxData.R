@@ -20,10 +20,13 @@
 #' @param model string. Select which model/file you want to download. Currently NCI versions of the Pathway Interaction Database, Biocarta and Reactome are linked.
 #' @param version string. Select which Biopax Version you want to download.
 #' @param outputfile string. The file name to save the downloaded data in. If left empty the URL file name will be used. The unzipped file name can be different from this. Check the screen output of gunzip.  
-#' @returnType none
 #' @return none. Check output for the name of the unzipped biopax .owl file.
 #' @author fkramer
 #' @export
+#' @examples
+#'  \dontrun{file = downloadBiopaxData("NCI", "biocarta", version = "biopax2")}
+#'  \dontrun{biopax = readBiopax(file)}
+#'  \dontrun{biopax}
 downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome"), outputfile="", version="biopax2") {
 	
 	links = data.frame(database=c("NCI"), model=c("pid"), version=c("biopax2"), link=c("ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz"), stringsAsFactors=FALSE)
@@ -36,15 +39,15 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	filename = regmatches(link, m)[[1]][length(m[[1]])]
 
 	if(!require(RCurl)) {
-		cat(paste("This functions needs the RCurl library installed, albeit it cannot be found. Check out the installation instructions or manually download the file you wanted at: ",filename,"\n"))
+		message(paste("This functions needs the RCurl library installed, albeit it cannot be found. Check out the installation instructions or manually download the file you wanted at: ",filename))
 		return(0)
 	}
 	
-	cat(paste("Trying to download:",filename,"\n"))
+	message(paste("Trying to download:",filename))
 	content = RCurl::getBinaryURL(link)
 	if(outputfile=="") outputfile = filename
 	writeBin(content, useBytes = TRUE, con = outputfile )
-	cat(paste("Downloaded ", outputfile, "! Proceed with readBiopax! \n", sep=""))
+	message(paste("Downloaded ", outputfile, "! Proceed with readBiopax!", sep=""))
 	outputfile
 }
 

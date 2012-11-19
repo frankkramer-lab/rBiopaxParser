@@ -37,6 +37,11 @@
   skip this step by downloading the exported file yourself
   and continuing with readBiopax.
 }
+\examples{
+\dontrun{file = downloadBiopaxData("NCI", "biocarta", version = "biopax2")}
+ \dontrun{biopax = readBiopax(file)}
+ \dontrun{biopax}
+}
 \author{
   fkramer
 }

@@ -24,6 +24,6 @@
   things.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

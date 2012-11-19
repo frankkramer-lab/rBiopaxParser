@@ -4,7 +4,7 @@
 \usage{
   addPhysicalEntity(biopax,
     class = c("dna", "rna", "protein", "smallMolecule", "complex")[1],
-    NAME, ID = NULL, ORGANISM = NULL, COMMENT = NULL)
+    NAME, id = NULL, ORGANISM = NULL, COMMENT = NULL)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -15,7 +15,7 @@
 
   \item{NAME}{string. Name of the new physical entity}
 
-  \item{ID}{string. ID for the physical entity. If NULL a
+  \item{id}{string. ID for the physical entity. If NULL a
   new ID is generated with prefix "physicalEntity".}
 
   \item{ORGANISM}{string. Organism property of the
@@ -32,6 +32,13 @@
   add physical entities, internally the function
   addBiopaxInstance is called with properties NAME and
   ORGANISM set.
+}
+\examples{
+biopax = createBiopax(level=2)
+biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",COMMENT="this is my first protein!"))
+biopax$df
+biopax = addPhysicalEntity(biopax, class="protein", id="id2", NAME="protein2", COMMENT="This is a protein added using the convenience function addPhysicalEntitiy")
+biopax$df
 }
 \author{
   fkramer

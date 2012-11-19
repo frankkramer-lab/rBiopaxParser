@@ -17,6 +17,19 @@
 #' @title Parses BioPax level 2 files and represents them in R
 #' @keywords package
 #' @examples
-#' \dontrun{readBiopax(file="biopaxmodel.owl)"}
+#' \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
 NULL
 
+#' Biopax example data set
+#' 
+#' A dataset containing two regulatory pathways encoded in Biopax Level 2 and parsed in via readBiopax().
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format An example biopax model parsed in via readBiopax.
+#' @name biopax
+#' @alias biopax2example
+#' @examples
+#' data(biopax2example)
+#' biopax
+NULL

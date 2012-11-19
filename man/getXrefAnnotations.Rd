@@ -1,6 +1,6 @@
 \name{getXrefAnnotations}
 \alias{getXrefAnnotations}
-\title{This function returns the annotations of the supplied IDs}
+\title{This function returns the annotations of the supplied instances.}
 \usage{
   getXrefAnnotations(biopax, id, splitComplexes = FALSE,
     followPhysicalEntityParticipants = TRUE)
@@ -26,6 +26,14 @@
 \description{
   This function returns the annotations of the supplied IDs
   in a data.frame.
+}
+\examples{
+# load data
+ data(biopax2example)
+# no annotations for exactly the complex
+getXrefAnnotations(biopax, id="ex_m_100650")
+# split up the complex and get annotations for all the molecules involved
+getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 }
 \author{
   fkramer

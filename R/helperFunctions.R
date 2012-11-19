@@ -14,12 +14,11 @@
 #' This function takes a data.frame as argument and returns it with strings instead of factors.
 #' 
 #' @param df any data.frame with factor levels in at least one column
-#' @returnType data.frame
 #' @return The data.frame is returned using strings instead of factors.
 #' @author Frank Kramer
 # #' @export
 unfactorize <- function (df) {
-	if(!(class(df)=="data.frame")) { stop("Error: unfactorize: data.frame as argument expected") }
+	if(!("data.frame" %in% class(df))) { stop("Error: unfactorize: data.frame as argument expected") }
 	
 	for (i in 1:ncol(df)) {
 		if (class(df[,i]) == "factor") df[,i] <- as.character(df[,i])
@@ -37,7 +36,6 @@ unfactorize <- function (df) {
 #' 
 #' @param classname A string containing the classname to check
 #' @param namespace A string giving the namespace to check for
-#' @returnType logical
 #' @return This function returns TRUE if the supplied classname string is preceeded with the supplied namespace string, and FALSE if not.
 #' @author Frank Kramer
 # #' @export
@@ -55,7 +53,6 @@ isOfNamespace <- function(classname, namespace="bp") {
 #' 
 #' @param classname A string containing a classname
 #' @param namespace A string containing a namespace
-#' @returnType string
 #' @return If the classname is not preceeded by a namespace yet, the supplied namespace is pasted in front of it and returned.
 #' @author Frank Kramer
 # #' @export
@@ -71,7 +68,6 @@ addns <- function(classname, namespace="bp") {
 #' Strips a namespace tag off a supplied classname string
 #'  
 #' @param classname A string containing a classname preceeded by a namespace tag
-#' @returnType string
 #' @return The classname with the namespace tag stripped off it.
 #' @author Frank Kramer
 # #' @export
@@ -84,7 +80,6 @@ stripns <- function(classname) {
 #' Adds a hash in front of a string 
 #' 
 #' @param x A string to be preceeded by a hash
-#' @returnType string
 #' @return The supplied string with a hash "#" pasted in front of it.
 #' @author Frank Kramer
 # #' @export
@@ -96,7 +91,6 @@ addhash <- function(x) {
 #' 
 #' Strips a hash in front of a string
 #' @param x A string to be stripped off a preceeeding hash
-#' @returnType string
 #' @return The supplied string with a hash "#" stripped off front.
 #' @author Frank Kramer
 # #' @export
@@ -112,7 +106,6 @@ striphash <- function(x) {
 #' @param df A data.frame with biopax instances 
 #' @param class A string containing the class name to check for
 #' @param considerInheritance Logical value indicating wether to consider inheritance or not
-#' @returnType Logical vector with length corresponding to the number of rows in the data.frame
 #' @return Returns TRUE for every row in the data.frame which is of the supplied class 
 #' @author Frank Kramer
 #' @export
@@ -121,18 +114,16 @@ isOfClass <- function (df, class, considerInheritance=FALSE) {
 	if(considerInheritance) {
 		class = c(class,getSubClasses(class))
 	}
-	tolower(as.character(df$instancetype)) %in% tolower(class)
+	tolower(as.character(df$class)) %in% tolower(class)
 }
 
-#return true/false for every entry in df        ##### HIER GEHTS WEITER
 #' Checks if instances in the biopax data.frame have a given property
 #' 
 #' Checks if instances in the biopax data.frame have a given property
 #'  
 #' @param df A data.frame with biopax instances 
 #' @param property A string containing the name of the property to check for
-#' @returnType Logical vector with length corresponding to the number of rows in the data.frame
-#' @return Returns TRUE for every row in the data.frame with contains the supplied property
+#' @return Returns TRUE for every row in the data.frame with contains the supplied property. Logical vector with length corresponding to the number of rows in the data.frame.
 #' @author Frank Kramer
 #' @export
 hasProperty <- function (df, property) {
@@ -149,7 +140,6 @@ hasProperty <- function (df, property) {
 #' @param allowNA Logical, allow NA or not
 #' @param allowEmptyString Logical, allow empty strings or not
 #' @param allowInf Logical, allow values of +/- infinity or not
-#' @returnType Returns 1 if all checks completed successfully, returns error message otherwise.
 #' @return Returns 1 if all checks completed successfully, returns error message otherwise.
 #' @author Frank Kramer
 # #' @export

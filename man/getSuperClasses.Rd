@@ -15,6 +15,9 @@
   This function returns the superclasses of the supplied
   biopax class.
 }
+\examples{
+getSuperClasses("control")
+}
 \author{
   Frank Kramer
 }

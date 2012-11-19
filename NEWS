@@ -1,3 +1,30 @@
+rBiopaxParser 0.99.0
+===========
+
+* Pushing version number to 0.99.0 according to Bioconductor checklist 
+
+rBiopaxParser 0.23
+===========
+
+* Fixes to documentation. All function documentation is featuring examples now. 
+
+rBiopaxParser 0.21
+===========
+
+* Attention: Major function renaming and restructuring in this version! This unfortunatly leads to incompatibilities with the previous versions due to the renaming.
+
+* The variables "instancetype" and "instanceid" have been renamed to "class" and "id". This keeps everyones code shorter and matches general ontology syntax. 
+
+* Function names of the ever-growing number of convenience functions were a mess and hard to understand. I have taken the time to refactor and consolidate the collection of functions to increase usability and give function(name)s a common structure. This will also serve as a stepping stone to allow biopax level 3 integration.
+
+* Functions with names starting "get" were previously being used for all selecting/accessing of data. These functions are now effectively being split up into functions with names "select" and "list".
+
+* Functions with prefix "select" return a TRUE/FALSE index vector for the whole biopax internal data.frame. This allows easy combination of select statements via logical & and |.
+
+* Functions with prefix "list" return a specific list of IDs or items depending on the function definition.
+
+* Functions with prefix "get" return newly created objects or informations about the biopax data.frame or its instance(s). 
+
 rBiopaxParser 0.15
 ===========
 

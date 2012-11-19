@@ -259,10 +259,11 @@ CLASS_PROPERTIES = data.frame(
 #' This function returns the subclasses of the supplied biopax class.
 #' 
 #' @param classname A string containing a class name
-#' @returnType A character vector
 #' @return Returns character vector containing the subclasses of the supplied class
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  getSubClasses("control")
 getSubClasses <- function(classname) {
 	classname = stripns(classname)
 	ret = list()
@@ -277,10 +278,11 @@ getSubClasses <- function(classname) {
 #' This function returns the superclasses of the supplied biopax class.
 #' 
 #' @param classname A string containing a class name
-#' @returnType A character vector
 #' @return Returns character vector containing the superclasses of the supplied class
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  getSuperClasses("control")
 getSuperClasses <- function(classname) {
 	classname = stripns(classname)
 	ret = list()
@@ -294,13 +296,14 @@ getSuperClasses <- function(classname) {
 #' This function returns the properties of the supplied biopax class.
 #' 
 #' This function returns the superclasses of the supplied biopax class. It always considers inhertance.
-#' Every class inhertis the properties of its super classes.
+#' Every class inhertis the properties of its super classes. A table listing all available properties and their cardinalities (for Biopax Level 2).
 #' 
 #' @param classname A string containing a class name
-#' @returnType A character vector
 #' @return Returns character vector containing the superclasses of the supplied class
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  getClassProperties("control")
 getClassProperties <- function(classname) {
 	classname = stripns(classname)
 	ret = list()

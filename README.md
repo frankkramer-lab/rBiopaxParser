@@ -67,16 +67,19 @@ to install it.
   
 Rgraphviz:   
 Rgraphviz is used to layout the graphs generated in this package. You can layout and plot these yourself if you want to.  
-Make sure your linux has package graphviz installed.  
-If this is not the case, many linux users can usually fix this by running   
-<code>
-	sudo apt-get install graphviz
-</code>    
+Since version 2.1 Rgraphviz now includes graphviz!
 You will now be able to install R package Rgraphviz using:  
 <code>
 	source("http://bioconductor.org/biocLite.R")  
     biocLite("Rgraphviz")
-</code>  
+</code>    
+If you are forced to use an earlier version of Rgraphviz you have to make sure
+your Linux has package graphviz installed.
+If this is not the case, you can usually fix this by running:
+<code>
+	sudo apt-get install graphviz
+</code>    
+
 If you encounter more problems check out http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html  
   
   
@@ -107,13 +110,16 @@ to install it.
   
 Rgraphviz:   
 Rgraphviz is used to layout the graphs generated in this package. You can layout and plot these yourself if you want to.  
-Make sure your  machine has Graphviz installed, it can be found at: http://www.graphviz.org  
-Click on Download -> Windows. 
-After installing graphviz you will now be able to install R package Rgraphviz using:  
+Since version 2.1 Rgraphviz now includes graphviz!
+You will now be able to install R package Rgraphviz (including graphviz) using:  
 <code>
 	source("http://bioconductor.org/biocLite.R")  
     biocLite("Rgraphviz")
-</code>  
+</code>
+If you are forced to use an earlier version of Rgraphviz you have to make sure
+your your machine has graphviz installed, it can be found at: http://www.graphviz.org  
+Click on Download -> Windows. 
+After installing graphviz, even older version of Rgraphviz will work.    
 If you encounter more problems check out http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html  
   
   

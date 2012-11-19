@@ -15,7 +15,16 @@
 }
 \description{
   This function calculates the overlap of supplied graph1
-  wtih graph2. Layout and weights of graph1 are kept.
+  with graph2. Layout and weights of graph1 are kept.
+}
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+ calcGraphOverlap(mygraph1,mygraph2)
 }
 \author{
   Frank Kramer

@@ -2,15 +2,15 @@
 \alias{addBiopaxInstance}
 \title{This function adds a new instance to an existing biopax model.}
 \usage{
-  addBiopaxInstance(biopax, instancetype, instanceid,
+  addBiopaxInstance(biopax, class, id,
     properties = list(NAME = c()), verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{instancetype}{string. Class name}
+  \item{class}{string. Class name}
 
-  \item{instanceid}{string. ID of the instance}
+  \item{id}{string. ID of the instance}
 
   \item{properties}{named list of properties.}
 
@@ -28,6 +28,11 @@
   sensitivity! In Biopax Level 2 all properties are written
   in all capital letters. This will change in Biopax Level
   3.
+}
+\examples{
+biopax = createBiopax(level=2)
+biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",SYNONYMS="p1"))
+biopax$df
 }
 \author{
   Frank Kramer

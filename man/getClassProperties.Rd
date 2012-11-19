@@ -14,7 +14,12 @@
 \description{
   This function returns the superclasses of the supplied
   biopax class. It always considers inhertance. Every class
-  inhertis the properties of its super classes.
+  inhertis the properties of its super classes. A table
+  listing all available properties and their cardinalities
+  (for Biopax Level 2).
+}
+\examples{
+getClassProperties("control")
 }
 \author{
   Frank Kramer

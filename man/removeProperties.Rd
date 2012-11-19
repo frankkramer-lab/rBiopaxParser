@@ -2,12 +2,12 @@
 \alias{removeProperties}
 \title{This function removes a property}
 \usage{
-  removeProperties(biopax, instanceid, properties)
+  removeProperties(biopax, id, properties)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{instanceid}{string. ID of the instance}
+  \item{id}{string. ID of the instance}
 
   \item{properties}{character vector. listing the
   properties to remove.}

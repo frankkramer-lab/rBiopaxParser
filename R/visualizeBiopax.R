@@ -22,18 +22,24 @@
 #' @param splitComplexMolecules logical. If TRUE every complex is split up into its components. This leads to splitting a single node with name of the complex into several nodes with names of the components, these components all have identical edges.   
 #' @param useIDasNodenames logical. If TRUE nodes of the graph are named by their molecule IDs instead of using the NAME property. This can help with badly annotated/formatted databases.
 #' @param verbose logical 
-#' @returnType matrix
 #' @return Returns the adjacency matrix representing the regulatory graph of the supplied pathway.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  pathway2AdjacancyMatrix(biopax, pwid1)
+
 pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
 	
-	mygraph = pathway2RegulatoryGraph(biopax, pwid, splitComplexMolecules, useIDasNodenames, verbose)
+	mygraph = pathway2RegulatoryGraph(biopax, pwid, expandSubpathways=expandSubpathways, splitComplexMolecules=splitComplexMolecules, useIDasNodenames=useIDasNodenames, verbose=verbose)
 	ttt = as(mygraph,"graphAM")
 	as(ttt,"matrix")
 	
@@ -58,14 +64,20 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #' @param splitComplexMolecules logical. If TRUE every complex is split up into its components. This leads to splitting a single node with name of the complex into several nodes with names of the components, these components all have identical edges.   
 #' @param useIDasNodenames logical. If TRUE nodes of the graph are named by their molecule IDs instead of using the NAME property. This can help with badly annotated/formatted databases.
 #' @param verbose logical 
-#' @returnType graphNEL
 #' @return Returns the representing the regulatory graph of the supplied pathway in a node-edge-list graph.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+#'  plotRegulatoryGraph(mygraph)
 pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
 	
@@ -75,13 +87,13 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	graph::edgemode(mygraph) = "directed"
 	
 	#get pathway component list
-	pw_component_list = getPathwayComponents(biopax, pwid)
+	pw_component_list = selectInstances(biopax,id=listPathwayComponents(biopax,pwid)$id)
 	#consider only controls //TODO: Consider subpathways!
-	for(i in unique(pw_component_list$instanceid)) {
-		instance = pw_component_list[pw_component_list$instanceid==i,]
+	for(i in unique(pw_component_list$id)) {
+		instance = pw_component_list[pw_component_list$id==i,]
 		if(any(isOfClass(instance,"control", considerInheritance = TRUE))) {
 			#if type neither inhibition nor activation i dont know what to do anyways. 
-			#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is requred by biopax standards. quick fix here:
+			#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2standards. quick fix here:
 			type = as.character(instance[instance$property=="CONTROL-TYPE","property_value"])
 			if(length(type)==0) {
 				if(any(isOfClass(instance,"catalysis"))) {
@@ -98,18 +110,18 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			controller_ids = as.character(instance[instance$property=="CONTROLLER","property_attr_value"])
 			controllers = NA
 			for(i2 in controller_ids) {
-				c_instance = getBiopaxInstancesByID(biopax, i2)
+				c_instance = selectInstances(biopax, id=i2)
 				#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
-				c_instance = getBiopaxInstancesByID(biopax, c_instance[c_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
+				c_instance = selectInstances(biopax, id=c_instance[c_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
 				if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 					if(useIDasNodenames) {
-						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$instanceid )))
+						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$id )))
 					} else {
 						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$property_value )))						
 					}
 				} else {
 					if(useIDasNodenames) {
-						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","instanceid"])))
+						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","id"])))
 					} else {
 						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","property_value"])))						
 					}
@@ -120,7 +132,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			controlled_ids = as.character(instance[instance$property=="CONTROLLED","property_attr_value"])
 			controlleds = NA
 			for(i2 in controlled_ids) {
-				c_instance = getBiopaxInstancesByID(biopax, i2)
+				c_instance = selectInstances(biopax, id=i2)
 				#depending on type of c_instance we must differentiate here. 
 				#pathway=ignore,interaction=ignore(this is only a nice field with a name in PID anyways),
 				#complexAssembly=we deal with a complex. split up or dont and return names
@@ -130,18 +142,18 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 					leftrights = as.character(c_instance[c_instance$property=="LEFT" | c_instance$property=="RIGHT" ,"property_attr_value"])
 					for(i3 in leftrights) {
 						#every left/right is an physicalentityparticipants, get that as above
-						leftrights_instance = getBiopaxInstancesByID(biopax, i3)
-						leftrights_instance = getBiopaxInstancesByID(biopax, leftrights_instance[leftrights_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
+						leftrights_instance = selectInstances(biopax, id=i3)
+						leftrights_instance = selectInstances(biopax, id=leftrights_instance[leftrights_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
 						#split complexes?
 						if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 							if(useIDasNodenames) {
-								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$instanceid )))
+								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$id )))
 							} else {
 								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$property_value )))						
 							}
 						} else {
 							if(useIDasNodenames) {
-								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","instanceid"])))
+								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","id"])))
 							} else {
 								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","property_value"])))						
 							}
@@ -159,8 +171,8 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			
 			#verbose
 			if(verbose) {
-				cat(paste("Adding to graph: ",unique(as.character(instance[,"instancetype"])), "-", type,
-								"Controllers: ", paste(controllers, collapse=" "), "Controlleds: ", paste(controlleds, collapse=" "),"\n"))
+				message(paste("Adding to graph: ",unique(as.character(instance[,"class"])), "-", type,
+								"Controllers: ", paste(controllers, collapse=" "), "Controlleds: ", paste(controlleds, collapse=" ")))
 			}
 			#now we have the controllers and controlleds lists, add edge
 			# leave out duplicates
@@ -203,14 +215,13 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 #' Edge weights are conserved if possible (in a hopefully smart way). 
 #' 
 #' @param mygraph graphNEL
-#' @returnType graphNEL
 #' @return Returns the transitive closure of the supplied graph.
 #' @author Frank Kramer
 #' @export
 transitiveClosure <- function(mygraph) {
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
 	
@@ -232,14 +243,13 @@ transitiveClosure <- function(mygraph) {
 #' Edge weights are conserved if possible (in a hopefully smart way). 
 #' 
 #' @param mygraph graphNEL
-#' @returnType graphNEL
 #' @return Returns the transitive reduction of the supplied graph.
 #' @author Frank Kramer
 #' @export
 transitiveReduction <- function(mygraph) {
 
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
 	
@@ -287,7 +297,6 @@ transitiveReduction <- function(mygraph) {
 #' @param edge.arrowheads vector. which arrowheads to use for weighted edges
 #' @param subgraphs A list of character vectors with node names defining the sub graphs.
 #' @param subgraphs.colors vector. which colors to use for subgraphs
-#' @returnType a layouted graphNEL
 #' @return Returns the supplied graph in a layouted form with several parameters set for regulatory graph plotting.
 #' @author Frank Kramer
 #' @export
@@ -296,11 +305,11 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	if(!require(Rgraphviz)) {
-		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 		
@@ -357,14 +366,20 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 #' @param mygraph graphNEL, regulatory graph
 #' @param subgraphs list of character vectors with node names
 #' @param layoutGraph logical. If FALSE the graph is not laid out again but send directly to Rgraphviz::renderGraph.
-#' @returnType none
 #' @return none
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+#'  plotRegulatoryGraph(mygraph)
 plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
 	
 	if(!require(Rgraphviz)) {
-		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	temp = mygraph
@@ -376,24 +391,31 @@ plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
 
 #' This function calculates the overlap of 2 graphs
 #' 
-#' This function calculates the overlap of supplied graph1 wtih graph2.
+#' This function calculates the overlap of supplied graph1 with graph2.
 #' Layout and weights of graph1 are kept.
 #' 
 #' @param graph1 graphNEL
 #' @param graph2 graphNEL
-#' @returnType list
 #' @return Returns a list containing the compared graphs and edge- and node-wise overlap between them.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+#'  calcGraphOverlap(mygraph1,mygraph2)
 calcGraphOverlap <- function(graph1, graph2) {
 
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	
-	edges_overlap = (length(graph::edgeNames(graph1)) - length(setdiff(graph::edgeNames(graph1), graph::edgeNames(graph1)))) / length(graph::edgeNames(graph1))
-	nodes_overlap = (length(graph::nodes(graph1)) - length(setdiff(graph::nodes(graph1), graph::nodes(graph1)))) / length(graph::nodes(graph1))
+	edges_overlap = (length(graph::edgeNames(graph1)) - length(setdiff(graph::edgeNames(graph1), graph::edgeNames(graph2)))) / length(graph::edgeNames(graph1))
+	nodes_overlap = (length(graph::nodes(graph1)) - length(setdiff(graph::nodes(graph1), graph::nodes(graph2)))) / length(graph::nodes(graph1))
 	list(graph1=graph1, graph2=graph2, edges_overlap = edges_overlap , nodes_overlap = nodes_overlap)	
 }
 
@@ -404,14 +426,21 @@ calcGraphOverlap <- function(graph1, graph2) {
 #' 
 #' @param graph1 graphNEL
 #' @param graph2 graphNEL
-#' @returnType graphNEL
 #' @return Returns the intersection of graph1 and graph2.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+#'  plotRegulatoryGraph(intersectGraphs(mygraph1,mygraph2))
 intersectGraphs <- function(graph1, graph2) {
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	
@@ -438,14 +467,21 @@ intersectGraphs <- function(graph1, graph2) {
 #' @param graph2 graphNEL
 #' @param colorNodes logical
 #' @param colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
-#' @returnType graphNEL 
 #' @return Return the diff between the graphs.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+#'  plotRegulatoryGraph(diffGraphs(mygraph1,mygraph2))
 diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDCDAC") ) {
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	
@@ -456,9 +492,6 @@ diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDC
 	for(x in 1:length(i)) {
 		temp = graph::removeEdge(i[[x]][1],i[[x]][2], temp)
 	}
-#	for(i in intersect(nodes(graph1), nodes(graph2))) {
-#		temp = removeNode(i, temp)
-#}
 	temp
 }
 
@@ -471,18 +504,25 @@ diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDC
 #' @param graph2 graphNEL
 #' @param colorNodes logical
 #' @param colors colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
-#' @returnType graphNEL
 #' @return Return a graph generated by uniting the two supplied graphs
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+#'  plotRegulatoryGraph(uniteGraphs(mygraph1,mygraph2))
 uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDCDAC","#F4CAE4")) {   #color: yellow, lightblue, lightgreen
 	
 	if(!require(graph)) {
-		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	if(!require(Rgraphviz)) {
-		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
 	
@@ -576,26 +616,27 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 
 
 #
-##' This function colors the nodes of a graph.
-##' 
-##' This function colors nodes of a graph, usually this is used to color subgraphs 
-##' or add a color hue correlating with the expression level or fold change to the molecules. 
-##' 
-##' @param graph1 graphNEL
-##' @param colorNodes logical
-##' @param colors colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
-##' @returnType graphNEL
-##' @return Return a graph generated by uniting the two supplied graphs
-##' @author Frank Kramer
-##' @export
+# # This function colors the nodes of a graph.
+# # 
+# # This function colors nodes of a graph, usually this is used to color subgraphs 
+# # or add a color hue correlating with the expression level or fold change to the molecules. 
+# # 
+# # param graph1 graphNEL
+# # param colorNodes logical
+# # param colors colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
+# # returnType graphNEL
+# # return Return a graph generated by uniting the two supplied graphs
+# # author Frank Kramer
+# # i graph Rgraphviz
+# # e
 #colorGraphNodes <- function(graph1, nodes=NA, colors=NA, textColors=NA) {
 #	
 #	if(!require(graph)) {
-#		cat(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+#		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 #		return(NULL)
 #	}
 #	if(!require(Rgraphviz)) {
-#		cat(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+#		message(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 #		return(NULL)
 #	}
 #	

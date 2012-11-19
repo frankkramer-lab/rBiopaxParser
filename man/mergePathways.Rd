@@ -2,7 +2,7 @@
 \alias{mergePathways}
 \title{This function merges two given pathways}
 \usage{
-  mergePathways(biopax, pwid1, pwid2, NAME, ID = NULL,
+  mergePathways(biopax, pwid1, pwid2, NAME, id = NULL,
     ORGANISM = "", COMMENT = NULL)
 }
 \arguments{
@@ -14,7 +14,7 @@
 
   \item{NAME}{string. Name of the new merged pathway}
 
-  \item{ID}{string. ID for the pathway. If NULL a new ID is
+  \item{id}{string. ID for the pathway. If NULL a new ID is
   generated with prefix "pathway".}
 
   \item{ORGANISM}{string. Organism property of the pathway.

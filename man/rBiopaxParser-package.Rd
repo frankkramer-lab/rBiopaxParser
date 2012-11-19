@@ -14,7 +14,7 @@
   License: \tab GPL (>= 2)\cr }
 }
 \examples{
-\dontrun{readBiopax(file="biopaxmodel.owl)"}
+\dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
 }
 \author{
   Frank Kramer \email{dev@frankkramer.de}

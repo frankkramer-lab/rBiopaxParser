@@ -2,12 +2,12 @@
 \alias{removeInstance}
 \title{This function removes an instance}
 \usage{
-  removeInstance(biopax, instanceid)
+  removeInstance(biopax, id)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{instanceid}{string. ID of the instance}
+  \item{id}{string. ID of the instance}
 }
 \value{
   Returns the supplied biopax model with the instance

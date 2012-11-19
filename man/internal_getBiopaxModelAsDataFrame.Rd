@@ -2,11 +2,14 @@
 \alias{internal_getBiopaxModelAsDataFrame}
 \title{This internal function parses the Biopax XML of the supplied biopax model and returns it in the data.frame format.}
 \usage{
-  internal_getBiopaxModelAsDataFrame(biopax,
+  internal_getBiopaxModelAsDataFrame(biopax, biopaxxml,
     verbose = TRUE)
 }
 \arguments{
-  \item{biopax}{A biopax model}
+  \item{biopax}{A biopax object}
+
+  \item{biopaxxml}{Biopax XML file read in. See
+  parseBiopax}
 
   \item{verbose}{logical}
 }
@@ -20,6 +23,6 @@
   format.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

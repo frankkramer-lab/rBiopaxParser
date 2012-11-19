@@ -38,6 +38,13 @@
   graph to an adjacency matrix. See pathway2RegulatoryGraph
   for more details.
 }
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ pathway2AdjacancyMatrix(biopax, pwid1)
+}
 \author{
   Frank Kramer
 }

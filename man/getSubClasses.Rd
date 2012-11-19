@@ -15,6 +15,9 @@
   This function returns the subclasses of the supplied
   biopax class.
 }
+\examples{
+getSubClasses("control")
+}
 \author{
   Frank Kramer
 }

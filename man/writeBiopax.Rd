@@ -29,6 +29,11 @@
   readBiopax, to either a file or returns the xmlTree if
   file is omitted.
 }
+\examples{
+# load data
+ data(biopax2example)
+ \dontrun{writeBiopax(biopax, file="mybiopax.owl")}
+}
 \author{
   Frank Kramer
 }

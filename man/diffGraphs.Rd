@@ -24,6 +24,15 @@
   between graph1 and graph2. Layout options of graph1 are
   kept. Coloring currently not implemented.
 }
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+ plotRegulatoryGraph(diffGraphs(mygraph1,mygraph2))
+}
 \author{
   Frank Kramer
 }

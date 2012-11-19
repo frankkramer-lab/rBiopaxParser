@@ -26,6 +26,15 @@
   returned graph has different colors for overlapping nodes
   and nodes individual for each graph.
 }
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+ plotRegulatoryGraph(uniteGraphs(mygraph1,mygraph2))
+}
 \author{
   Frank Kramer
 }

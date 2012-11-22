@@ -14,8 +14,7 @@
 }
 \description{
   This function returns a (unique) data.frame listing all
-  complex component IDs, names and classes of the supplied
-  complex.
+  component IDs, names and classes of the supplied complex.
 }
 \examples{
 # load data

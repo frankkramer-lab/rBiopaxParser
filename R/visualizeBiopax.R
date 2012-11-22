@@ -94,7 +94,12 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 		if(any(isOfClass(instance,"control", considerInheritance = TRUE))) {
 			#if type neither inhibition nor activation i dont know what to do anyways. 
 			#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2standards. quick fix here:
-			type = as.character(instance[instance$property=="CONTROL-TYPE","property_value"])
+			if(biopax$biopaxlevel == 2) {
+				type = as.character(instance[tolower(instance$property)==tolower("CONTROL-TYPE"),"property_value"])
+			}
+			if(biopax$biopaxlevel == 3) {
+				type = as.character(instance[tolower(instance$property)==tolower("controlType"),"property_value"])
+			}
 			if(length(type)==0) {
 				if(any(isOfClass(instance,"catalysis"))) {
 					type="ACTIVATION"
@@ -107,29 +112,31 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			}
 			
 			#controllers are physicalentityparticipants, get those
-			controller_ids = as.character(instance[instance$property=="CONTROLLER","property_attr_value"])
+			controller_ids = as.character(unique(instance[tolower(instance$property)==tolower("CONTROLLER"),"property_attr_value"]))
 			controllers = NA
 			for(i2 in controller_ids) {
 				c_instance = selectInstances(biopax, id=i2)
 				#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
-				c_instance = selectInstances(biopax, id=c_instance[c_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
+				if(biopax$biopaxlevel == 2) {
+					c_instance = selectInstances(biopax, id=c_instance[tolower(c_instance$property)==tolower("PHYSICAL-ENTITY"),"property_attr_value"])
+				}
 				if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 					if(useIDasNodenames) {
 						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$id )))
 					} else {
-						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$property_value )))						
+						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$name )))						
 					}
 				} else {
 					if(useIDasNodenames) {
-						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","id"])))
+						controllers = unique(c(controllers, as.character(c_instance$id[1])))
 					} else {
-						controllers = unique(c(controllers, as.character(c_instance[c_instance$property=="NAME","property_value"])))						
+						controllers = unique(c(controllers, getInstanceProperty(biopax,c_instance$id[1])))						
 					}
 				}	
 			}
 			
 			#controlleds are interactions or pathways. ignoring pathways for now
-			controlled_ids = as.character(instance[instance$property=="CONTROLLED","property_attr_value"])
+			controlled_ids = as.character(unique(instance[tolower(instance$property)==tolower("CONTROLLED"),"property_attr_value"]))
 			controlleds = NA
 			for(i2 in controlled_ids) {
 				c_instance = selectInstances(biopax, id=i2)
@@ -139,23 +146,25 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 				#biochemicalReaction=...
 				#any conversion: add up left & rights and get the names
 				if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE))) {
-					leftrights = as.character(c_instance[c_instance$property=="LEFT" | c_instance$property=="RIGHT" ,"property_attr_value"])
+					leftrights = as.character(c_instance[tolower(c_instance$property)==tolower("LEFT") | tolower(c_instance$property)==tolower("RIGHT") ,"property_attr_value"])
 					for(i3 in leftrights) {
 						#every left/right is an physicalentityparticipants, get that as above
 						leftrights_instance = selectInstances(biopax, id=i3)
-						leftrights_instance = selectInstances(biopax, id=leftrights_instance[leftrights_instance$property=="PHYSICAL-ENTITY","property_attr_value"])
+						if(biopax$biopaxlevel == 2) {
+							leftrights_instance = selectInstances(biopax, id=leftrights_instance[tolower(leftrights_instance$property)==tolower("PHYSICAL-ENTITY"),"property_attr_value"])
+						}
 						#split complexes?
 						if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 							if(useIDasNodenames) {
 								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$id )))
 							} else {
-								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$property_value )))						
+								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$name )))						
 							}
 						} else {
 							if(useIDasNodenames) {
-								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","id"])))
+								controlleds = unique(c(controlleds, as.character(leftrights_instance$id[1])))
 							} else {
-								controlleds = unique(c(controlleds, as.character(leftrights_instance[leftrights_instance$property=="NAME","property_value"])))						
+								controlleds = unique(c(controlleds, getInstanceProperty(biopax,leftrights_instance$id[1])))						
 							}
 						}
 					}
@@ -614,32 +623,67 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 	Rgraphviz::layoutGraph(temp)	
 }
 
-
-#
-# # This function colors the nodes of a graph.
-# # 
-# # This function colors nodes of a graph, usually this is used to color subgraphs 
-# # or add a color hue correlating with the expression level or fold change to the molecules. 
-# # 
-# # param graph1 graphNEL
-# # param colorNodes logical
-# # param colors colors character vector of colors. If colorNodes==TRUE these colors are used for graph1 and graph2 respectivley.
-# # returnType graphNEL
-# # return Return a graph generated by uniting the two supplied graphs
-# # author Frank Kramer
-# # i graph Rgraphviz
-# # e
-#colorGraphNodes <- function(graph1, nodes=NA, colors=NA, textColors=NA) {
+#' This function colors the nodes of a graph.
+#' 
+#' This function colors nodes of a graph, usually this is used to color subgraphs 
+#' or add a color hue correlating with the expression level or fold change to the molecules. 
+#' 
+#' @param graph1 graphNEL
+#' @param nodes vector of node names specifiying which nodes to color. must be same length as parameter foldChanges
+#' @param values vector of values indicating fold changes, gene expression values or similar. colors are mapped linearly over the range of these values
+#' @param colors string. either "greenred" or "yellowred", specifying which color gradient to use.
+#' @return Returns a graph with specified nodes colored according to the foldChanges
+#' @author Frank Kramer
+#' @export
+#' @examples
+#'  # load data and retrieve wnt pathway
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph1 = layoutRegulatoryGraph(mygraph1)
+#'  # retrieve all nodes
+#'  nodes = nodes(mygraph1)
+#'  # random expression data for your nodes 
+#'  values = rnorm(length(nodes), mean=6, sd=2)
+#'  # color nodes of the graph
+#'  mygraph1 = colorGraphNodes(mygraph1, nodes, values, colors="greenred") 
+#'  # plot the now colored graph 
+#'  plotRegulatoryGraph(mygraph1, layoutGraph=FALSE)
+colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowred")) {
+	
+	if(!require(graph)) {
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	ncol = length(nodes)
+	r=seq(0,1,length=ncol)
+	r2=seq(-1,1,length=ncol)
+	if(colors=="greenred") {
+		col = hcl(h=ifelse(r2>0, 90-90*abs(r2), 90+90*abs(r2)), c=30+50*abs(r2)^0.2, l=92-72*abs(r2)^1.5)
+	}
+	if(colors=="yellowred") {
+		col = hcl(h=90-90*r, c=30+50*r^0.2, l=90-60*r^1.5)
+	}
+	lim = range(values)
+	x=findInterval(values, seq(lim[1],lim[2],diff(lim)/ncol)[-c(1,ncol+1)])+1
+	res=col[x]
+	
+	for(n in 1:length(nodes)) {
+		graph::nodeRenderInfo(graph1)$fill[nodes[n]] = res[n] 
+	}
+	 
+	graph1
+}
+	
+	
+	
 #	
-#	if(!require(graph)) {
-#		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
-#		return(NULL)
-#	}
-#	if(!require(Rgraphviz)) {
-#		message(paste("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
-#		return(NULL)
-#	}
 #	
+#	
+#	
+#	
+#	########## OLD STUFF ################
 #	graph::graphRenderInfo(temp)$laidout <- FALSE
 #	
 #	
@@ -703,5 +747,5 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 #	
 #	Rgraphviz::layoutGraph(temp)	
 #}
-#
+
 

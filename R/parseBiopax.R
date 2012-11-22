@@ -53,7 +53,9 @@ createBiopax <- function(level = 2)  {
 		)
 		
 	} 
-	if(level==3) message("BioPAX level 3 OWL is not yet supported but work is underway.")
+	if(level==3) {
+		message("Creation of BioPAX level 3 OWL from scratch is not yet supported but work is underway.")
+	}
 	
 	ret
 }
@@ -103,7 +105,7 @@ readBiopax <- function(file, verbose=TRUE)  {
 		ret$df = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
 	}
 	if(any(grepl("biopax-level3",ret$namespaces,ignore.case=TRUE))) {
-		if(verbose) message("Found a BioPAX level 3 OWL. Unfortunatly this is not supported yet, but support will be added in the near future!\n")
+		if(verbose) message("Found a BioPAX level 3 OWL. Parsing...\n")
 		ret$biopaxlevel = 3
 		ret$df = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
 	}

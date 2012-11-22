@@ -2,9 +2,9 @@
 \name{rBiopaxParser-package}
 \alias{rBiopaxParser}
 \alias{rBiopaxParser-package}
-\title{Parses BioPax level 2 files and represents them in R}
+\title{Parses BioPax level files and represents them in R}
 \description{
-  Parses BioPax level 2 files and represents them in R
+  Parses BioPax files and represents them in R
 }
 \details{
   rBiopaxParser is a...

@@ -19,6 +19,6 @@
   tag with a dividing ":" in front of it.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

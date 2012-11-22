@@ -89,7 +89,6 @@ addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
 #' @param namespace_rdf string. This defines the rdf namespace to use.
 #' @return Returns a data.frame with the new properties for the given instance
 #' @author Frank Kramer
-#  #' @export
 internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf") {
 	
 	ret = matrix(data=NA,nrow = 1000, ncol = 6)
@@ -112,7 +111,7 @@ internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf"
 			rowcount = rowcount + 1
 			
 			#value
-			if(property_type %in% c("http://www.w3.org/2001/XMLSchema#string","http://www.w3.org/2001/XMLSchema#double","http://www.w3.org/2001/XMLSchema#float", "http://www.w3.org/2001/XMLSchema#integer" )) {
+			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
 				ret[rowcount,] = c(
 						class, id,
 						n, #property				
@@ -413,6 +412,6 @@ removeInstance <- function(biopax, id) {
 #' @author Frank Kramer
 #' @export
 removeProperties <- function(biopax, id, properties) {
-	biopax$df = biopax$df[biopax$df$id != id | !(biopax$df$property %in% properties), ]
+	biopax$df = biopax$df[biopax$df$id != id | !(tolower(biopax$df$property) %in% tolower(properties)), ]
 	biopax
 }

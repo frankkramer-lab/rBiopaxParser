@@ -21,6 +21,6 @@
   with a supplied namespace tag
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

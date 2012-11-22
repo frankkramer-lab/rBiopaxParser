@@ -17,6 +17,6 @@
   it with strings instead of factors.
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

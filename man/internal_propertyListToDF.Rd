@@ -24,6 +24,6 @@
   properties for a new instance
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

@@ -1,12 +1,12 @@
 Package: rBiopaxParser
 Type: Package
-Title: Parses BioPax level 2 files and represents them in R
-Version: 0.99.0
-Date: 2012-08-22
+Title: Parses BioPax files and represents them in R
+Version: 0.99.5
+Date: 2012-11-22
 Author: Frank Kramer
 Maintainer: Frank Kramer <dev@frankkramer.de>
-Description: Parses BioPAX files (at the moment only BioPAX level 2 is
-    supported, Level 3 is comming soon) and represents them in R.
+Description: Parses BioPAX files and represents them in R, at the moment BioPAX
+    level 2 and level 3 are supported.
 License: GPL (>= 2)
 Imports:
     XML

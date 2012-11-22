@@ -17,7 +17,7 @@
 #' You can easily skip this step by downloading the exported file yourself and continuing with readBiopax. 
 #' 
 #' @param database string. Select which database you want to download from. Currently only NCI links have been stored.
-#' @param model string. Select which model/file you want to download. Currently NCI versions of the Pathway Interaction Database, Biocarta and Reactome are linked.
+#' @param model string. Select which model/file you want to download. Currently NCI versions of the Pathway Interaction Database, Biocarta, Reactome and KEGG are linked.
 #' @param version string. Select which Biopax Version you want to download.
 #' @param outputfile string. The file name to save the downloaded data in. If left empty the URL file name will be used. The unzipped file name can be different from this. Check the screen output of gunzip.  
 #' @return none. Check output for the name of the unzipped biopax .owl file.
@@ -27,11 +27,13 @@
 #'  \dontrun{file = downloadBiopaxData("NCI", "biocarta", version = "biopax2")}
 #'  \dontrun{biopax = readBiopax(file)}
 #'  \dontrun{biopax}
-downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome"), outputfile="", version="biopax2") {
+downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome", "kegg"), outputfile="", version="biopax2") {
 	
 	links = data.frame(database=c("NCI"), model=c("pid"), version=c("biopax2"), link=c("ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz"), stringsAsFactors=FALSE)
 	links = rbind(links,c("NCI","biocarta","biopax2","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/BioCarta.bp2.owl.gz"))
 	links = rbind(links,c("NCI","reactome","biopax2","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/Reactome.bp2.owl.gz"))
+	links = rbind(links,c("NCI","kegg","biopax3","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_3/KEGG.bp3.owl.gz"))
+	
 	
 	link = links[links$database==database & links$model==model[1] & links$version==version,"link"]
 	

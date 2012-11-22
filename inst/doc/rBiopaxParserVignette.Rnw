@@ -75,8 +75,9 @@ contains installation instructions as well as a quick listing of working code to
 get started with the package right away.
 %\newline
 
-This package currently only supports Biopax Level 2, support for Biopax Level 3
-is on the way!
+This package supports Biopax Level 2 and has preliminary support for Biopax
+Level 3. If you experience any problems or errors parsing Biopax data please let
+me know!
 %\newline
 
 A plethora of databases offer a vast knowledge about biological signaling pathways.
@@ -178,7 +179,7 @@ If this is not the case, you can usually fix this by running:
 \begin{verbatim}
     sudo apt-get install graphviz
 \end{verbatim}
-If you encounter more problems check out
+If you encounter additional problems check out
 \url{http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html}
 
 \paragraph{devtools}
@@ -223,7 +224,7 @@ You will now be able to install R package Rgraphviz using:
 If you are forced to use an earlier version of Rgraphviz you have to make sure
 your your machine has graphviz installed, it can be found at:
 \url{http://www.graphviz.org} Click on Download -> Windows. 
-If you encounter more problems check out
+If you encounter additional problems check out
 \url{http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html}
 
 \paragraph{devtools}
@@ -264,8 +265,9 @@ providers from the web. A list of links to commonly used databases is stored
 internally and the user can select from which source and which export to
 download. The data is stored in the working directory.
 
-Currently only the NCI website is linked, with exports of the Pathway Interaction
-Database (PID), BioCarta and Reactome available.
+Currently only the website of the National Cancer Institute (NCI,
+http://pid.nci.nih.gov) is linked, where exports of the Pathway Interaction
+Database (PID), BioCarta and Reactome are available.
 
 The following command downloads the BioCarta export from the NCI website.
 <<label=downloadbiopax,echo=TRUE, eval=FALSE, results=hide>>=
@@ -337,8 +339,9 @@ following figure:
 
 A detailed description of BioPAX can be found at www.biopax.org. The BioPAX
 ontology is constantly being revised and improved. The latest released version
-of the ontology is BioPAX Level 3. This package currently only supports BioPAX
-Level 2. Support for BioPAX Level 3 is planned in a future release.
+of the ontology is BioPAX Level 3. This package currently supports BioPAX
+Level 2 and has preliminary support for BioPAX Level 3. All examples in this
+vignette are focused at Biopax Level 2.
 
 Mapping the XML/RDF representation of the BioPAX data from the OWL file to R
 is a work intensive task, especially considering the size of many complete exports of

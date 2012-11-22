@@ -3,7 +3,7 @@
 \title{This function downloads Biopax data from online databases}
 \usage{
   downloadBiopaxData(database = "NCI",
-    model = c("pid", "biocarta", "reactome"),
+    model = c("pid", "biocarta", "reactome", "kegg"),
     outputfile = "", version = "biopax2")
 }
 \arguments{
@@ -13,7 +13,8 @@
 
   \item{model}{string. Select which model/file you want to
   download. Currently NCI versions of the Pathway
-  Interaction Database, Biocarta and Reactome are linked.}
+  Interaction Database, Biocarta, Reactome and KEGG are
+  linked.}
 
   \item{version}{string. Select which Biopax Version you
   want to download.}

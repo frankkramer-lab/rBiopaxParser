@@ -1,0 +1,49 @@
+\name{colorGraphNodes}
+\alias{colorGraphNodes}
+\title{This function colors the nodes of a graph.}
+\usage{
+  colorGraphNodes(graph1, nodes, values,
+    colors = c("greenred", "yellowred"))
+}
+\arguments{
+  \item{graph1}{graphNEL}
+
+  \item{nodes}{vector of node names specifiying which nodes
+  to color. must be same length as parameter foldChanges}
+
+  \item{values}{vector of values indicating fold changes,
+  gene expression values or similar. colors are mapped
+  linearly over the range of these values}
+
+  \item{colors}{string. either "greenred" or "yellowred",
+  specifying which color gradient to use.}
+}
+\value{
+  Returns a graph with specified nodes colored according to
+  the foldChanges
+}
+\description{
+  This function colors nodes of a graph, usually this is
+  used to color subgraphs or add a color hue correlating
+  with the expression level or fold change to the
+  molecules.
+}
+\examples{
+# load data and retrieve wnt pathway
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph1 = layoutRegulatoryGraph(mygraph1)
+ # retrieve all nodes
+ nodes = nodes(mygraph1)
+ # random expression data for your nodes
+ values = rnorm(length(nodes), mean=6, sd=2)
+ # color nodes of the graph
+ mygraph1 = colorGraphNodes(mygraph1, nodes, values, colors="greenred")
+ # plot the now colored graph
+ plotRegulatoryGraph(mygraph1, layoutGraph=FALSE)
+}
+\author{
+  Frank Kramer
+}
+

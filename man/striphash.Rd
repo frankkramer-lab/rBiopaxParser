@@ -14,6 +14,6 @@
   Strips a hash in front of a string
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

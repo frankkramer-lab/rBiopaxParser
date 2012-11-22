@@ -1,3 +1,14 @@
+rBiopaxParser 0.99.5
+===========
+
+* Submitted some fixes. colorGraphNodes is finally working (again) using graph and Rgraphviz packages.
+
+rBiopaxParser 0.99.3
+===========
+
+* We are finally supporting BioPAX level 3 now! All functions (except for getXrefAnnotations) have been updated and work correctly with BioPAX Level 2 and Level 3 objects.
+
+
 rBiopaxParser 0.99.0
 ===========
 

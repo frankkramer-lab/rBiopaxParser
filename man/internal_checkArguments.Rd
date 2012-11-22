@@ -32,6 +32,6 @@
   to the given restrictions
 }
 \author{
-  Frank Kramer #
+  Frank Kramer
 }
 

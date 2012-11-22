@@ -14,8 +14,7 @@
 }
 \description{
   This function returns a (unique) data.frame listing all
-  pathway component IDs, names and classes of the supplied
-  pathway.
+  component IDs, names and classes of the supplied pathway.
 }
 \examples{
 # load data

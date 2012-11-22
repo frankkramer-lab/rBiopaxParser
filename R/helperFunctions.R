@@ -16,7 +16,6 @@
 #' @param df any data.frame with factor levels in at least one column
 #' @return The data.frame is returned using strings instead of factors.
 #' @author Frank Kramer
-# #' @export
 unfactorize <- function (df) {
 	if(!("data.frame" %in% class(df))) { stop("Error: unfactorize: data.frame as argument expected") }
 	
@@ -38,7 +37,6 @@ unfactorize <- function (df) {
 #' @param namespace A string giving the namespace to check for
 #' @return This function returns TRUE if the supplied classname string is preceeded with the supplied namespace string, and FALSE if not.
 #' @author Frank Kramer
-# #' @export
 isOfNamespace <- function(classname, namespace="bp") {
 	if(is.null(namespace) | is.na(namespace) | namespace == "" ) {
 		!grepl(":",classname,ignore.case = FALSE)
@@ -55,7 +53,6 @@ isOfNamespace <- function(classname, namespace="bp") {
 #' @param namespace A string containing a namespace
 #' @return If the classname is not preceeded by a namespace yet, the supplied namespace is pasted in front of it and returned.
 #' @author Frank Kramer
-# #' @export
 addns <- function(classname, namespace="bp") {
 	sel=!is.na(classname) & !(nchar(classname)==0) & !grepl(":",classname,ignore.case = FALSE)
 	classname[sel] = paste(namespace,":",classname[sel],sep="")
@@ -70,7 +67,6 @@ addns <- function(classname, namespace="bp") {
 #' @param classname A string containing a classname preceeded by a namespace tag
 #' @return The classname with the namespace tag stripped off it.
 #' @author Frank Kramer
-# #' @export
 stripns <- function(classname) {
 	gsub(".*:", "", classname, perl=TRUE)
 }
@@ -82,7 +78,6 @@ stripns <- function(classname) {
 #' @param x A string to be preceeded by a hash
 #' @return The supplied string with a hash "#" pasted in front of it.
 #' @author Frank Kramer
-# #' @export
 addhash <- function(x) {
 	paste("#",x,sep="")
 }
@@ -93,7 +88,6 @@ addhash <- function(x) {
 #' @param x A string to be stripped off a preceeeding hash
 #' @return The supplied string with a hash "#" stripped off front.
 #' @author Frank Kramer
-# #' @export
 striphash <- function(x) {
 	sub("#","",x)
 }
@@ -142,7 +136,6 @@ hasProperty <- function (df, property) {
 #' @param allowInf Logical, allow values of +/- infinity or not
 #' @return Returns 1 if all checks completed successfully, returns error message otherwise.
 #' @author Frank Kramer
-# #' @export
 internal_checkArguments <- function(args = c(), allowedValues=list(), allowNULL=FALSE, allowNA=FALSE, allowEmptyString=TRUE, allowInf=TRUE  ) {
 	
 	# return value == 1 -> everything ok, otherwise error message is returned

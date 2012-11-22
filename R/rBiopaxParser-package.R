@@ -1,4 +1,4 @@
-#' Parses BioPax level 2 files and represents them in R
+#' Parses BioPax files and represents them in R
 #'
 #' rBiopaxParser is a...
 #'
@@ -14,7 +14,7 @@
 #' @name rBiopaxParser-package
 #' @aliases rBiopaxParser
 #' @docType package
-#' @title Parses BioPax level 2 files and represents them in R
+#' @title Parses BioPax level files and represents them in R
 #' @keywords package
 #' @examples
 #' \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}

@@ -43,16 +43,16 @@
 selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NULL, returnValues=TRUE, includeSubClasses=FALSE, includeReferencedInstances=FALSE) {
 	sel = rep.int(TRUE,dim(biopax$df)[1])
 	
-	if(!is.null(class)) {
-		if(includeSubClasses) {
-			class = unique(c(class,getSubClasses(class)))
-		}
-		sel = sel & (tolower(biopax$df$class) %in% tolower(stripns(class)))
-	}
-	
 	if(!is.null(id)) {
 		id = unique(striphash(id))
 		sel = sel & (biopax$df$id %in% id)
+	}
+	
+	if(!is.null(class)) {
+		if(includeSubClasses) {
+			class = unique(c(class,getSubClasses(class, biopax$biopaxlevel)))
+		}
+		sel = sel & (tolower(biopax$df$class) %in% tolower(stripns(class)))
 	}
 	
 	if(!is.null(property)) {
@@ -61,13 +61,13 @@ selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NU
 	
 	if(!is.null(name)) {
 		ids = as.character(biopax$df[tolower(biopax$df$property)=="name" & biopax$df$property_value %in% name,]$id)
-		ids = unique(striphash(ids))
+		ids = unique(ids)
 		sel = sel & (biopax$df$id %in% ids)
 	}
 	
 	if(includeReferencedInstances) {
 		ids = as.character(biopax$df[sel,]$id)
-		ids = unique(striphash(ids))
+		ids = unique(ids)
 		ids = getReferencedIDs(biopax, ids)
 		sel = sel & (biopax$df$id %in% ids)
 	}	
@@ -107,22 +107,22 @@ selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NU
 #'  listInstances(biopax, class="interaction", includeSubClasses=TRUE)
 listInstances <- function (biopax, class=NULL, id=NULL, name=NULL, includeSubClasses=FALSE) {
 	sel = rep.int(TRUE,dim(biopax$df)[1])
-	
-	if(!is.null(class)) {
-		if(includeSubClasses) {
-			class = unique(c(class,getSubClasses(class)))
-		}
-		sel = sel & (tolower(biopax$df$class) %in% tolower(stripns(class)))
-	}
-	
+
 	if(!is.null(id)) {
 		id = unique(striphash(id))
 		sel = sel & (biopax$df$id %in% id)
 	}
 	
+	if(!is.null(class)) {
+		if(includeSubClasses) {
+			class = unique(c(class,getSubClasses(class, biopax$biopaxlevel)))
+		}
+		sel = sel & (tolower(biopax$df$class) %in% tolower(stripns(class)))
+	}
+	
 	if(!is.null(name)) {
 		ids = as.character(biopax$df[tolower(biopax$df$property)=="name" & biopax$df$property_value %in% name,]$id)
-		ids = unique(striphash(ids))
+		ids = unique(ids)
 		sel = sel & (biopax$df$id %in% ids)
 	}
 	
@@ -131,10 +131,13 @@ listInstances <- function (biopax, class=NULL, id=NULL, name=NULL, includeSubCla
 	ret$name = vector(mode="character", length=length(ret$id))
 	colnames(ret) = c("class","id","name")
 	#get name property for these instances. this slows things down but names seem so important ;-)
+	subbiopax = biopax
+	subbiopax$df = biopax$df[sel,]
 	for(i in 1:length(ret$id)) {
-		n = getInstanceProperty(biopax, ret$id[i])
+		n = getInstanceProperty(subbiopax, ret$id[i])
 		if(!is.null(n) && !length(n)==0) ret$name[i] = n
-	}
+	}	
+	
 	ret
 }
 
@@ -161,6 +164,7 @@ listPathways <- function(biopax) {
 #' 
 #' @param biopax A biopax model
 #' @param id string. A pathway ID
+#' @param includeSubPathways logical. If TRUE the returned list will include subpathways and pathwaysteps as well.
 #' @return data.frame
 #' @author Frank Kramer
 #' @export
@@ -168,16 +172,25 @@ listPathways <- function(biopax) {
 #'  # load data
 #'  data(biopax2example)
 #'  listPathwayComponents(biopax, id="pid_p_100002_wntpathway")
-listPathwayComponents <- function(biopax, id) {
+listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
 	#support for bp level 3
 	pwcompname = tolower("PATHWAY-COMPONENTS")
+	subpathwayproperties = c("STEP-INTERACTIONS","NEXT-STEP")
 	if(biopax$biopaxlevel == 3) {
 		pwcompname = tolower("pathwayComponent")
+		subpathwayproperties = c("nextStep","stepProcess","pathwayOrder")
 	}
+	#####CONTINUE HERE
+	
 	
 	id = unique(striphash(id))
 	#get pw component list
-	pwcomp_list = as.character(biopax$df[tolower(biopax$df$property) == pwcompname & biopax$df$id %in% id,"property_attr_value"])
+	#pwcomp_list = as.character(biopax$df[tolower(biopax$df$property) == pwcompname & biopax$df$id %in% id,"property_attr_value"])
+	if(includeSubPathways)	{
+		pwcomp_list = getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(pwcompname, subpathwayproperties))
+	} else {
+		pwcomp_list = getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(pwcompname))
+	}
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(pwcomp_list)))
 }
@@ -247,7 +260,7 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
 #'  
 #' @param biopax A biopax model
 #' @param pwid string
-#' @return Returns the gene set of the supplied pathway.
+#' @return Returns the gene set of the supplied pathway. Returns NULL if the pathway has no components.
 #' @author Frank Kramer
 #' @export
 #' @examples
@@ -330,11 +343,15 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 	id = unique(striphash(id))
 	referencedIDs = list()
 	
+	##speed up selecting by doing it once:
+	isrdfresource = biopax$df$property_attr == "rdf:resource"
+	
 	#every ref in instances of id
 	if(length(onlyFollowProperties) > 0) {
-		newIDs = biopax$df[biopax$df$id %in% id & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"property_attr_value"]	
+		propertysel = tolower(biopax$df$property) %in% tolower(onlyFollowProperties)
+		newIDs = biopax$df[biopax$df$id %in% id & isrdfresource & propertysel,"property_attr_value"]	
 	} else {
-		newIDs = biopax$df[biopax$df$id %in% id & biopax$df$property_attr == "rdf:resource" ,"property_attr_value"]	
+		newIDs = biopax$df[biopax$df$id %in% id & isrdfresource ,"property_attr_value"]	
 	}
 	newIDs = unique(striphash(newIDs))
 	newIDs = newIDs[!(newIDs %in% id)]
@@ -343,9 +360,9 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 	if(recursive) {
 		while(length(newIDs)>0) {
 			if(length(onlyFollowProperties) > 0) {
-				newIDs = biopax$df[biopax$df$id %in% newIDs & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"property_attr_value"]	
+				newIDs = biopax$df[biopax$df$id %in% newIDs & isrdfresource & propertysel,"property_attr_value"]	
 			} else {
-				newIDs = biopax$df[biopax$df$id %in% newIDs & biopax$df$property_attr == "rdf:resource" ,"property_attr_value"]	
+				newIDs = biopax$df[biopax$df$id %in% newIDs & isrdfresource ,"property_attr_value"]	
 			}
 			newIDs = unique(striphash(newIDs))
 			newIDs = newIDs[!(newIDs %in% c(referencedIDs,id))]
@@ -378,11 +395,15 @@ getReferencingIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c
 	id = unique(id)
 	id = addhash(id)
 	referencingIDs = list()
+	
+	##speed up selecting by doing it once:
+	isrdfresource = biopax$df$property_attr == "rdf:resource"
 
 	if(length(onlyFollowProperties) > 0) {
-		newIDs = biopax$df[biopax$df$property_attr_value %in% id & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"id"]	
+		propertysel = tolower(biopax$df$property) %in% tolower(onlyFollowProperties)
+		newIDs = biopax$df[biopax$df$property_attr_value %in% id & isrdfresource & propertysel,"id"]	
 	} else {
-		newIDs = biopax$df[biopax$df$property_attr_value %in% id & biopax$df$property_attr == "rdf:resource" ,"id"]	
+		newIDs = biopax$df[biopax$df$property_attr_value %in% id & isrdfresource ,"id"]	
 	}
 	newIDs = unique(addhash(newIDs))
 	newIDs = newIDs[!(newIDs %in% id)]
@@ -391,9 +412,9 @@ getReferencingIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c
 	if(recursive) {
 		while(length(newIDs)>0) {
 			if(length(onlyFollowProperties) > 0) {
-				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & biopax$df$property_attr == "rdf:resource" & tolower(biopax$df$property) %in% tolower(onlyFollowProperties),"id"]	
+				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & isrdfresource & propertysel,"id"]	
 			} else {
-				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & biopax$df$property_attr == "rdf:resource" ,"id"]	
+				newIDs = biopax$df[biopax$df$property_attr_value %in% newIDs & isrdfresource ,"id"]	
 			}
 			newIDs = unique(addhash(newIDs))
 			newIDs = newIDs[!(newIDs %in% c(referencingIDs,id))]
@@ -442,11 +463,16 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 	
 	### speed up and quick fix for biopax level 3 naming:
 	if(tolower(property) == "name") {
-		names = unfactorize(selectInstances(biopax, id=id, property=c("name","displayName","standardName")))
+		#names = unfactorize(selectInstances(biopax, id=id, property=))
+		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
+		names = biopax$df[biopax$df$id==id,]
 		if(dim(names)[1] == 0) return(NULL)
-		if(any(grepl("displayName", names$property, ignore.case=T))) return(names[tolower(names$property) == "displayname", "property_value"])
-		if(any(grepl("standardName", names$property, ignore.case=T))) return(names[tolower(names$property) == "standardname", "property_value"])
-		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
+		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
+		if(dim(names)[1] == 0) return(NULL)
+		if(any(grepl("displayName", names$property))) return(as.character(names[names$property == "displayName", "property_value"]))
+		if(any(grepl("standardName", names$property))) return(as.character(names[names$property == "standardName", "property_value"]))
+		if(any(grepl("name", names$property, ignore.case=T))) return(as.character(names[tolower(names$property) == "name", "property_value"]))
+		return(NULL)
 	}
 	
 	#get class of the instance
@@ -467,6 +493,7 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 		return(NULL)
 	}
 }
+
 
 #' This function resolves physicalEntityParticipantIDs to their corresponding physicalEntityIDs
 #' 

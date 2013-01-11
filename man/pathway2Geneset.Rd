@@ -10,7 +10,8 @@
   \item{pwid}{string}
 }
 \value{
-  Returns the gene set of the supplied pathway.
+  Returns the gene set of the supplied pathway. Returns
+  NULL if the pathway has no components.
 }
 \description{
   This function generates a gene set of all

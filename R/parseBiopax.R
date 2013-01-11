@@ -51,10 +51,25 @@ createBiopax <- function(level = 2)  {
 				'owl'="http://www.w3.org/2002/07/owl#",
 				'xsd'="http://www.w3.org/2001/XMLSchema#"
 		)
-		
 	} 
 	if(level==3) {
-		message("Creation of BioPAX level 3 OWL from scratch is not yet supported but work is underway.")
+		ret$biopaxlevel = 3
+		df_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
+		ret$df = data.frame(rbind(df_colnames,0))
+		colnames(ret$df) = df_colnames
+		ret$df = ret$df[0,]
+		
+		# deal with namespaces, we're interested in owl, rdf, biopax
+		ret$ns_rdf = "rdf"
+		ret$ns_owl = "owl"
+		ret$ns_bp = "bp"
+		ret$namespaces = namespaces = list(
+				'rdf'="http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+				'bp'="http://www.biopax.org/release/biopax-level3.owl#",
+				'rdfs'="http://www.w3.org/2000/01/rdf-schema#",
+				'owl'="http://www.w3.org/2002/07/owl#",
+				'xsd'="http://www.w3.org/2001/XMLSchema#"
+		)
 	}
 	
 	ret
@@ -158,7 +173,7 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 	if(verbose)	message("[Info Verbose] Parsing Biopax-Model as a data.frame...")
 	nodecount = sum(XML::xmlElementSummary(biopax$file)$nodeCounts)
 	if(verbose)	message(paste("[Info Verbose] Estimating up to", nodecount,"entries. This will roughly need", round(nodecount*58*2*2/2**20), "MB of RAM."))
-	if(verbose)message(paste("[Info Verbose] Where I came from this would've taken at least", round(nodecount/1000),"seconds!"))
+	if(verbose)message(paste("[Info Verbose] Where I came from this would've taken at least", round(3*nodecount/1000),"seconds!"))
 	time_start = proc.time()[1]
 	ret = matrix(data=NA,nrow = nodecount, ncol = 6)
 	

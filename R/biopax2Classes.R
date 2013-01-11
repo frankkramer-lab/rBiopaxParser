@@ -25,12 +25,12 @@
 #' 
 #' @docType data
 #' @keywords datasets
-#' @name CLASS_INHERITANCE
-#' @title CLASS_INHERITANCE
-#' @usage CLASS_INHERITANCE
+#' @name CLASS_INHERITANCE_BP2
+#' @title CLASS_INHERITANCE_BP2
+#' @usage CLASS_INHERITANCE_BP2
 #' @format A data frame with 46 rows and 2 columns
 #' @export
-CLASS_INHERITANCE = data.frame(
+CLASS_INHERITANCE_BP2 = data.frame(
 		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= list(
 "entity",								"",
 
@@ -95,7 +95,7 @@ CLASS_INHERITANCE = data.frame(
 #' Class properties in Biopax Level 2.
 #' 
 #' A data.frame listing all direct properties for every Biopax Level 2 class. 
-#' Together with CLASS_INHERITANCE this allows to list all properties, including the inherited ones, of every class.
+#' Together with CLASS_INHERITANCE_BP2 this allows to list all properties, including the inherited ones, of every class.
 #' 
 #' The variables are as follows:
 #' 
@@ -108,12 +108,12 @@ CLASS_INHERITANCE = data.frame(
 #' 
 #' @docType data
 #' @keywords datasets
-#' @name CLASS_PROPERTIES
-#' @title CLASS_PROPERTIES
-#' @usage CLASS_PROPERTIES
+#' @name CLASS_PROPERTIES_BP2
+#' @title CLASS_PROPERTIES_BP2
+#' @usage CLASS_PROPERTIES_BP2
 #' @format A data frame with 106 rows and 4 columns
 #' @export
-CLASS_PROPERTIES = data.frame(
+CLASS_PROPERTIES_BP2 = data.frame(
 		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
 "entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
 "entity",								"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
@@ -254,21 +254,272 @@ CLASS_PROPERTIES = data.frame(
 			))		
 		)
 
+#' Class inheritance relationships in Biopax Level 3.
+#' 
+#' A data.frame listing all direct superclasses for every Biopax Level 3 class.
+#' The variables are as follows:
+#' 
+#' \itemize{
+#'   \item class. Name of the class
+#'   \item superclass. Name of the superclass
+#' }
+#' 
+#' NOT UPDATED TO BP3 yet!
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name CLASS_INHERITANCE_BP3
+#' @title CLASS_INHERITANCE_BP3
+#' @usage CLASS_INHERITANCE_BP3
+#' @format A data frame with 46 rows and 2 columns
+#' @export
+CLASS_INHERITANCE_BP3 = data.frame(
+		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= list(
+						"entity",								"",
+						
+						"pathway",								"entity",
+						
+						"interaction",							"entity",
+						"physicalInteraction",					"interaction",
+						"control",								"physicalInteraction",
+						"catalysis",							"control",
+						"modulation",							"control",
+						"conversion",							"physicalInteraction",
+						"complexAssembly",						"conversion",
+						"biochemicalReaction",					"conversion",
+						"transport",							"conversion",
+						"transportWithBiochemicalReaction",		"biochemicalReaction",
+						"transportWithBiochemicalReaction",		"transport",
+						
+						"physicalEntity",						"entity",
+						"dna",									"physicalEntity",
+						"rna",									"physicalEntity",
+						"protein",								"physicalEntity",
+						"smallMolecule",						"physicalEntity",
+						"complex",								"physicalEntity",
+						
+						"utilityClass",							"",
+						
+						"chemicalStructure",					"utilityClass",
+						"deltaGprimeO",							"utilityClass",
+						"kPrime",								"utilityClass",
+						"confidence",							"utilityClass",
+						"evidence",								"utilityClass",
+						"experimentalForm",						"utilityClass",
+						"pathwayStep",							"utilityClass",
+						"sequenceFeature",						"utilityClass",
+						"sequenceLocation",						"utilityClass",
+						
+						"sequenceInterval",						"sequenceLocation",
+						"sequenceSite",							"sequenceLocation",
+						
+						"physicalEntityParticipant",			"utilityClass",
+						
+						"sequenceParticipant",					"physicalEntityParticipant",
+						"dnaParticipant",						"physicalEntityParticipant",
+						"rnaParticipant",						"physicalEntityParticipant",
+						"proteinParticipant",					"physicalEntityParticipant",
+						"smallMoleculeParticipant",				"physicalEntityParticipant",
+						"complexParticipant",					"physicalEntityParticipant",
+						
+						"externalReferenceUtilityClass",		"utilityClass",
+						
+						"dataSource",							"externalReferenceUtilityClass",
+						"bioSource",							"externalReferenceUtilityClass",
+						"openControlledVocabulary",				"externalReferenceUtilityClass",
+						"xref",									"externalReferenceUtilityClass",
+						
+						"unificationXref",						"xref",
+						"relationshipXref",						"xref",
+						"publicationXref",						"xref"
+				))
+)
+		
+#' Class properties in Biopax Level 3.
+#' 
+#' A data.frame listing all direct properties for every Biopax Level 3 class. 
+#' Together with CLASS_INHERITANCE_BP3 this allows to list all properties, including the inherited ones, of every class.
+#' 
+#' The variables are as follows:
+#' 
+#' \itemize{
+#'   \item class. Name of the class
+#'   \item property. Name of the superclass
+#'   \item property_type.Type of the property, value or reference
+#'   \item cardinality. Maximum allowed cardinality of a property. Many properties may only be singular.
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name CLASS_PROPERTIES_BP3
+#' @title CLASS_PROPERTIES_BP3
+#' @usage CLASS_PROPERTIES_BP3
+#' @format A data frame with 106 rows and 4 columns
+#' @export
+CLASS_PROPERTIES_BP3 = data.frame(
+		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
+						"entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"entity",								"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"entity",								"SYNONYMS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"entity",								"COMMENT",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"entity",								"AVAILABILITY",				"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"entity",								"DATA-SOURCE",				"dataSource",									"*",
+						"entity",								"XREF",						"xref",											"*",
+						
+						"pathway",								"ORGANISM",					"bioSource",										"1",
+						"pathway",								"EVIDENCE",					"evidence",										"*",
+						"pathway",								"PATHWAY-COMPONENTS",		"interaction",									"*",
+						"pathway",								"PATHWAY-COMPONENTS",		"pathway",										"*",
+						"pathway",								"PATHWAY-COMPONENTS",		"pathwayStep",									"*",
+						
+						"interaction",							"PARTICIPANTS",				"entity",										"*",
+						"interaction",							"PARTICIPANTS",				"physicalEntityParticipant",						"*",
+						"interaction",							"EVIDENCE",					"evidence",										"*",
+						
+						"physicalInteraction",					"INTERACTION-TYPE",			"openControlledVocabulary",						"*",
+						
+						"control",								"CONTROL-TYPE",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"control",								"CONTROLLER",				"entity",										"*",
+						"control",								"CONTROLLER",				"physicalEntityParticipant",						"*",
+						"control",								"CONTROLLED",				"entity",										"*",
+						"control",								"CONTROLLED",				"physicalEntityParticipant",						"*",
+						"control",								"CONTROLLED",				"pathway",										"*",
+						"control",								"CONTROLLED",				"interaction",									"*",
+						
+						"catalysis",							"DIRECTION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"catalysis",							"COFACTOR",					"entity",										"*",
+						"catalysis",							"COFACTOR",					"physicalEntityParticipant",						"*",
+						
+						"conversion",							"SPONTANEUS",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"conversion",							"LEFT",						"entity",										"*",
+						"conversion",							"LEFT",						"physicalEntityParticipant",						"*",
+						"conversion",							"RIGHT",					"entity",										"*",
+						"conversion",							"RIGHT",					"physicalEntityParticipant",						"*",
+						
+						"biochemicalReaction",					"DELTA-H",					"http://www.w3.org/2001/XMLSchema#double",			"*",
+						"biochemicalReaction",					"DELTA-S",					"http://www.w3.org/2001/XMLSchema#double",			"*",
+						"biochemicalReaction",					"EC-NUMBER",				"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"biochemicalReaction",					"DELTA-G",					"deltaGprimeO",									"*",
+						"biochemicalReaction",					"KEQ",						"kPrime",										"*",
+						
+						"dna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"dna",									"ORGANISM",					"bioSource",										"1",
+						"rna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"rna",									"ORGANISM",					"bioSource",										"1",
+						"protein",								"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"protein",								"ORGANISM",					"bioSource",										"1",
+						
+						"complex",								"COMPONENTS",				"physicalEntityParticipant",						"*",
+						"complex",								"ORGANISM",					"bioSource",										"1",
+						
+						"smallMolecule",						"MOLECULAR-WEIGHT",			"http://www.w3.org/2001/XMLSchema#double",			"1",
+						"smallMolecule",						"CHEMICAL-FORMULA",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"smallMolecule",						"STRUCTURE",				"chemicalStructure",								"*",
+						
+						"utilityClass",							"COMMENT",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						
+						"chemicalStructure",					"STRUCTURE-DATA",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"chemicalStructure",					"STRUCTURE-FORMAT",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						
+						"confidence",							"XREF",						"publicationXref",								"*",
+						"confidence",							"CONFIDENCE-VALUE",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						
+						"deltaGprimeO",							"DELTA-G-PRIME-O",			"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"deltaGprimeO",							"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"deltaGprimeO",							"PH",						"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"deltaGprimeO",							"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"deltaGprimeO",							"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"1",
+						
+						"kPrime",								"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"kPrime",								"PH",						"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"kPrime",								"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"kPrime",								"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"1",
+						
+						"evidence",								"XREF",						"xref",											"*",
+						"evidence",								"CONFIDENCE",				"confidence",									"*",
+						"evidence",								"EVIDENCE-CODE",			"openControlledVocabulary",						"*",
+						"evidence",								"EXPERIMENTAL-FORM",		"experimentalForm",								"*",
+						
+						"experimentalForm",						"EXPERIMENTAL-FORM-TYPE",	"openControlledVocabulary",						"*",
+						"experimentalForm",						"PARTICIPANT",				"physicalEntityParticipant",						"*",
+						
+						"pathwayStep",							"NEXT-STEP",				"pathwayStep",									"*",
+						"pathwayStep",							"PATHWAY-COMPONENTS",		"interaction",									"*",
+						"pathwayStep",							"PATHWAY-COMPONENTS",		"pathway",										"*",
+						"pathwayStep",							"PATHWAY-COMPONENTS",		"pathwayStep",									"*",
+						"pathwayStep",							"STEP-INTERACTIONS",		"interaction",									"*",
+						"pathwayStep",							"STEP-INTERACTIONS",		"pathway",										"*",
+						
+						"sequenceFeature",						"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"sequenceFeature",						"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"sequenceFeature",						"SYNONYMS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"sequenceFeature",						"XREF",						"xref",											"*",
+						"sequenceFeature",						"FEATURE-TYPE",				"openControlledVocabulary",						"1",
+						"sequenceFeature",						"FEATURE-LOCATION",			"sequenceLocation",								"*",
+						"sequenceFeature",						"SEQUENCE-FEATURE-LIST",	"sequenceFeature",								"*",
+						
+						"sequenceInterval",						"SEQUENCE-INTERVAL-BEGIN",	"sequenceSite",									"1",
+						"sequenceInterval",						"SEQUENCE-INTERVAL-END",	"sequenceSite",									"1",
+						
+						"sequenceSite",							"POSITION-STATUS",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"sequenceSite",							"SEQUENCE-POSITION",		"http://www.w3.org/2001/XMLSchema#integer",			"1",
+						
+						"physicalEntityParticipant",			"STOICHIOMETRIC-COEFFICIENT","http://www.w3.org/2001/XMLSchema#double",			"1",
+						"physicalEntityParticipant",			"CELLULAR-LOCATION",		"openControlledVocabulary",						"1",
+						"physicalEntityParticipant",			"PHYSICAL-ENTITY",			"physicalEntity",								"1",
+						
+						"sequenceParticipant",					"SEQUENCE-FEATURE-LIST",	"sequenceFeature",								"*",
+						
+						"bioSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"bioSource",							"CELLTYPE",					"openControlledVocabulary",						"1",
+						"bioSource",							"TISSUE",					"openControlledVocabulary",						"1",
+						"bioSource",							"TAXON-XREF",				"unificationXref",								"1",
+						
+						"dataSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"dataSource",							"XREF",						"xref",											"*",
+						
+						"openControlledVocabulary",				"XREF",						"unificationXref",											"*",
+						"openControlledVocabulary",				"TERM",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						
+						"xref",									"DB",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"xref",									"DB-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"xref",									"ID",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"xref",									"ID-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						
+						"relationshipXref",						"RELATIONSHIP-TYPE",		"http://www.w3.org/2001/XMLSchema#string",			"1",
+						
+						"publicationXref",						"AUTHORS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"publicationXref",						"TITLE",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"publicationXref",						"YEAR",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"publicationXref",						"URL",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"publicationXref",						"SOURCE",					"http://www.w3.org/2001/XMLSchema#string",			"*"
+				
+				))		
+)
+
+		
 #' This function returns the subclasses of the supplied biopax class.
 #' 
 #' This function returns the subclasses of the supplied biopax class.
 #' 
 #' @param classname A string containing a class name
+#' @param biopaxlevel Numeric. Specifies the Biopax Level to use.
 #' @return Returns character vector containing the subclasses of the supplied class
 #' @author Frank Kramer
 #' @export
 #' @examples
 #'  getSubClasses("control")
-getSubClasses <- function(classname) {
+getSubClasses <- function(classname, biopaxlevel=2) {
 	classname = stripns(classname)
 	ret = list()
 	for(x in 1:10) {
-		ret = CLASS_INHERITANCE$class[CLASS_INHERITANCE$superclass %in% c(classname,ret)]
+		if(biopaxlevel==2) {
+			ret = CLASS_INHERITANCE_BP2$class[CLASS_INHERITANCE_BP2$superclass %in% c(classname,ret)]
+		}
+		if(biopaxlevel==3) {
+			ret = CLASS_INHERITANCE_BP3$class[CLASS_INHERITANCE_BP3$superclass %in% c(classname,ret)]
+		}
+		
 	}
 	unlist(ret)
 }
@@ -278,16 +529,22 @@ getSubClasses <- function(classname) {
 #' This function returns the superclasses of the supplied biopax class.
 #' 
 #' @param classname A string containing a class name
+#' @param biopaxlevel Numeric. Specifies the Biopax Level to use.
 #' @return Returns character vector containing the superclasses of the supplied class
 #' @author Frank Kramer
 #' @export
 #' @examples
 #'  getSuperClasses("control")
-getSuperClasses <- function(classname) {
+getSuperClasses <- function(classname, biopaxlevel=2) {
 	classname = stripns(classname)
 	ret = list()
 	for(x in 1:10) {
-		ret = CLASS_INHERITANCE$superclass[CLASS_INHERITANCE$class %in% c(classname,ret)]
+		if(biopaxlevel==2) {
+			ret = CLASS_INHERITANCE_BP2$superclass[CLASS_INHERITANCE_BP2$class %in% c(classname,ret)]
+		}
+		if(biopaxlevel==3) {
+			ret = CLASS_INHERITANCE_BP3$superclass[CLASS_INHERITANCE_BP3$class %in% c(classname,ret)]
+		}
 	}
 	ret = unlist(ret)
 	ret[ret != ""]
@@ -295,20 +552,27 @@ getSuperClasses <- function(classname) {
 
 #' This function returns the properties of the supplied biopax class.
 #' 
-#' This function returns the superclasses of the supplied biopax class. It always considers inhertance.
+#' This function returns the properties of the supplied biopax class. It always considers inhertance.
 #' Every class inhertis the properties of its super classes. A table listing all available properties and their cardinalities (for Biopax Level 2).
 #' 
 #' @param classname A string containing a class name
-#' @return Returns character vector containing the superclasses of the supplied class
+#' @param biopaxlevel Numeric. Specifies the Biopax Level to use.
+#' @return Returns a data.frame containing the properties and cardinalities of the supplied class
 #' @author Frank Kramer
 #' @export
 #' @examples
 #'  getClassProperties("control")
-getClassProperties <- function(classname) {
+getClassProperties <- function(classname, biopaxlevel=2) {
 	classname = stripns(classname)
-	ret = list()
-	classes = c(classname,getSuperClasses(classname))
-	CLASS_PROPERTIES[CLASS_PROPERTIES$class %in% classes,]
+	if(biopaxlevel==2) {
+		classes = unlist(c(classname,getSuperClasses(classname,biopaxlevel)))
+		return(CLASS_PROPERTIES_BP2[CLASS_PROPERTIES_BP2$class %in% classes,])
+	}
+	if(biopaxlevel==3) {
+		classes = unlist(c(classname,getSuperClasses(classname,biopaxlevel)))
+		return(CLASS_PROPERTIES_BP3[CLASS_PROPERTIES_BP3$class %in% classes,])
+	}
+	return(NULL)
 }
 
 #

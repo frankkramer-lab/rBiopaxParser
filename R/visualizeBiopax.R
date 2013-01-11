@@ -321,7 +321,14 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 		message("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
-		
+	
+	if(label != "")	graph::graphRenderInfo(mygraph) <- list(label=label, labelJust="l", labelLoc="t")
+	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", fill="#e0e0e0", fixedsize=node.fixedsize)
+	
+	#graph::nodeRenderInfo(mygraph) <- list(iwidth="2", iheight="2")
+	
+	mygraph = Rgraphviz::layoutGraph(mygraph)		
+	
 	#GRAPH
 	# graph rendering info
 	if(label != "")	graph::graphRenderInfo(mygraph) <- list(label=label, labelJust="l", labelLoc="t")
@@ -346,13 +353,9 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 	color[x==-1] = edge.weights[3]
 	graph::edgeRenderInfo(mygraph) <- list(col=color)
 	
-	
 	#NODES
 	#shape size and fill of nodes
 	graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", fill="#e0e0e0", fixedsize=node.fixedsize)
-	#graph::nodeRenderInfo(mygraph) <- list(shape="ellipse", height=node.height, width=node.width, fill="#e0e0e0") 
-	#fontsizes
-	#graph::nodeRenderInfo(mygraph) <- list(fontsize=node.fontsize, labelfontsize=node.labelfontsize)
 	
 	#SUBGRAPHS
 	if(length(subgraphs) > 0) {
@@ -363,7 +366,7 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 		}
 	}
 	
-	Rgraphviz::layoutGraph(mygraph)									
+	return(mygraph)						
 }
 
 #' This function layouts a regulatory graph and plots it using Rgraphviz.
@@ -393,7 +396,7 @@ plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
 	}
 	temp = mygraph
 	if(layoutGraph) {
-		temp = layoutRegulatoryGraph(mygraph, subgraphs=subgraphs)
+		temp = layoutRegulatoryGraph(temp, subgraphs=subgraphs)
 	}
 	Rgraphviz::renderGraph(temp)
 }
@@ -538,17 +541,31 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 	temp = graph1
 	graph::graphRenderInfo(temp)$laidout <- FALSE
 	
-	#NODES
+	#ADD NODES
 	for(i in setdiff(graph::nodes(graph2), graph::nodes(graph1))) {
 		temp = graph::addNode(i, temp)
 	}
 	
+	#ADD EDGES
+	e1 = strsplit(graph::edgeNames(graph1), split="~")
+	e2 = strsplit(graph::edgeNames(graph2), split="~")
+	i  = setdiff(e2,e1)
+	for(x in 1:length(i)) {
+		temp = graph::addEdge(i[[x]][1],i[[x]][2], temp, as.numeric(graph::edgeData(graph2,i[[x]][1],i[[x]][2], "weight")))
+	}
+
 	#shape size and fill of nodes
 	nodevector = as.vector(rep(1,length(graph::nodes(temp))))
 	names(nodevector) = graph::nodes(temp)
 	
 	node.shape = nodevector
 	node.shape[TRUE] = "ellipse"
+	graph::nodeRenderInfo(temp)$shape <- node.shape
+	
+	#LAYOUT GRAPH
+	temp = Rgraphviz::layoutGraph(temp)
+	
+	#set shape again. strange rgraphviz behavior
 	graph::nodeRenderInfo(temp)$shape <- node.shape
 
 	node.fill = nodevector
@@ -592,13 +609,7 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 		graph::nodeRenderInfo(temp)$fill[n] <- colors[3]
 	}
 	
-	#EDGES	
-	e1 = strsplit(graph::edgeNames(graph1), split="~")
-	e2 = strsplit(graph::edgeNames(graph2), split="~")
-	i  = setdiff(e2,e1)
-	for(x in 1:length(i)) {
-		temp = graph::addEdge(i[[x]][1],i[[x]][2], temp, as.numeric(graph::edgeData(graph2,i[[x]][1],i[[x]][2], "weight")))
-	}
+	#COLOR EDGES	
 	# generate a list of all edges, preinitialized with the weights
 	edge.weights=c("green","black","red")
 	x = unlist(graph::edgeData(temp))
@@ -620,7 +631,7 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 	color[x==-1] = edge.weights[3]
 	graph::edgeRenderInfo(temp) <- list(col=color)
 	
-	Rgraphviz::layoutGraph(temp)	
+	return(temp)
 }
 
 #' This function colors the nodes of a graph.
@@ -673,7 +684,7 @@ colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowre
 		graph::nodeRenderInfo(graph1)$fill[nodes[n]] = res[n] 
 	}
 	 
-	graph1
+	return(graph1)
 }
 	
 	

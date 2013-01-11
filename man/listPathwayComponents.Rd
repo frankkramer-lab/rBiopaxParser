@@ -2,12 +2,16 @@
 \alias{listPathwayComponents}
 \title{This function lists all pathway components of a given pathway.}
 \usage{
-  listPathwayComponents(biopax, id)
+  listPathwayComponents(biopax, id,
+    includeSubPathways = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
   \item{id}{string. A pathway ID}
+
+  \item{includeSubPathways}{logical. If TRUE the returned
+  list will include subpathways and pathwaysteps as well.}
 }
 \value{
   data.frame

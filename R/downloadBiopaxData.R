@@ -9,6 +9,36 @@
 #
 ###############################################################################
 
+#' Databases available for direct download via downloadBiopaxData
+#' 
+#' A data.frame listing all available databases which can be directly downloaded (Homo Sapiens only) via function downloadBiopaxData.
+#' The variables are as follows:
+#' 
+#' \itemize{
+#'   \item database. Name of the database
+#'   \item model. Name of the ontology model
+#'   \item version. Biopax level
+#'   \item link. Link to the direct download
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name DATABASE_BIOPAX
+#' @title DATABASE_BIOPAX
+#' @usage DATABASE_BIOPAX
+#' @format A data frame with 46 rows and 4 columns
+#' @export
+DATABASE_BIOPAX = data.frame(
+		matrix(ncol=4,byrow=T, dimnames=list(list(),list("database","model","version","link")),data= list(
+						"NCI",			"pid",		"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",					
+						"NCI",			"biocarta",	"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
+						"NCI",			"reactome",	"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
+						"NCI",			"kegg",		"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
+						"reactome",		"reactome",	"biopax2",		"http://www.reactome.org/download/current/biopax.zip",
+						"reactome",		"reactome",	"biopax3",		"http://www.reactome.org/download/current/biopax3.zip"
+				)), stringsAsFactors=FALSE)
+
+
 #' This function downloads Biopax data from online databases
 #' 
 #' This function has an internal list of download links for some online databases. It will retrieve the selected model from the selected database using RCurl.
@@ -29,13 +59,9 @@
 #'  \dontrun{biopax}
 downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactome", "kegg"), outputfile="", version="biopax2") {
 	
-	links = data.frame(database=c("NCI"), model=c("pid"), version=c("biopax2"), link=c("ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz"), stringsAsFactors=FALSE)
-	links = rbind(links,c("NCI","biocarta","biopax2","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/BioCarta.bp2.owl.gz"))
-	links = rbind(links,c("NCI","reactome","biopax2","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/Reactome.bp2.owl.gz"))
-	links = rbind(links,c("NCI","kegg","biopax3","ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_3/KEGG.bp3.owl.gz"))
-	
-	
-	link = links[links$database==database & links$model==model[1] & links$version==version,"link"]
+	links = DATABASE_BIOPAX
+		
+	link = links[links$database==database & links$model==model[1] & links$version==version,"link"][[1]]
 	
 	m <- regexec("^(([^:]+)://)?([^:/]+)(:([0-9]+))?(/.*/)?(.*)", link)
 	filename = regmatches(link, m)[[1]][length(m[[1]])]
@@ -46,10 +72,19 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	}
 	
 	message(paste("Trying to download:",filename))
+	if(database=="reactome") message("This download is very large (60-80MB) and might take a while.\n")
 	content = RCurl::getBinaryURL(link)
 	if(outputfile=="") outputfile = filename
 	writeBin(content, useBytes = TRUE, con = outputfile )
-	message(paste("Downloaded ", outputfile, "! Proceed with readBiopax!", sep=""))
+	
+	# for reactome: extract homo sapiens data
+	if(database=="reactome") {
+		content2 = readBin(unz(outputfile, "Homo sapiens.owl", open="rb"),"raw", n=500000000)
+		outputfile = paste(outputfile,".owl",sep="")
+		writeBin(content2, useBytes = TRUE, con = outputfile )
+	}
+	
+	message(paste("Downloaded ", outputfile, "! Proceed with readBiopax!\n", sep=""))
 	outputfile
 }
 

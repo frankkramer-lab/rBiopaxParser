@@ -1,6 +1,6 @@
 # rBiopaxParser
 
-Parses BioPax level 2 files and represents them in R.  
+Parses BioPax files of Level 2 and Level 3 and represents them in R.  
 https://github.com/frankkramer/rBiopaxParser  
   
 More concretely, `rBiopaxParser`:
@@ -15,7 +15,8 @@ More concretely, `rBiopaxParser`:
  
  * Visualization functions to layout ina a (more or less) beautiful way
  
- * Can export the (modified) Biopax models to OWL 
+ * Can export the (modified) Biopax models to OWL
+
   
 ### Prerequisites:  
 This package suggests package RCurl to download Biopax files from the web.  

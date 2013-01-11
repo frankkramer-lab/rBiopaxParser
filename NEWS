@@ -1,3 +1,16 @@
+rBiopaxParser 0.99.6
+===========
+
+* Fixed pathway layouting. It broke simarily to: http://permalink.gmane.org/gmane.science.biology.informatics.conductor/44745
+
+* Function createBiopax can create Biopax Level 3 models now!
+
+* Function listInstances was very slow. It is alot faster now with huge databases like Reactome.
+
+* Functions pathway2Geneset, pathway2RegulatoryGraph, pathway2AdjacencyMatrix now fully support nested Subpathways and PathwayOrder/PathwaySteps in Biopax Level 2 and Level 3.
+
+* Started to integrate RUnit tests for some of my functions. More to come. 
+
 rBiopaxParser 0.99.5
 ===========
 

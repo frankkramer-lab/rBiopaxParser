@@ -2,17 +2,20 @@
 \alias{getClassProperties}
 \title{This function returns the properties of the supplied biopax class.}
 \usage{
-  getClassProperties(classname)
+  getClassProperties(classname, biopaxlevel = 2)
 }
 \arguments{
   \item{classname}{A string containing a class name}
+
+  \item{biopaxlevel}{Numeric. Specifies the Biopax Level to
+  use.}
 }
 \value{
-  Returns character vector containing the superclasses of
-  the supplied class
+  Returns a data.frame containing the properties and
+  cardinalities of the supplied class
 }
 \description{
-  This function returns the superclasses of the supplied
+  This function returns the properties of the supplied
   biopax class. It always considers inhertance. Every class
   inhertis the properties of its super classes. A table
   listing all available properties and their cardinalities

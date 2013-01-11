@@ -100,13 +100,14 @@ striphash <- function(x) {
 #' @param df A data.frame with biopax instances 
 #' @param class A string containing the class name to check for
 #' @param considerInheritance Logical value indicating wether to consider inheritance or not
+#' @param biopaxlevel Numeric. Specifies the Biopax Level to use.
 #' @return Returns TRUE for every row in the data.frame which is of the supplied class 
 #' @author Frank Kramer
 #' @export
-isOfClass <- function (df, class, considerInheritance=FALSE) {
+isOfClass <- function (df, class, considerInheritance=FALSE, biopaxlevel=2) {
 	class = stripns(class)
 	if(considerInheritance) {
-		class = c(class,getSubClasses(class))
+		class = c(class,getSubClasses(class,biopaxlevel))
 	}
 	tolower(as.character(df$class)) %in% tolower(class)
 }

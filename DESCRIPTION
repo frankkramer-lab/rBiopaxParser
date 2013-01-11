@@ -1,8 +1,8 @@
 Package: rBiopaxParser
 Type: Package
 Title: Parses BioPax files and represents them in R
-Version: 0.99.5
-Date: 2012-11-22
+Version: 0.99.6
+Date: 2013-01-10
 Author: Frank Kramer
 Maintainer: Frank Kramer <dev@frankkramer.de>
 Description: Parses BioPAX files and represents them in R, at the moment BioPAX
@@ -13,7 +13,9 @@ Imports:
 Suggests:
     Rgraphviz,
     RCurl,
-    graph
+    graph,
+    RUnit,
+    BiocGenerics
 URL: https://github.com/frankkramer/rBiopaxParser
 Collate:
     'biopax2Classes.R'

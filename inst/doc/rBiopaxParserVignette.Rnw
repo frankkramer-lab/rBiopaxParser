@@ -1,0 +1,637 @@
+%\VignetteIndexEntry{rBiopaxParser Vignette}
+%\VignetteDepends{rBiopaxParser, XML}
+%\VignetteKeywords{Pathway, Graph, BioPAX, Network}
+%\VignettePackage{rBiopaxParser}
+
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage{float}
+
+%\usepackage[round]{natbib}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+
+\newcommand{\gene}[1]{\emph{#1}}
+
+\setlength{\parskip}{1.5ex}
+\setlength{\parindent}{0cm}
+
+% NEW COMMANDS
+% ------------------------------------------------
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rpackage}[1]{\textit{#1}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rfunction}[1]{{\small\texttt{#1}}}
+
+\newcommand{\myincfig}[4]{
+  \setkeys{Gin}{width=#1\textwidth}
+  \begin{figure}[htbp]
+    \begin{center}
+      #2
+      \caption{\label{#3}#4}
+    \end{center}
+  \end{figure}
+  \setkeys{Gin}{width=.8\textwidth}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+% options(useFancyQuotes="UTF-8")?
+<<no.nonsense,echo=FALSE,results=hide>>=
+rm(list=ls())
+@
+
+\title{rBiopaxParser Vignette}
+\author{ Frank Kramer\footnote{University Medical Center Göttingen, Department
+of Medical Statistics, Workgroup Statistical Bioinformatics, Humboldtallee
+32, 37073 Göttingen, Germany. eMail: mail@frankkramer.de}}
+\date{\today}
+\maketitle
+
+%\renewcommand{\baselinestretch}{0.5}\normalsize
+\setlength\cftparskip{-2pt}
+\setlength\cftbeforesecskip{1pt}
+\setlength\cftaftertoctitleskip{2pt}
+\tableofcontents
+\newpage
+%\renewcommand{\baselinestretch}{1.00}\normalsize
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{abstract}
+%\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+\label{sec:introduction}
+The aim of this document is to help the user get accustomed with the package and to
+provide a step-by-step introduction on how to get started. This vignette
+contains installation instructions as well as a quick listing of working code to
+get started with the package right away.
+%\newline
+
+This package supports Biopax Level 2 and has preliminary support for Biopax
+Level 3. If you experience any problems or errors parsing Biopax data please let
+me know!
+%\newline
+
+A plethora of databases offer a vast knowledge about biological signaling pathways.
+BioPAX is implemented in the Web Ontology Language OWL, an RDF/XML-based
+markup language. It allows the users to store and exchange pathway knowledge in a
+well-documented and standardized way. In simplified terms one can say, that the
+main class, the pathway, is build up from a list of interactions. Interactions
+themselves provide a link from one controlling molecule to one or more controlled
+molecules. Molecule instances, including their properties like names, sequences or
+external references are defined within the BioPAX model. This package will
+hopefully ease the task of working with BioPAX data within R.
+%\newline
+
+For a deeper understanding of how BioPAX instances are composed, it is strongly
+encouraged to take a look at the BioPAX definition, especially the class
+inheritance tree and the list of properties for each class. The language
+definition, as well as further information on BioPAX, can be found at
+\url{http://www.biopax.org}.
+
+
+\section{Installation Instructions}
+\label{sec:installation}
+
+\subsection{Prerequisites}
+This package depends on package XML to parse the BioPAX .owl files.
+This package suggests package RCurl to download BioPAX files from the
+web.
+This package suggests package graph to build graphs/networks from the data.
+This package suggests package Rgraphviz to visualize networks.
+To install directly from github you need package devtools.
+Installation or running certain functions MIGHT fail if these prerequisites are
+not met. Please read through the following instructions.
+
+\subsubsection{Prerequisites for Linux users}
+This paragraph uses installation instructions fitting for Debian and Ubuntu
+derivatives. If you are on another Linux please use the corresponding functions
+of your distribution.
+
+\paragraph{XML}
+Make sure your Linux has library libxml2 installed. This is almost always the
+case. Otherwise install libxml2:
+\begin{verbatim}
+    sudo apt-get install libxml2
+\end{verbatim}
+You will now be able to install R package XML, this should be automatically
+done when you install rBiopaxParser, or you can run within R:
+\begin{verbatim}
+    install.packages("XML")
+\end{verbatim}
+
+
+\paragraph{RCurl}
+RCurl is only needed for a convenience function to download BioPAX files
+directly within R. You can skip this step if you already have the BioPAX data
+downloaded.
+Make sure your Linux has library libcurl installed and curl-config in your path.
+Check out:
+\begin{verbatim}
+    locate libcurl
+    locate curl-config
+\end{verbatim}
+If these are not found (usually the developer version is missing), most Linux
+users will be able to fix this by running:
+\begin{verbatim}
+    sudo apt-get install libcurl4-openssl-dev
+\end{verbatim}
+
+You will now be able to install R package RCurl, this should be automatically
+done when you install rBiopaxParser, or you can run within R:
+\begin{verbatim}
+    install.packages("RCurl")
+\end{verbatim}
+If you encounter other problems check out \url{http://www.omegahat.org/RCurl/FAQ.html}
+
+\paragraph{graph}
+Package graph has moved from CRAN to Bioconductor recently, you might
+encounter an error saying that package graph is not available for your
+distribution when calling install.packages("graph").
+Check out \url{http://bioconductor.org/packages/release/bioc/html/graph.html} or
+call:
+\begin{verbatim}
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("graph")
+\end{verbatim}
+to install it right away.
+
+\paragraph{Rgraphviz}
+Rgraphviz is used to layout the graphs generated in this package. You can
+layout and plot these yourself if you want to. Since version 2.1 Rgraphviz now
+includes graphviz!  
+You will now be able to install R package Rgraphviz using:
+\begin{verbatim}
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("Rgraphviz")
+\end{verbatim}
+If you are forced to use an earlier version of Rgraphviz you have to make sure
+your Linux has package graphviz installed.
+If this is not the case, you can usually fix this by running:
+\begin{verbatim}
+    sudo apt-get install graphviz
+\end{verbatim}
+If you encounter additional problems check out
+\url{http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html}
+
+\paragraph{devtools}
+Package devtools is available at CRAN. Run:
+\begin{verbatim}
+    install.packages("devtools")
+\end{verbatim}
+to install it.
+
+
+\subsubsection{Prerequisites for Windows users}
+\paragraph{XML and RCurl}
+These packages depend on Linux libraries. However, Brian Ripley has put
+together a repository to allow Windows users to run these packages.
+Check out \url{http://www.stats.ox.ac.uk/pub/RWin/bin/windows/contrib/} for
+these two packages for your R version.
+Download first XML.<yourRversion>.zip and then RCurl.<yourRversion>.zip
+and install them locally on your machine.
+
+\paragraph{graph}
+Package graph has moved from CRAN to Bioconductor recently, you might
+encounter an error saying that package graph is not available for your
+distribution when calling install.packages("graph").
+Check out \url{http://bioconductor.org/packages/release/bioc/html/graph.html} or
+run:
+\begin{verbatim}
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("graph")
+\end{verbatim}
+to install it.
+
+\paragraph{Rgraphviz}
+Rgraphviz is used to layout the graphs generated in this package. You can
+layout and plot these yourself if you want to.
+Since version 2.1 Rgraphviz now
+includes graphviz!  
+You will now be able to install R package Rgraphviz using:
+\begin{verbatim}
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("Rgraphviz")
+\end{verbatim}
+If you are forced to use an earlier version of Rgraphviz you have to make sure
+your your machine has graphviz installed, it can be found at:
+\url{http://www.graphviz.org} Click on Download -> Windows. 
+If you encounter additional problems check out
+\url{http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html}
+
+\paragraph{devtools}
+Package devtools is available at CRAN. For Windows this seems to depend on
+having Rtools for Windows installed. You can download and install this from:
+\url{http://cran.r-project.org/bin/windows/Rtools/}
+To install R package devtools call:
+\begin{verbatim}
+    install.packages("devtools")
+\end{verbatim}
+
+
+\subsection{Installation}
+If everything went well you will be able to install the rBiopaxParser package
+from:
+\begin{verbatim}
+    library(devtools)
+    install_github(repo="rBiopaxParser", username="frankkramer")
+\end{verbatim}
+The rBiopaxParser has also been submitted to Bioconductor.
+
+
+\section{Getting Started}
+\label{sec:gettingstarted}
+Let's load the library and the example data set.
+
+<<label=Load_package,echo=TRUE, eval=TRUE, results=hide>>=
+library(rBiopaxParser)
+@
+
+
+\section{Downloading BioPAX Data}
+\label{sec:download}
+
+Many online pathway databases offer an export in BioPAX format. This package
+gives the user a shortcut to download BioPAX exports directly from database
+providers from the web. A list of links to commonly used databases is stored
+internally and the user can select from which source and which export to
+download. The data is stored in the working directory.
+
+Currently only the website of the National Cancer Institute (NCI,
+http://pid.nci.nih.gov) is linked, where exports of the Pathway Interaction
+Database (PID), BioCarta and Reactome are available.
+
+The following command downloads the BioCarta export from the NCI website.
+<<label=downloadbiopax,echo=TRUE, eval=FALSE, results=hide>>=
+file = downloadBiopaxData("NCI","biocarta")
+@
+After the download is finished the on-screen output informs the user of success and
+name of the downloaded file.
+
+\section{Parsing BioPAX Data}
+\label{sec:parse}
+
+BioPAX data can be parsed into R using the rBiopaxParser. The readBiopax
+function reads in a BioPAX .owl file and generates the internal data.frame format
+used in this package. This function can take a while with large BioPAX files like
+NCIs Pathway Interaction Database or Reactome.
+
+The following command reads in the BioPAX file which was previously downloaded
+into variable biopax and print its summary.
+<<label=parsebiopax,echo=TRUE, eval=FALSE, results=hide>>=
+biopax = readBiopax(file)
+print(biopax)
+@
+
+%for the sake of this vignette (no downloading NCI data every compiling), we load mock data
+<<label=loaddata,echo=FALSE, eval=TRUE, results=hide>>=
+data(biopax2example)
+@
+
+
+
+\section{Internal Data Model}
+\label{sec:internaldatamodel}
+
+The BioPAX ontology models biological pathway concepts and their relationships.
+Implemented in the Web Ontology Language OWL, an XML-based markup
+language, it allows the users to store and exchange pathway knowledge in a well-
+documented and standardized way. In simplified terms one can say, that the main
+class, the pathway, is build up from a list of interactions. Interactions themselves are
+linking a controlling molecule to a controlled molecule.
+
+\begin{figure}[H]
+\centering
+\vspace{-60pt}
+\includegraphics{biopaxsimple.pdf}
+\vspace{-5pt}
+\caption{The building blocks for every BioPAX model: molecules, interactions
+and pathways.}
+\label{fig:biopaxsimple}
+\vspace{-10pt}
+\end{figure}
+
+The BioPAX ontology models the domain of biological pathway knowledge. Classes
+like Protein, RNA, Interaction and Pathway, define the entities in this domain. Their
+respective properties, like NAME, SEQUENCE, CONTROLLER and PATHWAY-COMPONENT,
+define the characteristics of and the links between the instances of these
+classes. An overview of the main classes in BioPAX Level 2 is shown in the
+following figure:
+
+\begin{figure}[H]
+\centering
+\hspace*{-0.05\textwidth}
+\vspace{-20pt}
+\includegraphics[width=1.1\textwidth]{biopax2classgraph.pdf}
+\vspace{-5pt}
+\caption{Class inheritance graph of the BioPAX ontology Level 2.}
+\vspace{-10pt}
+\label{fig:classgraph}
+\end{figure}
+
+A detailed description of BioPAX can be found at www.biopax.org. The BioPAX
+ontology is constantly being revised and improved. The latest released version
+of the ontology is BioPAX Level 3. This package currently supports BioPAX
+Level 2 and has preliminary support for BioPAX Level 3. All examples in this
+vignette are focused at Biopax Level 2.
+
+Mapping the XML/RDF representation of the BioPAX data from the OWL file to R
+is a work intensive task, especially considering the size of many complete exports of
+popular databases. The Pathway Interaction Database of the NCI consists of more
+than 50000 BioPAX instances, for example. Unfortunately mapping these instances
+to S3 or S4 classes within R and managing them within lists is not feasible, therefore
+the classes and their respective properties are internally mapped to a single R matrix
+and then converted to a data.frame. This allows for efficient indexing and selecting of
+subsets of this data.frame.
+
+The mapping of BioPAX data is performed as revertible as possible, with one caveat,
+however. The XML structure of the data would allow for an infinite nesting of
+instance declarations. An example would be to instantiate an external publication
+reference within a protein instance, which could itself be instantiated in another
+instance. This is not desirable when attempting to map the data to a tabular format
+like data.frame. The trick here is to move these instances into the main XML tree and
+reference the specific instance with an rdf:resource attribute.
+
+An excerpt of the internal data.frame of a biopax model, as created in the last section
+of this document "Modifying BioPAX":
+
+\begin{table}[H]\footnotesize
+  \centering
+  \hspace*{-0.28\textwidth}
+  \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        class   & id        & property           & property\_attr & property\_attr\_value                     & property\_value \\ \hline
+        pathway & mypwid2   & NAME               & rdf:datatype  & http://www.w3.org/2001/XMLSchema\#string & pathway1       \\ 
+        pathway & mypwid2   & PATHWAY-COMPONENTS & rdf:resource  & \#control\_1                              &                \\ 
+        pathway & mypwid2   & PATHWAY-COMPONENTS & rdf:resource  & \#control\_2                              &                \\ 
+        control & control\_1 & CONTROL-TYPE       & rdf:datatype  & http://www.w3.org/2001/XMLSchema\#string & ACTIVATION     \\ 
+        control & control\_1 & CONTROLLER         & rdf:resource  & \#myPEPid\_A                              &                \\ 
+        control & control\_1 & CONTROLLED         & rdf:resource  & \#myBCRid\_B                              &                \\ 
+        control & control\_2 & CONTROL-TYPE       & rdf:datatype  & http://www.w3.org/2001/XMLSchema\#string & INHIBITION     \\ 
+        control & control\_2 & CONTROLLER         & rdf:resource  & \#myPEPid\_A                              &                \\ 
+        control & control\_2 & CONTROLLED         & rdf:resource  & \#myBCRid\_C                              &                \\
+        \hline
+    \end{tabular}
+  \vspace{-10pt}
+  \label{table:exampledatatable}
+\end{table}
+
+
+
+This data.frame represents instances as a collection of their properties. The
+first column specifies the class and the second column specifies the id of the instance. The
+properties, for example "NAME", can either be of rdf:datatype, usually a string like
+"pathway1", or of type rdf:resource, which is a reference to another instance, like
+"\#control\_1".
+
+For comprehensive databases this data.frame can reach quite extensive sizes. The
+data.frame itself can be accessed directly via the slot "df" of
+the parsed object, e.g. by accessing 
+<<label=displaydataframe,echo=TRUE, eval=TRUE>>=
+head(biopax$df)
+@
+
+\section{Accessing the Data}
+\label{sec:access}
+Many convenience functions are available that will aid the user in selecting certain
+parts or instances of the biopax model. Generally, these functions will require the
+parsed biopax model as parameter as well as other parameters that differ from
+function to function.
+
+The most basic function to select distinct instances is selectInstances. This
+functions allows the user to specify conditions like class, id or name to select
+a subset of the internal data.frame meeting these conditions. This functions is
+vectorized to allow the user to select multiple instances. The user can extend
+the selection criteria by several parameters to include, for example, inherited
+classes or all referenced instances.
+
+The next type of functions return (compared to the internal data.frame)
+nicely formatted lists: listInstances, listPathways, listPathwayComponents,
+listComplexComponents. These functions return a list of class, ID and names
+of instances.
+
+The function getReferencedIDs, which can optionally be called recursively, is
+passed a biopax model and an instance ID. The return value is a vector of IDs of
+all instances that are referenced by the instance supplied.
+
+This example retrieves a list of all pathways within a BioPAX model, selects two of
+them and retrieves their data, their component lists and components.
+<<label=accessingbiopax,echo=TRUE, eval=TRUE, results=hide>>=
+pw_list = listInstances(biopax, class="pathway")
+pw_complete = selectInstances(biopax, class="pathway")
+pwid1 = "pid_p_100002_wntpathway"
+pwid2 = "pid_p_100146_hespathway"
+getInstanceProperty(biopax, pwid1, property="NAME")
+getInstanceProperty(biopax, pwid2, property="NAME")
+pw_1 = selectInstances(biopax, class="pathway", id=pwid1)
+pw_1_component_list = listPathwayComponents(biopax,pwid1)
+pw_1_components = selectInstances(biopax,id=pw_1_component_list$id)
+pw_2 = selectInstances(biopax, class="pathway", id=pwid2)
+pw_2_component_list = listPathwayComponents(biopax,pwid2)
+pw_2_components = selectInstances(biopax,id=pw_2_component_list$id)
+@
+
+\section{Visualization}
+\label{sec:visualize}
+These functions transform BioPAX pathways into regulatory graphs. However, there
+are some caveats. These graphs rely solely on the BioPAX information about
+activations and inhibitions, by classes of, or inheriting from, class
+"control". Involved molecules, as nodes, are connected, via edges, depending on
+this information. Lack of this information will inevitably lead to disconnected or incomplete graphs. The
+splitComplexMolecules parameter is available to split all complexes into their most
+atomic members, all members will share the same in- and outgoing edges.
+
+Transform pathways into a regulatory graph or an adjacency matrix:
+<<label=pathwaytoregulatorygraphs,echo=TRUE, eval=TRUE, results=hide>>=
+pw_1_adj = pathway2AdjacancyMatrix(biopax, pwid1, expandSubpathways=TRUE,
+splitComplexMolecules=TRUE, verbose=TRUE)
+pw_1_graph = pathway2RegulatoryGraph(biopax, pwid1,
+splitComplexMolecules=TRUE, verbose=TRUE)
+pw_2_adj = pathway2AdjacancyMatrix(biopax, pwid2, expandSubpathways=TRUE,
+splitComplexMolecules=TRUE, verbose=TRUE)
+pw_2_graph = pathway2RegulatoryGraph(biopax, pwid2,
+splitComplexMolecules=TRUE, verbose=TRUE)
+@
+
+Layout the graphs using Rgraphviz:
+<<label=layoutgraphs, echo=TRUE, eval=TRUE, results=hide>>=
+pw_1_graph_laidout = layoutRegulatoryGraph(pw_1_graph)
+pw_2_graph_laidout = layoutRegulatoryGraph(pw_2_graph)
+@
+
+Plot the graphs:
+<<label=plotgraphs, echo=TRUE, eval=FALSE, results=hide>>=
+plotRegulatoryGraph(pw_1_graph)
+plotRegulatoryGraph(pw_2_graph)
+@
+
+\begin{figure}[H]
+\centering
+\includegraphics{wntplot}
+\vspace{-10pt}
+\caption{WNT pathway}
+\label{fig:wntplot}
+\vspace{-10pt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{segclock}
+\vspace{-10pt}
+\caption{Segmentation Clock pathway}
+\label{fig:segclock}
+\vspace{-10pt}
+\end{figure}
+
+A number of functions can be applied to these regulatory graphs, for example, merge,
+diff or intersect.
+
+Merge graphs and render them (this time disable re-layouting for the plot function):
+<<label=mergedgraph, echo=TRUE, eval=FALSE, results=hide>>=
+merged_graph = uniteGraphs(pw_1_graph_laidout,pw_2_graph_laidout)
+plotRegulatoryGraph(merged_graph, layoutGraph=FALSE)
+@
+
+\begin{figure}[H]
+\centering
+\hspace*{-0.25\textwidth}
+\includegraphics[width=1.5\textwidth]{mergedpw}
+\vspace{-10pt}
+\caption{Merged pathway}
+\label{fig:mergedpw}
+\vspace{-10pt}
+\end{figure}
+
+If you want to make your graphs more beautiful a good start would be to look at
+Rgraphviz parameters that can be set via nodeRenderInfo. For example, try out:
+<<label=beautifygraphs, echo=TRUE, eval=FALSE, results=hide>>=
+nodeRenderInfo(merged_graph)$cex = 1
+nodeRenderInfo(merged_graph)$textCol = "red"
+nodeRenderInfo(merged_graph)$fill = "green"
+plotRegulatoryGraph(merged_graph, layoutGraph=FALSE)
+@
+
+\section{Modifying BioPAX}
+\label{sec:modify}
+Instead of merging the regulatory graph representations it is also possible to merge
+the biopax pathways directly and add this new, merged pathway directly into the
+biopax model.
+<<label=modifypathways, echo=TRUE, eval=FALSE, results=hide>>=
+biopax = mergePathways(biopax, pwid1, pwid2, NAME="mergedpw1", ID="mergedpwid1")
+mergedpw_graph = pathway2RegulatoryGraph(biopax, 
+		"mergedpwid1", splitComplexMolecules=TRUE, verbose=TRUE)
+plotRegulatoryGraph(layoutRegulatoryGraph(mergedpw_graph))
+@
+
+Although it is possible to directly edit the parsed BioPAX data by accessing
+biopax\$df, there are quite a few convenience functions to make life easier.
+In the following code block a new BioPAX model will be created from scratch using
+createBiopax. Functions addPhysicalEntity, addPhysicalEntityParticipant,
+addBiochemicalReaction, addControl and addPathway will be used to build 2
+pathways with 2 controls between 3 proteins each.
+
+Start out with adding 5 proteins (Protein\_A-E), their corresponding
+physicalEntityParticipant instances and a biochemical reaction where they do
+something to themselves.
+
+<<label=createbiopax1, echo=TRUE, eval=TRUE, results=hide>>=
+biopax = createBiopax()
+for(i in LETTERS[1:5]) {
+	biopax = addPhysicalEntity(biopax, class="protein",
+		NAME=paste("protein",i,sep="_"), 
+		id=paste("proteinid",i,sep="_"))
+	biopax = addPhysicalEntityParticipant(biopax,
+		referencedPhysicalEntityID=paste("proteinid",i,sep="_"), 
+		id=paste("PEPid",i,sep="_"))
+	biopax = addBiochemicalReaction(biopax, LEFT=paste("PEPid",i,sep="_"),
+		RIGHT=paste("PEPid",i,sep="_"),
+		id=paste("BCRid",i,sep="_"))
+}
+@
+
+Now we add some controls (A-B,A-C,C-D,C-E) between those proteins.
+<<label=createbiopax2, echo=TRUE, eval=TRUE, results=hide>>=
+biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION",
+	CONTROLLER="PEPid_A", CONTROLLED=c("BCRid_B"),id="control_1")
+biopax = addControl(biopax, CONTROL_TYPE="INHIBITION",
+	CONTROLLER="PEPid_A", CONTROLLED=c("BCRid_C"),id="control_2")
+biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION",
+	CONTROLLER="PEPid_C", CONTROLLED=c("BCRid_D"),id="control_3")
+biopax = addControl(biopax, CONTROL_TYPE="INHIBITION",
+	CONTROLLER="PEPid_C", CONTROLLED=c("BCRid_E"), id="control_4")
+@
+
+These interactions will be used as pathway components for new pathways by calling
+addPathway.
+<<label=createbiopax3, echo=TRUE, eval=TRUE, results=hide>>=
+biopax = addPathway(biopax, NAME="pw1",
+	PATHWAY_COMPONENTS=c("control_1","control_2"), id="pwid1")
+biopax = addPathway(biopax, NAME="pw2",
+	PATHWAY_COMPONENTS=c("control_3","control_4"), id="pwid2")
+biopax = mergePathways(biopax, "pwid1", "pwid2", NAME="pw3", id="pwid3")
+@
+
+Now these new pathways are ready to be viewed!
+<<label=createbiopax4,echo=TRUE, eval=TRUE, results=hide>>=
+pw1_graph = pathway2RegulatoryGraph(biopax, "pwid1",
+	splitComplexMolecules=TRUE, verbose=TRUE)
+pw2_graph = pathway2RegulatoryGraph(biopax, "pwid2",
+	splitComplexMolecules=TRUE, verbose=TRUE)
+pw3_graph = pathway2RegulatoryGraph(biopax, "pwid3",
+	splitComplexMolecules=TRUE, verbose=TRUE)
+@
+<<label=createbiopax5, echo=TRUE, eval=FALSE, results=hide>>=
+plotRegulatoryGraph(layoutRegulatoryGraph(pw1_graph))
+plotRegulatoryGraph(layoutRegulatoryGraph(pw2_graph))
+plotRegulatoryGraph(layoutRegulatoryGraph(pw3_graph))
+@
+
+\begin{figure}[H]
+\centering
+\includegraphics{newpathways2}
+\vspace{-10pt}
+\caption{Newly created and merged pathways}
+\vspace{-10pt}
+\label{fig:newpathways}
+\end{figure}
+
+Finally, properties as well as complete instances can be removed from the current
+BioPAX model by calling:
+<<label=removebiopaxinstances, echo=TRUE, eval=FALSE, results=hide>>=
+temp = biopax
+temp = removeProperties(temp, id="newpwid2", properties="PATHWAY-COMPONENTS")
+temp = removeInstance(temp, id="newpwid3")
+@
+
+\section{Writing out in BioPAX Format}
+\label{sec:writeout}
+Writing out an internal BioPAX model into a valid .owl file is very easy.
+Simply call:
+<<label=writeoutbiopax,echo=TRUE, eval=FALSE, results=hide>>=
+writeBiopax(biopax, file="test.writeBiopax.owl")
+@
+
+\section{Session Information}
+
+The version number of R and packages loaded for generating the vignette were:
+
+<<echo=FALSE,results=tex>>=
+toLatex(sessionInfo())
+@
+
+\bibliographystyle{plain}  % Style BST file
+%\bibliography{references}     % Bibliography file (usually '*.bib' ) 
+\end{document}
+
+%
+%   end of file
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

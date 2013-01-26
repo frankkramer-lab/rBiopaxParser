@@ -1,0 +1,32 @@
+\name{calcGraphOverlap}
+\alias{calcGraphOverlap}
+\title{This function calculates the overlap of 2 graphs}
+\usage{
+  calcGraphOverlap(graph1, graph2)
+}
+\arguments{
+  \item{graph1}{graphNEL}
+
+  \item{graph2}{graphNEL}
+}
+\value{
+  Returns a list containing the compared graphs and edge-
+  and node-wise overlap between them.
+}
+\description{
+  This function calculates the overlap of supplied graph1
+  with graph2. Layout and weights of graph1 are kept.
+}
+\examples{
+# load data
+ data(biopax2example)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph2 = pathway2RegulatoryGraph(biopax, pwid2)
+ calcGraphOverlap(mygraph1,mygraph2)
+}
+\author{
+  Frank Kramer
+}
+

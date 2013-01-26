@@ -1,0 +1,37 @@
+\name{internal_checkArguments}
+\alias{internal_checkArguments}
+\title{This function checks the supplied arguments if they abid to the given restrictions}
+\usage{
+  internal_checkArguments(args = c(),
+    allowedValues = list(), allowNULL = FALSE,
+    allowNA = FALSE, allowEmptyString = TRUE,
+    allowInf = TRUE)
+}
+\arguments{
+  \item{args}{The vector of arguments to check}
+
+  \item{allowedValues}{A named list of values the argument
+  of a this name is allowed to have}
+
+  \item{allowNULL}{Logical, allow NULL or not}
+
+  \item{allowNA}{Logical, allow NA or not}
+
+  \item{allowEmptyString}{Logical, allow empty strings or
+  not}
+
+  \item{allowInf}{Logical, allow values of +/- infinity or
+  not}
+}
+\value{
+  Returns 1 if all checks completed successfully, returns
+  error message otherwise.
+}
+\description{
+  This function checks the supplied arguments if they abid
+  to the given restrictions
+}
+\author{
+  Frank Kramer
+}
+

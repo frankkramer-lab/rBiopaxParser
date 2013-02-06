@@ -1,0 +1,12 @@
+citHeader("Please cite the paper for the software itself.")
+
+citEntry(
+   entry="article",
+   title = "rBiopaxParser—an R package to parse, modify and visualize BioPAX data",
+   author = "Frank Kramer, Michaela Bayerlová, Florian Klemm, Annalen Bleckmann and Tim Beißbarth",
+   journal = "Bioinformatics",
+   volume = 30,
+   pages = 100-101,
+   year = 2013,
+   textVersion = "Kramer F, Bayerlová M, Klemm F, Bleckmann A, Beißbarth T (2013). rBiopaxParser—an R package to parse, modify and visualize BioPAX data. Bioinformatics 30, 100-101"
+)

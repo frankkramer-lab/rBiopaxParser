@@ -1,7 +1,6 @@
 # rBiopaxParser
 
-Parses BioPax files of Level 2 and Level 3 and represents them in R.  
-https://github.com/frankkramer/rBiopaxParser  
+Parses BioPax files of Level 2 and Level 3 and represents them in R. 
   
 More concretely, `rBiopaxParser`:
 
@@ -17,6 +16,14 @@ More concretely, `rBiopaxParser`:
  
  * Can export the (modified) Biopax models to OWL
 
+rBiopaxParser has been published in Bioinformatics!
+rBiopaxParser - an R package to parse, modify and visualize BioPAX data. Kramer F, Bayerlova M, Klemm F, Bleckmann A, Beissbarth T. Bioinformatics (2013) 29(4): 520-522.
+http://bioinformatics.oxfordjournals.org/content/29/4/520.abstract
+
+You can retrieve rBiopaxParser from Bioconductor or GitHub:
+http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html
+https://github.com/frankkramer/rBiopaxParser  
+
   
 ### Prerequisites:  
 This package suggests package RCurl to download Biopax files from the web.  
@@ -26,7 +33,7 @@ This package suggests package Rgraphviz to visualize networks.
 To install directly from github you need package devtools.  
   
 Installation or running certain functions MIGHT fail if these are not met. Please read carefully through the following instructions.   
-  
+
 ### Installing prerequisites for Linux users:  
 XML:   
 Make sure your linux has library libxml2 installed. This is almost always the case. Otherwise run in your shell  
@@ -133,8 +140,14 @@ To install R package devtools call
 </code>  
   
   
-Finally:    
-## Installing rBiopaxParser from github:  
+Finally:   
+## Installing rBiopaxParser from Bioconductor:  
+<code>
+	source("http://bioconductor.org/biocLite.R") 
+	biocLite("rBiopaxParser", siteRepos="http://bioconductor.org/packages/2.12/bioc")
+</code>
+
+## Installing rBiopaxParser from GitHub:  
 <code>
 	install.packages("devtools")  
 	library(devtools)  

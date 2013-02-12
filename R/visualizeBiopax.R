@@ -188,9 +188,9 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			newnodes = unique(c(controllers,controlleds))
 			# only add new nodes that are not null, na or empty strings
 			newnodes = newnodes[!(newnodes %in% graph::nodes(mygraph))]
-			mygraph = graph::addNode(newnodes,mygraph)
+			if(length(newnodes)>0) mygraph = graph::addNode(newnodes,mygraph)
 			#set weight: activation 1, inhibition = -1
-			if ( grepl("activation",type,ignore.case=TRUE) ) {
+			if ( tolower(type)=="activation" ) {
 				weights = 1
 			} else {
 				weights = -1

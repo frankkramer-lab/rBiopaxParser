@@ -91,6 +91,18 @@ external references are defined within the BioPAX model. This package will
 hopefully ease the task of working with BioPAX data within R.
 %\newline
 
+rBiopaxParser has been published in Bioinformatics! Please cite the paper if you
+find this package helpful.
+rBiopaxParser - an R package to parse, modify and visualize BioPAX data.
+Kramer F, Bayerlova M, Klemm F, Bleckmann A, Beissbarth T. Bioinformatics (2013) 29(4): 520-522.
+\url{http://bioinformatics.oxfordjournals.org/content/29/4/520.abstract}
+%\newline
+
+You can retrieve rBiopaxParser from Bioconductor or GitHub:
+\url{http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html}
+\url{https://github.com/frankkramer/rBiopaxParser}  
+%\newline
+
 For a deeper understanding of how BioPAX instances are composed, it is strongly
 encouraged to take a look at the BioPAX definition, especially the class
 inheritance tree and the list of properties for each class. The language
@@ -238,13 +250,18 @@ To install R package devtools call:
 
 
 \subsection{Installation}
-If everything went well you will be able to install the rBiopaxParser package
-from:
+If everything went well you will be able to install the rBiopaxParser package,
+either from Bioconductor:
+\begin{verbatim}
+	source("http://bioconductor.org/biocLite.R") 
+	biocLite("rBiopaxParser", siteRepos="http://bioconductor.org/packages/2.12/bioc")
+\end{verbatim}
+or via GitHub using devtools:
 \begin{verbatim}
     library(devtools)
     install_github(repo="rBiopaxParser", username="frankkramer")
 \end{verbatim}
-The rBiopaxParser has also been submitted to Bioconductor.
+
 
 
 \section{Getting Started}
@@ -618,6 +635,27 @@ Simply call:
 <<label=writeoutbiopax,echo=TRUE, eval=FALSE, results=hide>>=
 writeBiopax(biopax, file="test.writeBiopax.owl")
 @
+
+\section{Example: Parsing Reactome Biopax Level 3}
+\label{sec:examplereactome}
+In this section we will work with the Homo Sapiens pathways from Reactome
+\url{http://www.reactome.org} in Biopax Level 3 format. To download the data
+either run
+<<label=examplereactome1, echo=TRUE, eval=FALSE, results=hide>>=
+file = downloadBiopaxData("reactome","reactome", version="biopax3")
+@
+or download and unzip the file directly from \url{http://www.reactome.org/download/}
+The download is quite large (about 70MB) and might take a while. It is strongly
+recommended to download the file once and re-use it. Do not run an R script
+downloading this file every hour!
+To parse the "Homo sapiens.owl" file run
+<<label=examplereactome1, echo=TRUE, eval=FALSE, results=hide>>=
+biopax = readBiopax(file)
+print(biopax)
+@
+Due to the size of the database this might take up to an hour. Some messages
+will be displayed to keep you entertained.
+
 
 \section{Session Information}
 

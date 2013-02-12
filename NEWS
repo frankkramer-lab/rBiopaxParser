@@ -1,3 +1,18 @@
+rBiopaxParser 0.99.7
+===========
+
+* Fixed getXrefAnnotations. This function now works with Biopax Level 3 and can retrieve all Xref annotations of any given vector of instance ids.
+
+* Added CITATION file! rBiopaxParser was pubished in Bioinformatics! 
+
+* rBiopaxParser - an R package to parse, modify and visualize BioPAX data. Kramer F, Bayerlova M, Klemm F, Bleckmann A, Beissbarth T. Bioinformatics (2013) 29(4): 520-522.
+
+* rBiopaxParser has been accepted to Bioconductor! http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html
+
+* README.md has been updated accordingly with steps to install directly from Bioconductor.
+
+* Function selectInstances correctly returns all referenced instances with parameter "includeReferencedInstances=TRUE" now.
+
 rBiopaxParser 0.99.6
 ===========
 

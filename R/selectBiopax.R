@@ -66,10 +66,11 @@ selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NU
 	}
 	
 	if(includeReferencedInstances) {
+		#include all referenced instances. this is the only place we do a logical OR.
 		ids = as.character(biopax$df[sel,]$id)
 		ids = unique(ids)
 		ids = getReferencedIDs(biopax, ids)
-		sel = sel & (biopax$df$id %in% ids)
+		sel = sel | (biopax$df$id %in% ids)
 	}	
 	
 	if(returnValues) {
@@ -475,23 +476,41 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 		return(NULL)
 	}
 	
-	#get class of the instance
-	class = getInstanceClass(biopax,id)
-	#get the properties this instance has
-	classproperties = getClassProperties(class)
-	#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
-	property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
-	
-	#value
-	if(length(property_type)>0) {
-		if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
-			as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
+	if( biopax$biopaxlevel == 2 ) {
+		#get class of the instance
+		class = getInstanceClass(biopax,id)
+		#get the properties this instance has
+		classproperties = getClassProperties(class)
+		#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
+		property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
+		
+		#value
+		if(length(property_type)>0) {
+			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
+				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
+			} else {
+				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
+			}
 		} else {
-			as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
+			return(NULL)
 		}
-	} else {
-		return(NULL)
 	}
+	
+	if( biopax$biopaxlevel == 3 ) {
+		data = selectInstances(biopax, id=id, property=property)
+		
+		#value
+		if(dim(data)[1]>0) {
+			if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
+				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
+			} else {
+				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
+			}
+		} else {
+			return(NULL)
+		}
+	}	
+	
 }
 
 
@@ -561,16 +580,17 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	id = c(striphash(id))
 	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
 	annotations = matrix(nrow=0, ncol=6)
-	colnames(annotations) = c("type", "id","name","annotation_type", "annotation_id", "annotation")
+	colnames(annotations) = c("class", "id","name","annotation_type", "annotation_id", "annotation")
 	
 	for(i in 1:length(id)) {
+		instanceclass = getInstanceClass(biopax, id[i])
 		# if its a complex AND we're supposed to split it:
-		if(tolower(getInstanceClass(biopax,id[i])) == "complex" & splitComplexes) {
-			referenced = selectInstances(biopax, id=getReferencedIDs(biopax, id[i], recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY")))
+		if(tolower(instanceclass) == "complex" & splitComplexes) {
+			referenced = selectInstances(biopax, id=getReferencedIDs(biopax, id[i], recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY","component")))
 			sel = tolower(referenced$class) %in% tolower(c("dna","rna","protein","smallMolecule"))
 			referenced = as.character(unique(referenced[sel & !(referenced$id %in% id),"id"]))
 			annotations = rbind(annotations, getXrefAnnotations(biopax,referenced, splitComplexes=FALSE, followPhysicalEntityParticipants=FALSE))
-		} else if(getInstanceClass(biopax,id[i]) == "physicalEntityParticipant" & followPhysicalEntityParticipants) {
+		} else if(instanceclass == "physicalEntityParticipant" & followPhysicalEntityParticipants) {
 			# if its a physicalEntityParticipant
 			peID = internal_resolvePhysicalEntityParticipant(biopax, id[i])
 			if(!(peID %in% id)) {
@@ -578,11 +598,17 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			}
 		} else {
 			# for any other class do this
-			type = getInstanceClass(biopax, id[i])
 			name = getInstanceProperty(biopax, id[i], property="NAME")[1]
 			xrefs = getInstanceProperty(biopax, id[i], property="XREF")
+			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
+			if(tolower(instanceclass) %in% tolower(c("Dna","DnaRegion","Rna","RnaRegion","Protein","SmallMolecule"))) {
+				referencedEntityReferences = selectInstances(biopax, id=getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference")))
+				for(rerIds in referencedEntityReferences) {
+					xrefs = cbind(xrefs, getInstanceProperty(biopax, rerIds, property="XREF"))
+				}
+			} 
 			for(xref in xrefs) {
-				annotations = rbind(annotations, c(type, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
+				annotations = rbind(annotations, c(instanceclass, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
 								paste(getInstanceProperty(biopax, xref, property="DB"),	":",
 										getInstanceProperty(biopax, xref, property="ID"), sep="")
 								))

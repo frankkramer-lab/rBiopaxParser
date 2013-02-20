@@ -2,12 +2,16 @@
 \alias{pathway2Geneset}
 \title{This function generates the gene set of a pathway.}
 \usage{
-  pathway2Geneset(biopax, pwid)
+  pathway2Geneset(biopax, pwid, returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
   \item{pwid}{string}
+
+  \item{returnIDonly}{logical. If TRUE only IDs of the
+  components are returned. This saves tiem for looking up
+  names for every single ID.}
 }
 \value{
   Returns the gene set of the supplied pathway. Returns

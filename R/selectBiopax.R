@@ -74,7 +74,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 	}	
 	
 	if(returnValues) {
-		biopax$df[sel,]
+		unfactorize(biopax$df[sel,])
 	} else {
 		sel
 	}
@@ -94,6 +94,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 #' @param class string. Class of the instances to select
 #' @param name string. Name of the instances to select
 #' @param includeSubClasses logical. If includeSubClasses is set to TRUE the class criteria is broadened to include all classes that inherit from the given class
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return Returns a data.frame containing all instances conforming to the given selection criteria if returnValues=TRUE, only the selector for the internal data.frame otherwise.
 #' @author Frank Kramer
 #' @export
@@ -106,7 +107,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 #'  listInstances(biopax, class="pathway")
 #'  # list all interaction including all subclasses of interactions
 #'  listInstances(biopax, class="interaction", includeSubClasses=TRUE)
-listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubClasses=FALSE) {
+listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubClasses=FALSE, returnIDonly=FALSE) {
 	sel = rep.int(TRUE,dim(biopax$df)[1])
 
 	if(!is.null(id)) {
@@ -131,6 +132,7 @@ listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubCla
 	bpsel = unfactorize(biopax$df[sel,c("class","id","property","property_value")])
 	ret = unique(bpsel[,c("class","id")])
 	if(dim(ret)[1]==0) return(NULL)
+	if(returnIDonly) return(unique(bpsel[,"id"]))
 	
 	bpsel$property = tolower(bpsel$property)
 	bpsel = rbind(bpsel[bpsel$property=="displayname",],bpsel[bpsel$property=="standardname",],bpsel[bpsel$property=="name",])
@@ -176,6 +178,7 @@ listPathways <- function(biopax) {
 #' @param biopax A biopax model
 #' @param id string. A pathway ID
 #' @param includeSubPathways logical. If TRUE the returned list will include subpathways and pathwaysteps as well.
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return data.frame
 #' @author Frank Kramer
 #' @export
@@ -183,18 +186,21 @@ listPathways <- function(biopax) {
 #'  # load data
 #'  data(biopax2example)
 #'  listPathwayComponents(biopax, id="pid_p_100002_wntpathway")
-listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
-	#support for bp level 3
-	pwcompname = tolower("PATHWAY-COMPONENTS")
-	subpathwayproperties = c("STEP-INTERACTIONS","NEXT-STEP")
+listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDonly=FALSE) {
+	#support for bp level 2 and 3
+	if(biopax$biopaxlevel == 2) {
+		pwcompname = "pathway-components"
+		subpathwayproperties = c("step-interactions","next-step")
+	}
 	if(biopax$biopaxlevel == 3) {
-		pwcompname = tolower("pathwayComponent")
+		pwcompname = "pathwaycomponent"
 		subpathwayproperties = c("nextStep","stepProcess","pathwayOrder")
 	}
 	#####CONTINUE HERE
 	
 	
 	id = unique(striphash(id))
+	id = id[!is.na(id) & !is.null(id) & nchar(id) > 0 ]
 	#get pw component list
 	#pwcomp_list = as.character(biopax$df[tolower(biopax$df$property) == pwcompname & biopax$df$id %in% id,"property_attr_value"])
 	if(includeSubPathways)	{
@@ -203,6 +209,8 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
 		pwcomp_list = getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(pwcompname))
 	}
 	if(is.null(pwcomp_list)) return(NULL)
+	pwcomp_list = pwcomp_list[!is.na(pwcomp_list) & !is.null(pwcomp_list) & nchar(pwcomp_list) > 0 ]
+	if(returnIDonly) return(unique(striphash(pwcomp_list)))
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(pwcomp_list)))
 }
@@ -213,6 +221,7 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
 #' 
 #' @param biopax A biopax model
 #' @param id string. A complex ID
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return data.frame
 #' @author Frank Kramer
 #' @export
@@ -220,7 +229,7 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
 #'  # load data
 #'  data(biopax2example)
 #'  listComplexComponents(biopax, id="ex_m_100650")
-listComplexComponents <- function(biopax, id) {
+listComplexComponents <- function(biopax, id, returnIDonly=FALSE) {
 	#support for bp level 3
 	compname = "COMPONENTS"
 	if(biopax$biopaxlevel == 3) {
@@ -231,7 +240,9 @@ listComplexComponents <- function(biopax, id) {
 	#get complex component list
 	complexcomp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=FALSE, onlyFollowProperties=c(compname)))))
 	if(is.null(complexcomp_list)) return(NULL)
+	complexcomp_list = complexcomp_list[!is.na(complexcomp_list) & !is.null(complexcomp_list) & nchar(complexcomp_list) > 0 ]
 	#strip # from front of id
+	if(returnIDonly) return(unique(striphash(complexcomp_list)))
 	listInstances(biopax, id=unique(striphash(complexcomp_list)))
 }
 
@@ -242,6 +253,7 @@ listComplexComponents <- function(biopax, id) {
 #' @param biopax A biopax model
 #' @param id string. A complex ID
 #' @param splitComplexes logical. If TRUE complexes are split up into their components and the added to the listing.
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return data.frame
 #' @author Frank Kramer
 #' @export
@@ -249,7 +261,7 @@ listComplexComponents <- function(biopax, id) {
 #'  # load data
 #'  data(biopax2example)
 #'  listInteractionComponents(biopax, id="ex_i_100036_activator_1")
-listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
+listInteractionComponents <- function(biopax, id, splitComplexes=TRUE, returnIDonly=FALSE) {
 	#support for bp level 3
 	if(biopax$biopaxlevel == 2) {
 		compname = c("PARTICIPANTS","CONTROLLER","CONTROLLED","LEFT","RIGHT","COFACTOR","PHYSICAL-ENTITY")
@@ -264,7 +276,9 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
 	#get complex component list
 	comp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(compname)))))
 	if(is.null(comp_list)) return(NULL)
+	comp_list = comp_list[!is.na(comp_list) & !is.null(comp_list) & nchar(comp_list) > 0 ]
 	#strip # from front of id
+	if(returnIDonly) return(unique(striphash(comp_list)))
 	listInstances(biopax, id=unique(striphash(comp_list)))
 }
 
@@ -274,6 +288,7 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
 #'  
 #' @param biopax A biopax model
 #' @param pwid string
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return Returns the gene set of the supplied pathway. Returns NULL if the pathway has no components.
 #' @author Frank Kramer
 #' @export
@@ -282,15 +297,17 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
 #'  data(biopax2example)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pathway2Geneset(biopax, pwid=pwid1)
-pathway2Geneset <- function(biopax, pwid) {
+pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE) {
 	
-	pwComponents = listPathwayComponents(biopax, id=pwid)$id
+	pwComponents = listPathwayComponents(biopax, id=pwid, returnIDonly=TRUE)
 	interactionComponents = NULL
 	if(length(pwComponents)>0) {
 		for(p in pwComponents) {
-			interactionComponents = c(interactionComponents, listInteractionComponents(biopax,id=p)$id)
+			interactionComponents = c(interactionComponents, listInteractionComponents(biopax,id=p, returnIDonly=T))
 		}
+		interactionComponents = interactionComponents[!is.na(interactionComponents) & !is.null(interactionComponents) & nchar(interactionComponents) > 0 ]
 		if(is.null(interactionComponents)) return(NULL)
+		if(returnIDonly) return(interactionComponents)
 		return(listInstances(biopax, id=interactionComponents))
 	} else {
 		return(NULL)
@@ -483,50 +500,53 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 	if(tolower(property) == "name") {
 		#names = unfactorize(selectInstances(biopax, id=id, property=))
 		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
-		names = biopax$df[biopax$df$id==id,]
+		names = unfactorize(biopax$df[biopax$df$id==id,])
 		if(dim(names)[1] == 0) return(NULL)
 		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
 		if(dim(names)[1] == 0) return(NULL)
-		if(any(grepl("displayName", names$property))) return(as.character(names[names$property == "displayName", "property_value"]))
-		if(any(grepl("standardName", names$property))) return(as.character(names[names$property == "standardName", "property_value"]))
-		if(any(grepl("name", names$property, ignore.case=T))) return(as.character(names[tolower(names$property) == "name", "property_value"]))
+		if(any(grepl("displayName", names$property))) return(names[names$property == "displayName", "property_value"])
+		if(any(grepl("standardName", names$property))) return(names[names$property == "standardName", "property_value"])
+		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
 		return(NULL)
 	}
 	
-	if( biopax$biopaxlevel == 2 ) {
-		#get class of the instance
-		class = getInstanceClass(biopax,id)
-		#get the properties this instance has
-		classproperties = getClassProperties(class)
-		#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
-		property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
-		
-		#value
-		if(length(property_type)>0) {
-			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
-				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
-			} else {
-				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
-			}
-		} else {
-			return(NULL)
-		}
-	}
+	data = unfactorize(selectInstances(biopax, id=id))
+	data = data[tolower(data$property) %in% tolower(property),]
 	
-	if( biopax$biopaxlevel == 3 ) {
-		data = selectInstances(biopax, id=id, property=property)
+#	if( biopax$biopaxlevel == 2 ) {
+#		#get class of the instance
+#		class = getInstanceClass(biopax,id)
+#		#get the properties this instance has
+#		classproperties = getClassProperties(class)
+#		#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
+#		property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
+#		
+#		#value
+#		if(length(property_type)>0) {
+#			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
+#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
+#			} else {
+#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
+#			}
+#		} else {
+#			return(NULL)
+#		}
+#	}
+#	
+#	if( biopax$biopaxlevel == 3 ) {
+#		data = selectInstances(biopax, id=id, property=property)
 		
 		#value
 		if(dim(data)[1]>0) {
 			if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
-				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
+				return(data[,"property_value"])
 			} else {
-				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
+				return(data[,"property_attr_value"])
 			}
 		} else {
 			return(NULL)
 		}
-	}	
+#	}	
 	
 }
 
@@ -594,7 +614,7 @@ getNeighborhood <- function(biopax, id, depth=1, onlyInPathways=c()) {
 #' # split up the complex and get annotations for all the molecules involved
 #' getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalEntityParticipants=TRUE) {
-	if(is.null(id) | is.na(id)) return(NULL)
+	if(length(id)==0) return(NULL)
 	id = c(striphash(id))
 	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
 	annotations = matrix(nrow=0, ncol=6)
@@ -602,16 +622,21 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	
 	for(i in 1:length(id)) {
 		instanceclass = getInstanceClass(biopax, id[i])
+		if(is.na(instanceclass) | is.null(instanceclass)) next;
 		# if its a complex AND we're supposed to split it:
 		if(tolower(instanceclass) == "complex" & splitComplexes) {
-			referenced = selectInstances(biopax, id=getReferencedIDs(biopax, id[i], recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY","component")))
-			sel = tolower(referenced$class) %in% tolower(c("dna","rna","protein","smallMolecule"))
+			#split complex
+			ref = getReferencedIDs(biopax, id[i], recursive=TRUE, onlyFollowProperties=c("COMPONENTS","PHYSICAL-ENTITY","component"))
+			if(is.null(ref)) next;
+			referenced = selectInstances(biopax, id=ref)
+			sel = tolower(referenced$class) %in% c("dna","rna","protein","smallmolecule")
 			referenced = as.character(unique(referenced[sel & !(referenced$id %in% id),"id"]))
+			if(is.null(referenced)) next;
 			annotations = rbind(annotations, getXrefAnnotations(biopax,referenced, splitComplexes=FALSE, followPhysicalEntityParticipants=FALSE))
 		} else if(instanceclass == "physicalEntityParticipant" & followPhysicalEntityParticipants) {
 			# if its a physicalEntityParticipant
 			peID = internal_resolvePhysicalEntityParticipant(biopax, id[i])
-			if(!(peID %in% id)) {
+			if(!(peID %in% id) & !is.null(peID) & length(peID)>0) {
 				annotations = rbind(annotations, getXrefAnnotations(biopax, peID, splitComplexes=splitComplexes, followPhysicalEntityParticipants=TRUE))
 			}
 		} else {
@@ -619,13 +644,18 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			name = getInstanceProperty(biopax, id[i], property="NAME")[1]
 			xrefs = getInstanceProperty(biopax, id[i], property="XREF")
 			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
-			if(tolower(instanceclass) %in% tolower(c("Dna","DnaRegion","Rna","RnaRegion","Protein","SmallMolecule"))) {
-				referencedEntityReferences = selectInstances(biopax, id=getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference")))
-				for(rerIds in referencedEntityReferences) {
-					xrefs = cbind(xrefs, getInstanceProperty(biopax, rerIds, property="XREF"))
+			if(tolower(instanceclass) %in% c("dna","dnaregion","rna","rnaregion","protein","smallmolecule")) {
+				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference"))
+				if(!is.null(sel)) {
+					referencedEntityReferences = selectInstances(biopax, id=sel)
+					for(rerIds in referencedEntityReferences) {
+						xrefs = cbind(xrefs, getInstanceProperty(biopax, rerIds, property="XREF"))
+					}
 				}
-			} 
+			}
+			
 			for(xref in xrefs) {
+				if(is.null(xref)) next;
 				annotations = rbind(annotations, c(instanceclass, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
 								paste(getInstanceProperty(biopax, xref, property="DB"),	":",
 										getInstanceProperty(biopax, xref, property="ID"), sep="")

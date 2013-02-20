@@ -2,12 +2,16 @@
 \alias{listComplexComponents}
 \title{This function lists all components of a given complex.}
 \usage{
-  listComplexComponents(biopax, id)
+  listComplexComponents(biopax, id, returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
   \item{id}{string. A complex ID}
+
+  \item{returnIDonly}{logical. If TRUE only IDs of the
+  components are returned. This saves tiem for looking up
+  names for every single ID.}
 }
 \value{
   data.frame

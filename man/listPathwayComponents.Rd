@@ -3,7 +3,7 @@
 \title{This function lists all pathway components of a given pathway.}
 \usage{
   listPathwayComponents(biopax, id,
-    includeSubPathways = TRUE)
+    includeSubPathways = TRUE, returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -12,6 +12,10 @@
 
   \item{includeSubPathways}{logical. If TRUE the returned
   list will include subpathways and pathwaysteps as well.}
+
+  \item{returnIDonly}{logical. If TRUE only IDs of the
+  components are returned. This saves tiem for looking up
+  names for every single ID.}
 }
 \value{
   data.frame

@@ -3,7 +3,8 @@
 \title{Lists all instances that conform to the selection criteria.}
 \usage{
   listInstances(biopax, id = NULL, class = NULL,
-    name = NULL, includeSubClasses = FALSE)
+    name = NULL, includeSubClasses = FALSE,
+    returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -17,6 +18,10 @@
   \item{includeSubClasses}{logical. If includeSubClasses is
   set to TRUE the class criteria is broadened to include
   all classes that inherit from the given class}
+
+  \item{returnIDonly}{logical. If TRUE only IDs of the
+  components are returned. This saves tiem for looking up
+  names for every single ID.}
 }
 \value{
   Returns a data.frame containing all instances conforming

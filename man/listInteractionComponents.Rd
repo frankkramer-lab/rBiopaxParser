@@ -3,7 +3,7 @@
 \title{This function lists all components of a given interaction.}
 \usage{
   listInteractionComponents(biopax, id,
-    splitComplexes = TRUE)
+    splitComplexes = TRUE, returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -13,6 +13,10 @@
   \item{splitComplexes}{logical. If TRUE complexes are
   split up into their components and the added to the
   listing.}
+
+  \item{returnIDonly}{logical. If TRUE only IDs of the
+  components are returned. This saves tiem for looking up
+  names for every single ID.}
 }
 \value{
   data.frame

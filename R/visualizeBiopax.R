@@ -87,7 +87,9 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	graph::edgemode(mygraph) = "directed"
 	
 	#get pathway component list
-	pw_component_list = unfactorize(selectInstances(biopax,id=listPathwayComponents(biopax,pwid)$id, includeReferencedInstances=TRUE))
+	pw_component_list = listPathwayComponents(biopax,pwid, returnIDonly=T)
+	if(length(pw_component_list)==0) return(NULL)  
+	pw_component_list = unfactorize(selectInstances(biopax,id=pw_component_list, includeReferencedInstances=TRUE))
 	pw_component_list$property = tolower(pw_component_list$property)
 	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation"),]
 	#verbose

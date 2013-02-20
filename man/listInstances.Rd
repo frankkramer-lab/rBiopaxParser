@@ -2,15 +2,15 @@
 \alias{listInstances}
 \title{Lists all instances that conform to the selection criteria.}
 \usage{
-  listInstances(biopax, class = NULL, id = NULL,
+  listInstances(biopax, id = NULL, class = NULL,
     name = NULL, includeSubClasses = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{class}{string. Class of the instances to select}
-
   \item{id}{string. ID of the instances to select}
+
+  \item{class}{string. Class of the instances to select}
 
   \item{name}{string. Name of the instances to select}
 

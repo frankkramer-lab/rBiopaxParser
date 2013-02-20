@@ -358,15 +358,15 @@ CLASS_INHERITANCE_BP3 = data.frame(
 #' @export
 CLASS_PROPERTIES_BP3 = data.frame(
 		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
-						"entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"entity",								"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"entity",								"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"entity",								"SYNONYMS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"entity",								"COMMENT",					"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"entity",								"AVAILABILITY",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"entity",								"DATA-SOURCE",				"dataSource",									"*",
 						"entity",								"XREF",						"xref",											"*",
 						
-						"pathway",								"ORGANISM",					"bioSource",										"1",
+						"pathway",								"ORGANISM",					"bioSource",										"*",
 						"pathway",								"EVIDENCE",					"evidence",										"*",
 						"pathway",								"PATHWAY-COMPONENTS",		"interaction",									"*",
 						"pathway",								"PATHWAY-COMPONENTS",		"pathway",										"*",
@@ -378,7 +378,7 @@ CLASS_PROPERTIES_BP3 = data.frame(
 						
 						"physicalInteraction",					"INTERACTION-TYPE",			"openControlledVocabulary",						"*",
 						
-						"control",								"CONTROL-TYPE",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"control",								"CONTROL-TYPE",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"control",								"CONTROLLER",				"entity",										"*",
 						"control",								"CONTROLLER",				"physicalEntityParticipant",						"*",
 						"control",								"CONTROLLED",				"entity",										"*",
@@ -386,11 +386,11 @@ CLASS_PROPERTIES_BP3 = data.frame(
 						"control",								"CONTROLLED",				"pathway",										"*",
 						"control",								"CONTROLLED",				"interaction",									"*",
 						
-						"catalysis",							"DIRECTION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"catalysis",							"DIRECTION",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"catalysis",							"COFACTOR",					"entity",										"*",
 						"catalysis",							"COFACTOR",					"physicalEntityParticipant",						"*",
 						
-						"conversion",							"SPONTANEUS",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"conversion",							"SPONTANEUS",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"conversion",							"LEFT",						"entity",										"*",
 						"conversion",							"LEFT",						"physicalEntityParticipant",						"*",
 						"conversion",							"RIGHT",					"entity",										"*",
@@ -402,38 +402,38 @@ CLASS_PROPERTIES_BP3 = data.frame(
 						"biochemicalReaction",					"DELTA-G",					"deltaGprimeO",									"*",
 						"biochemicalReaction",					"KEQ",						"kPrime",										"*",
 						
-						"dna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"dna",									"ORGANISM",					"bioSource",										"1",
-						"rna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"rna",									"ORGANISM",					"bioSource",										"1",
-						"protein",								"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"protein",								"ORGANISM",					"bioSource",										"1",
+						"dna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"dna",									"ORGANISM",					"bioSource",										"*",
+						"rna",									"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"rna",									"ORGANISM",					"bioSource",										"*",
+						"protein",								"SEQUENCE",					"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"protein",								"ORGANISM",					"bioSource",										"*",
 						
 						"complex",								"COMPONENTS",				"physicalEntityParticipant",						"*",
-						"complex",								"ORGANISM",					"bioSource",										"1",
+						"complex",								"ORGANISM",					"bioSource",										"*",
 						
-						"smallMolecule",						"MOLECULAR-WEIGHT",			"http://www.w3.org/2001/XMLSchema#double",			"1",
-						"smallMolecule",						"CHEMICAL-FORMULA",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"smallMolecule",						"MOLECULAR-WEIGHT",			"http://www.w3.org/2001/XMLSchema#double",			"*",
+						"smallMolecule",						"CHEMICAL-FORMULA",			"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"smallMolecule",						"STRUCTURE",				"chemicalStructure",								"*",
 						
 						"utilityClass",							"COMMENT",					"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
-						"chemicalStructure",					"STRUCTURE-DATA",			"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"chemicalStructure",					"STRUCTURE-FORMAT",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"chemicalStructure",					"STRUCTURE-DATA",			"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"chemicalStructure",					"STRUCTURE-FORMAT",			"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
 						"confidence",							"XREF",						"publicationXref",								"*",
-						"confidence",							"CONFIDENCE-VALUE",			"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"confidence",							"CONFIDENCE-VALUE",			"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
-						"deltaGprimeO",							"DELTA-G-PRIME-O",			"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"deltaGprimeO",							"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"deltaGprimeO",							"PH",						"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"deltaGprimeO",							"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"deltaGprimeO",							"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"deltaGprimeO",							"DELTA-G-PRIME-O",			"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"deltaGprimeO",							"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"deltaGprimeO",							"PH",						"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"deltaGprimeO",							"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"deltaGprimeO",							"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"*",
 						
-						"kPrime",								"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"kPrime",								"PH",						"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"kPrime",								"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"1",
-						"kPrime",								"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"1",
+						"kPrime",								"IONIC-STRENGTH",			"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"kPrime",								"PH",						"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"kPrime",								"PMG",						"http://www.w3.org/2001/XMLSchema#float",			"*",
+						"kPrime",								"TEMPERATURE",				"http://www.w3.org/2001/XMLSchema#float",			"*",
 						
 						"evidence",								"XREF",						"xref",											"*",
 						"evidence",								"CONFIDENCE",				"confidence",									"*",
@@ -450,43 +450,43 @@ CLASS_PROPERTIES_BP3 = data.frame(
 						"pathwayStep",							"STEP-INTERACTIONS",		"interaction",									"*",
 						"pathwayStep",							"STEP-INTERACTIONS",		"pathway",										"*",
 						
-						"sequenceFeature",						"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"sequenceFeature",						"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"sequenceFeature",						"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"sequenceFeature",						"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"sequenceFeature",						"SYNONYMS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"sequenceFeature",						"XREF",						"xref",											"*",
-						"sequenceFeature",						"FEATURE-TYPE",				"openControlledVocabulary",						"1",
+						"sequenceFeature",						"FEATURE-TYPE",				"openControlledVocabulary",						"*",
 						"sequenceFeature",						"FEATURE-LOCATION",			"sequenceLocation",								"*",
 						"sequenceFeature",						"SEQUENCE-FEATURE-LIST",	"sequenceFeature",								"*",
 						
-						"sequenceInterval",						"SEQUENCE-INTERVAL-BEGIN",	"sequenceSite",									"1",
-						"sequenceInterval",						"SEQUENCE-INTERVAL-END",	"sequenceSite",									"1",
+						"sequenceInterval",						"SEQUENCE-INTERVAL-BEGIN",	"sequenceSite",									"*",
+						"sequenceInterval",						"SEQUENCE-INTERVAL-END",	"sequenceSite",									"*",
 						
-						"sequenceSite",							"POSITION-STATUS",			"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"sequenceSite",							"SEQUENCE-POSITION",		"http://www.w3.org/2001/XMLSchema#integer",			"1",
+						"sequenceSite",							"POSITION-STATUS",			"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"sequenceSite",							"SEQUENCE-POSITION",		"http://www.w3.org/2001/XMLSchema#integer",			"*",
 						
-						"physicalEntityParticipant",			"STOICHIOMETRIC-COEFFICIENT","http://www.w3.org/2001/XMLSchema#double",			"1",
-						"physicalEntityParticipant",			"CELLULAR-LOCATION",		"openControlledVocabulary",						"1",
-						"physicalEntityParticipant",			"PHYSICAL-ENTITY",			"physicalEntity",								"1",
+						"physicalEntityParticipant",			"STOICHIOMETRIC-COEFFICIENT","http://www.w3.org/2001/XMLSchema#double",			"*",
+						"physicalEntityParticipant",			"CELLULAR-LOCATION",		"openControlledVocabulary",						"*",
+						"physicalEntityParticipant",			"PHYSICAL-ENTITY",			"physicalEntity",								"*",
 						
 						"sequenceParticipant",					"SEQUENCE-FEATURE-LIST",	"sequenceFeature",								"*",
 						
-						"bioSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"bioSource",							"CELLTYPE",					"openControlledVocabulary",						"1",
-						"bioSource",							"TISSUE",					"openControlledVocabulary",						"1",
-						"bioSource",							"TAXON-XREF",				"unificationXref",								"1",
+						"bioSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"bioSource",							"CELLTYPE",					"openControlledVocabulary",						"*",
+						"bioSource",							"TISSUE",					"openControlledVocabulary",						"*",
+						"bioSource",							"TAXON-XREF",				"unificationXref",								"*",
 						
-						"dataSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"dataSource",							"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"dataSource",							"XREF",						"xref",											"*",
 						
 						"openControlledVocabulary",				"XREF",						"unificationXref",											"*",
 						"openControlledVocabulary",				"TERM",						"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
-						"xref",									"DB",						"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"xref",									"DB-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"xref",									"ID",						"http://www.w3.org/2001/XMLSchema#string",			"1",
-						"xref",									"ID-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"xref",									"DB",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"xref",									"DB-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"xref",									"ID",						"http://www.w3.org/2001/XMLSchema#string",			"*",
+						"xref",									"ID-VERSION",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
-						"relationshipXref",						"RELATIONSHIP-TYPE",		"http://www.w3.org/2001/XMLSchema#string",			"1",
+						"relationshipXref",						"RELATIONSHIP-TYPE",		"http://www.w3.org/2001/XMLSchema#string",			"*",
 						
 						"publicationXref",						"AUTHORS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"publicationXref",						"TITLE",					"http://www.w3.org/2001/XMLSchema#string",			"*",

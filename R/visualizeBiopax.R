@@ -87,129 +87,135 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	graph::edgemode(mygraph) = "directed"
 	
 	#get pathway component list
-	pw_component_list = selectInstances(biopax,id=listPathwayComponents(biopax,pwid)$id)
+	pw_component_list = unfactorize(selectInstances(biopax,id=listPathwayComponents(biopax,pwid)$id, includeReferencedInstances=TRUE))
+	pw_component_list$property = tolower(pw_component_list$property)
+	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation"),]
+	#verbose
+	if(verbose) {
+		message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
+	}
 	#consider only controls //TODO: Consider subpathways!
-	for(i in unique(pw_component_list$id)) {
-		instance = pw_component_list[pw_component_list$id==i,]
-		if(any(isOfClass(instance,"control", considerInheritance = TRUE))) {
-			#if type neither inhibition nor activation i dont know what to do anyways. 
-			#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2standards. quick fix here:
-			if(biopax$biopaxlevel == 2) {
-				type = as.character(instance[tolower(instance$property)==tolower("CONTROL-TYPE"),"property_value"])
-			}
-			if(biopax$biopaxlevel == 3) {
-				type = as.character(instance[tolower(instance$property)==tolower("controlType"),"property_value"])
-			}
-			if(length(type)==0) {
-				if(any(isOfClass(instance,"catalysis"))) {
-					type="ACTIVATION"
-				} else {
-					next
-				}
-			}
-			if ( !grepl("activation",type,ignore.case=TRUE) & !grepl("inhibition",type,ignore.case=TRUE)) {
-				next
-			}
-			
-			#controllers are physicalentityparticipants, get those
-			controller_ids = as.character(unique(instance[tolower(instance$property)==tolower("CONTROLLER"),"property_attr_value"]))
-			controllers = NA
-			for(i2 in controller_ids) {
-				c_instance = selectInstances(biopax, id=i2)
-				#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
-				if(biopax$biopaxlevel == 2) {
-					c_instance = selectInstances(biopax, id=c_instance[tolower(c_instance$property)==tolower("PHYSICAL-ENTITY"),"property_attr_value"])
-				}
-				if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
-					if(useIDasNodenames) {
-						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$id )))
-					} else {
-						controllers = unique(c(controllers,  as.character( splitComplex(biopax,i2)$name )))						
-					}
-				} else {
-					if(useIDasNodenames) {
-						controllers = unique(c(controllers, as.character(c_instance$id[1])))
-					} else {
-						controllers = unique(c(controllers, getInstanceProperty(biopax,c_instance$id[1])))						
-					}
-				}	
-			}
-			
-			#controlleds are interactions or pathways. ignoring pathways for now
-			controlled_ids = as.character(unique(instance[tolower(instance$property)==tolower("CONTROLLED"),"property_attr_value"]))
-			controlleds = NA
-			for(i2 in controlled_ids) {
-				c_instance = selectInstances(biopax, id=i2)
-				#depending on type of c_instance we must differentiate here. 
-				#pathway=ignore,interaction=ignore(this is only a nice field with a name in PID anyways),
-				#complexAssembly=we deal with a complex. split up or dont and return names
-				#biochemicalReaction=...
-				#any conversion: add up left & rights and get the names
-				if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE))) {
-					leftrights = as.character(c_instance[tolower(c_instance$property)==tolower("LEFT") | tolower(c_instance$property)==tolower("RIGHT") ,"property_attr_value"])
-					for(i3 in leftrights) {
-						#every left/right is an physicalentityparticipants, get that as above
-						leftrights_instance = selectInstances(biopax, id=i3)
-						if(biopax$biopaxlevel == 2) {
-							leftrights_instance = selectInstances(biopax, id=leftrights_instance[tolower(leftrights_instance$property)==tolower("PHYSICAL-ENTITY"),"property_attr_value"])
-						}
-						#split complexes?
-						if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
-							if(useIDasNodenames) {
-								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$id )))
-							} else {
-								controlleds = unique(c(controlleds,  as.character( splitComplex(biopax,i3)$name )))						
-							}
-						} else {
-							if(useIDasNodenames) {
-								controlleds = unique(c(controlleds, as.character(leftrights_instance$id[1])))
-							} else {
-								controlleds = unique(c(controlleds, getInstanceProperty(biopax,leftrights_instance$id[1])))						
-							}
-						}
-					}
-				}
-			}
-			
-			controllers = controllers[!is.na(controllers) & !is.null(controllers) & nchar(controllers) > 0 ]
-			controlleds = controlleds[!is.na(controlleds) & !is.null(controlleds) & nchar(controlleds) > 0 ]
-			#only add viable directed edges:
-			if(length(controllers)==0 | length(controlleds)==0) {
-				next
-			}
-			
-			#verbose
-			if(verbose) {
-				message(paste("Adding to graph: ",unique(as.character(instance[,"class"])), "-", type,
-								"Controllers: ", paste(controllers, collapse=" "), "Controlleds: ", paste(controlleds, collapse=" ")))
-			}
-			#now we have the controllers and controlleds lists, add edge
-			# leave out duplicates
-			newnodes = unique(c(controllers,controlleds))
-			# only add new nodes that are not null, na or empty strings
-			newnodes = newnodes[!(newnodes %in% graph::nodes(mygraph))]
-			if(length(newnodes)>0) mygraph = graph::addNode(newnodes,mygraph)
-			#set weight: activation 1, inhibition = -1
-			if ( tolower(type)=="activation" ) {
-				weights = 1
+	for(i in unique(pw_controls$id)) {
+		instance = pw_controls[pw_controls$id==i,]
+		
+		#if type neither inhibition nor activation i dont know what to do anyways. 
+		#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2standards. quick fix here:
+		if(biopax$biopaxlevel == 2) {
+			type = as.character(instance[instance$property=="control-type","property_value"])
+		}
+		if(biopax$biopaxlevel == 3) {
+			type = as.character(instance[instance$property=="controltype","property_value"])
+		}
+		if(length(type)==0) {
+			if(tolower(instance[1,"class"]) == "catalysis") {
+				type="ACTIVATION"
 			} else {
-				weights = -1
+				next
 			}
-			# add all edges from controllers to controlleds.
-			for(i_controllers in controllers) {
-				for(i_controlleds in controlleds) {
-					#skip edges to self
-					if(i_controllers != i_controlleds) {
-						#if edge already exists throw a warning and skip
-						if(!(i_controlleds %in% unlist(graph::edges(mygraph, which=i_controllers)))) {
-							mygraph = graph::addEdge(i_controllers, i_controlleds,mygraph,weights=weights)							
+		}
+		if ( !grepl("activation",type,ignore.case=TRUE) & !grepl("inhibition",type,ignore.case=TRUE)) {
+			next
+		}
+		
+		#controllers are physicalentityparticipants, get those
+		controller_ids = striphash(unique(instance[instance$property=="controller","property_attr_value"]))
+		controllers = NA
+		for(i2 in controller_ids) {
+			c_instance = pw_component_list[pw_component_list$id==i2,]
+			#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
+			if(biopax$biopaxlevel == 2) {
+				c_instance = pw_component_list[pw_component_list$id==striphash(c_instance[c_instance$property=="physical-entity","property_attr_value"]),]
+			}
+			if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
+				if(useIDasNodenames) {
+					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$id ))
+				} else {
+					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$name ))						
+				}
+			} else {
+				if(useIDasNodenames) {
+					controllers = c(controllers, c_instance$id[1])
+				} else {
+					controllers = c(controllers, getInstanceProperty(biopax,c_instance$id[1]))					
+				}
+			}	
+		}
+		
+		#controlleds are interactions or pathways. ignoring pathways for now
+		controlled_ids = striphash(unique(instance[instance$property=="controlled","property_attr_value"]))
+		controlleds = NA
+		for(i2 in controlled_ids) {
+			c_instance = pw_component_list[pw_component_list$id==i2,]
+			#depending on type of c_instance we must differentiate here. 
+			#pathway=ignore,interaction=ignore(this is only a nice field with a name in PID anyways),
+			#complexAssembly=we deal with a complex. split up or dont and return names
+			#biochemicalReaction=...
+			#any conversion: add up left & rights and get the names
+			if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE))) {
+				leftrights = striphash(c_instance[c_instance$property=="left" | c_instance$property=="right" ,"property_attr_value"])
+				for(i3 in leftrights) {
+					#every left/right is an physicalentityparticipants, get that as above
+					leftrights_instance = pw_component_list[pw_component_list$id==i3,]
+					if(biopax$biopaxlevel == 2) {
+						leftrights_instance = pw_component_list[pw_component_list$id==striphash(leftrights_instance[leftrights_instance$property=="physical-entity","property_attr_value"]),]
+					}
+					#split complexes?
+					if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
+						if(useIDasNodenames) {
+							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$id ))
 						} else {
-							warning( paste("Problem while adding edge (weight=",weights,") to graph: Edge already exists between ",i_controllers," and ",i_controlleds," (weight=",unlist(graph::edgeWeights(mygraph))[paste(i_controllers,i_controlleds,sep=".")],"). Skipping this edge.",sep="" )  )
+							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$name ))					
+						}
+					} else {
+						if(useIDasNodenames) {
+							controlleds = c(controlleds, leftrights_instance$id[1])
+						} else {
+							controlleds = c(controlleds, getInstanceProperty(biopax,leftrights_instance$id[1]))					
 						}
 					}
 				}
-			}			
-			
+			}
+		}
+		
+		controllers = striphash(unique(controllers))
+		controlleds = striphash(unique(controlleds))
+		controllers = controllers[!is.na(controllers) & !is.null(controllers) & nchar(controllers) > 0 ]
+		controlleds = controlleds[!is.na(controlleds) & !is.null(controlleds) & nchar(controlleds) > 0 ]
+		#only add viable directed edges:
+		if(length(controllers)==0 | length(controlleds)==0) {
+			next
+		}
+		
+		#verbose
+		if(verbose) {
+			message(paste("Adding to graph: ",unique(as.character(instance[,"class"])), "-", type,
+							"Controllers: ", paste(controllers, collapse=" "), "Controlleds: ", paste(controlleds, collapse=" ")))
+		}
+		#now we have the controllers and controlleds lists, add edge
+		# leave out duplicates
+		newnodes = unique(c(controllers,controlleds))
+		# only add new nodes that are not null, na or empty strings
+		newnodes = newnodes[!(newnodes %in% graph::nodes(mygraph))]
+		if(length(newnodes)>0) mygraph = graph::addNode(newnodes,mygraph)
+		#set weight: activation 1, inhibition = -1
+		if ( tolower(type)=="activation" ) {
+			weights = 1
+		} else {
+			weights = -1
+		}
+		# add all edges from controllers to controlleds.
+		for(i_controllers in controllers) {
+			for(i_controlleds in controlleds) {
+				#skip edges to self
+				if(i_controllers != i_controlleds) {
+					#if edge already exists throw a warning and skip
+					if(!(i_controlleds %in% unlist(graph::edges(mygraph, which=i_controllers)))) {
+						mygraph = graph::addEdge(i_controllers, i_controlleds,mygraph,weights=weights)							
+					} else {
+						warning( paste("Problem while adding edge (weight=",weights,") to graph: Edge already exists between ",i_controllers," and ",i_controlleds," (weight=",unlist(graph::edgeWeights(mygraph))[paste(i_controllers,i_controlleds,sep=".")],"). Skipping this edge.",sep="" )  )
+					}
+				}
+			}
 		}
 	}
 	mygraph

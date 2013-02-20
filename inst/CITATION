@@ -7,7 +7,7 @@ citEntry(
    journal = "Bioinformatics",
    volume = 29,
    issue = 4,
-   pages = 520-522,
+   pages = "520-522",
    year = 2013,
    textVersion = "Kramer F, Bayerlova M, Klemm F, Bleckmann A, Beissbarth T (2013). rBiopaxParser - an R package to parse, modify and visualize BioPAX data. Bioinformatics 2013, 29(4), 520-522."
 )

@@ -1,3 +1,12 @@
+rBiopaxParser 0.99.8
+===========
+
+* Speed up of many function which were beautifully programmed but became increasingly slow when using the whole Reactome database.
+
+* Fixed a nasty bug where a complex without any pyhsical entities could cause many functions to fail badly.
+
+* Fixed CITATION file. 
+
 rBiopaxParser 0.99.7
 ===========
 

@@ -19,8 +19,8 @@
 #' If includeReferencedInstances is set to TRUE all instances that are being referenced by the selected instances are being selected too. The parameter works recursively, this means for example that a selected pathway and all it's interactions, complexes, molecules and annotations are returned if this parameter is set to true. This parameter is especially helpful if you want to migrate or merge knowledge from different data bases.
 #' 
 #' @param biopax A biopax model
-#' @param class string. Class of the instances to select
 #' @param id string. ID of the instances to select
+#' @param class string. Class of the instances to select
 #' @param property string. Return only this property of the instances
 #' @param name string. Name of the instances to select
 #' @param returnValues logical. If returnValues is set to FALSE only the selector (a logical vector with length of the internal data.frame) is returned, otherwise the selected data is returned
@@ -40,7 +40,7 @@
 #'  selectInstances(biopax, class="interaction", includeSubClasses=TRUE)
 #'  # select the subset of the internal data.frame that belongs to class "pathway" AND is a "NAME" property
 #'  selectInstances(biopax, class="pathway", property="NAME")
-selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NULL, returnValues=TRUE, includeSubClasses=FALSE, includeReferencedInstances=FALSE) {
+selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NULL, returnValues=TRUE, includeSubClasses=FALSE, includeReferencedInstances=FALSE) {
 	sel = rep.int(TRUE,dim(biopax$df)[1])
 	
 	if(!is.null(id)) {
@@ -90,8 +90,8 @@ selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NU
 #' If includeSubClasses is set to TRUE the class criteria is broadened to include all classes that inherit from the given class, e.g. if class="control" and includeSubClasses=TRUE the function will select catalyses and modulations too, since they are a subclass of class control. 
 #' 
 #' @param biopax A biopax model
-#' @param class string. Class of the instances to select
 #' @param id string. ID of the instances to select
+#' @param class string. Class of the instances to select
 #' @param name string. Name of the instances to select
 #' @param includeSubClasses logical. If includeSubClasses is set to TRUE the class criteria is broadened to include all classes that inherit from the given class
 #' @return Returns a data.frame containing all instances conforming to the given selection criteria if returnValues=TRUE, only the selector for the internal data.frame otherwise.
@@ -106,7 +106,7 @@ selectInstances <- function (biopax, class=NULL, id=NULL, property=NULL, name=NU
 #'  listInstances(biopax, class="pathway")
 #'  # list all interaction including all subclasses of interactions
 #'  listInstances(biopax, class="interaction", includeSubClasses=TRUE)
-listInstances <- function (biopax, class=NULL, id=NULL, name=NULL, includeSubClasses=FALSE) {
+listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubClasses=FALSE) {
 	sel = rep.int(TRUE,dim(biopax$df)[1])
 
 	if(!is.null(id)) {
@@ -122,24 +122,34 @@ listInstances <- function (biopax, class=NULL, id=NULL, name=NULL, includeSubCla
 	}
 	
 	if(!is.null(name)) {
-		ids = as.character(biopax$df[tolower(biopax$df$property)=="name" & biopax$df$property_value %in% name,]$id)
+		ids = as.character(biopax$df[tolower(biopax$df$property) %in% c("name","displayname","standardname") & biopax$df$property_value %in% name,]$id)
 		ids = unique(ids)
 		sel = sel & (biopax$df$id %in% ids)
 	}
 	
-	ret = unfactorize(unique(biopax$df[sel,c("class","id")]))
+	######speed up name retrieval
+	bpsel = unfactorize(biopax$df[sel,c("class","id","property","property_value")])
+	ret = unique(bpsel[,c("class","id")])
 	if(dim(ret)[1]==0) return(NULL)
-	ret$name = vector(mode="character", length=length(ret$id))
-	colnames(ret) = c("class","id","name")
-	#get name property for these instances. this slows things down but names seem so important ;-)
-	subbiopax = biopax
-	subbiopax$df = biopax$df[sel,]
-	for(i in 1:length(ret$id)) {
-		n = getInstanceProperty(subbiopax, ret$id[i])
-		if(!is.null(n) && !length(n)==0) ret$name[i] = n
-	}	
 	
+	bpsel$property = tolower(bpsel$property)
+	bpsel = rbind(bpsel[bpsel$property=="displayname",],bpsel[bpsel$property=="standardname",],bpsel[bpsel$property=="name",])
+	bpsel = bpsel[!duplicated(bpsel$id),c("id","property_value")]
+	colnames(bpsel) = c("id","name")
+	ret = merge(ret, bpsel, by="id", all.x=T, all.y=F, sort=F)
+	ret =  unfactorize(unique(ret))
+	ret = ret[,c("class","id","name")]
 	ret
+	
+	
+#	#get name property for these instances. this slows things down but names seem so important ;-)
+#	subbiopax = biopax
+#	subbiopax$df = biopax$df[sel,]
+#	for(i in 1:length(ret$id)) {
+#		n = getInstanceProperty(subbiopax, ret$id[i])
+#		if(!is.null(n) && !length(n)==0) ret$name[i] = n
+#	}	
+	
 }
 
 
@@ -192,6 +202,7 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE) {
 	} else {
 		pwcomp_list = getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(pwcompname))
 	}
+	if(is.null(pwcomp_list)) return(NULL)
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(pwcomp_list)))
 }
@@ -219,6 +230,7 @@ listComplexComponents <- function(biopax, id) {
 	id = unique(striphash(id))
 	#get complex component list
 	complexcomp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=FALSE, onlyFollowProperties=c(compname)))))
+	if(is.null(complexcomp_list)) return(NULL)
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(complexcomp_list)))
 }
@@ -251,6 +263,7 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE) {
 	id = unique(striphash(id))
 	#get complex component list
 	comp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(compname)))))
+	if(is.null(comp_list)) return(NULL)
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(comp_list)))
 }
@@ -277,6 +290,7 @@ pathway2Geneset <- function(biopax, pwid) {
 		for(p in pwComponents) {
 			interactionComponents = c(interactionComponents, listInteractionComponents(biopax,id=p)$id)
 		}
+		if(is.null(interactionComponents)) return(NULL)
 		return(listInstances(biopax, id=interactionComponents))
 	} else {
 		return(NULL)
@@ -311,13 +325,15 @@ splitComplex <- function(biopax, complexid, recursive=TRUE) {
 	}
 	
 	# complexes can contain entries via "bp:COMPONENTS" -> physicalentityparticipant "bp:PHYSICAL-ENTITY" -> physicalentity
-	referenced = selectInstances(biopax, id=getReferencedIDs(biopax, complexid, recursive=recursive, onlyFollowProperties=compname))
+	ref = getReferencedIDs(biopax, complexid, recursive=recursive, onlyFollowProperties=compname)
+	if(is.null(ref)) return(NULL)
+	referenced = selectInstances(biopax, id=ref)
 	
-	sel = tolower(referenced$class) %in% tolower(c("dna","rna","protein","smallMolecule"))
+	sel = tolower(referenced$class) %in% c("dna","rna","protein","smallmolecule")
+	sel = unique(referenced[sel,"id"])
+	if(is.null(sel)) return(NULL)
 	
-	#unique(referenced[tolower(referenced$property)==tolower("NAME") & sel,c("id","property_value")])
-	
-	listInstances(biopax,id=as.character(unique(referenced[sel,"id"])))
+	listInstances(biopax,id=sel)
 }
 
 
@@ -460,6 +476,7 @@ getInstanceClass <- function(biopax, id) {
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="ORGANISM")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")
 getInstanceProperty <- function(biopax, id, property="NAME") {
+	if(is.null(id) | is.na(id)) return(NULL)
 	id = striphash(id)
 	
 	### speed up and quick fix for biopax level 3 naming:
@@ -577,6 +594,7 @@ getNeighborhood <- function(biopax, id, depth=1, onlyInPathways=c()) {
 #' # split up the complex and get annotations for all the molecules involved
 #' getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalEntityParticipants=TRUE) {
+	if(is.null(id) | is.na(id)) return(NULL)
 	id = c(striphash(id))
 	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
 	annotations = matrix(nrow=0, ncol=6)

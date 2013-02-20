@@ -2,7 +2,7 @@
 \alias{selectInstances}
 \title{Returns all instances that conform to the selection criteria.}
 \usage{
-  selectInstances(biopax, class = NULL, id = NULL,
+  selectInstances(biopax, id = NULL, class = NULL,
     property = NULL, name = NULL, returnValues = TRUE,
     includeSubClasses = FALSE,
     includeReferencedInstances = FALSE)
@@ -10,9 +10,9 @@
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{class}{string. Class of the instances to select}
-
   \item{id}{string. ID of the instances to select}
+
+  \item{class}{string. Class of the instances to select}
 
   \item{property}{string. Return only this property of the
   instances}

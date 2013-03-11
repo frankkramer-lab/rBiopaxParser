@@ -1,3 +1,15 @@
+rBiopaxParser 0.99.10
+===========
+
+* Changed function getInstanceProperty, this now returns all names for Biopaxl Level 3 instances: name, displayName and standardName by default. Use parameter to turn this behaivior off.
+* getXrefAnnotations now correctly follows memberEntityReferences and memberPhysicalEntitys to obtain more annotations for physicalEntity instances.
+
+rBiopaxParser 0.99.9
+===========
+
+* Added function removeNodes. This gracefully removes nodes from a regulatory graph: Connecting parents and children by their multiplied edge weights.
+* Added function combineNodes. This gracefully combines nodes from a regulatory graph. This is basically a wrapper for graph::combineNodes(nodes, graph, newName, collapseFunction=max).
+
 rBiopaxParser 0.99.8
 ===========
 

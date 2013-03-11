@@ -130,7 +130,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			}
 			if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 				if(useIDasNodenames) {
-					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$id ))
+					controllers = c(controllers,  as.character( splitComplex(biopax,i2, returnIDonly=T) ))
 				} else {
 					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$name ))						
 				}
@@ -164,7 +164,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 					#split complexes?
 					if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 						if(useIDasNodenames) {
-							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$id ))
+							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3, returnIDonly=T) ))
 						} else {
 							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$name ))					
 						}

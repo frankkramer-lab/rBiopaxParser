@@ -73,6 +73,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 		sel = sel | (biopax$df$id %in% ids)
 	}	
 	
+	### TODO unfactorize or droplevels.. whats faster?
 	if(returnValues) {
 		unfactorize(biopax$df[sel,])
 	} else {
@@ -324,6 +325,7 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE) {
 #' @param biopax A biopax model 
 #' @param complexid string ID of an complex
 #' @param recursive logical
+#' @param returnIDonly logical. If TRUE only IDs of the components are returned. This saves tiem for looking up names for every single ID.
 #' @return Returns a character vector with the names of all subcomponents.
 #' @author Frank Kramer
 #' @export
@@ -334,7 +336,7 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE) {
 #'  listInstances(biopax, id="ex_m_100650")
 #'  listComplexComponents(biopax, id="ex_m_100650")
 #'  splitComplex(biopax, complexid="ex_m_100650")
-splitComplex <- function(biopax, complexid, recursive=TRUE) {
+splitComplex <- function(biopax, complexid, recursive=TRUE, returnIDonly=FALSE) {
 	#support for bp level 3
 	compname = c("COMPONENTS","PHYSICAL-ENTITY")
 	if(biopax$biopaxlevel == 3) {
@@ -349,6 +351,7 @@ splitComplex <- function(biopax, complexid, recursive=TRUE) {
 	sel = tolower(referenced$class) %in% c("dna","rna","protein","smallmolecule")
 	sel = unique(referenced[sel,"id"])
 	if(is.null(sel)) return(NULL)
+	if(returnIDonly) return(striphash(sel))
 	
 	listInstances(biopax,id=sel)
 }
@@ -510,43 +513,62 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 		return(NULL)
 	}
 	
-	data = unfactorize(selectInstances(biopax, id=id))
+	data = selectInstances(biopax, id=id)
 	data = data[tolower(data$property) %in% tolower(property),]
 	
-#	if( biopax$biopaxlevel == 2 ) {
-#		#get class of the instance
-#		class = getInstanceClass(biopax,id)
-#		#get the properties this instance has
-#		classproperties = getClassProperties(class)
-#		#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
-#		property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
-#		
-#		#value
-#		if(length(property_type)>0) {
-#			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
-#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
-#			} else {
-#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
-#			}
-#		} else {
-#			return(NULL)
-#		}
-#	}
-#	
-#	if( biopax$biopaxlevel == 3 ) {
-#		data = selectInstances(biopax, id=id, property=property)
-		
-		#value
-		if(dim(data)[1]>0) {
-			if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
-				return(data[,"property_value"])
-			} else {
-				return(data[,"property_attr_value"])
-			}
+	#value
+	if(dim(data)[1]>0) {
+		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
+			return(data[,"property_value"])
 		} else {
-			return(NULL)
+			return(data[,"property_attr_value"])
 		}
-#	}	
+	} else {
+		return(NULL)
+	}
+	
+}
+
+#' This function returns all properties of the specified type for an instance.
+#' 
+#' This function returns all properties of the specified type for an instance. By default this function returns the NAME property of an instance.
+#' 
+#' @param df data.frame of biopax instances
+#' @param id string
+#' @param property string. Attention: All properties in Biopax Level 2 are all upper case. 
+#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
+#' @author fkramer
+internal_getInstanceProperty_df <- function(df, id, property="NAME") {
+	if(is.null(id) | is.na(id)) return(NULL)
+	id = striphash(id)
+	
+	### speed up and quick fix for biopax level 3 naming:
+	if(tolower(property) == "name") {
+		#names = unfactorize(selectInstances(biopax, id=id, property=))
+		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
+		names = unfactorize(df[df$id==id,])
+		if(dim(names)[1] == 0) return(NULL)
+		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
+		if(dim(names)[1] == 0) return(NULL)
+		if(any(grepl("displayName", names$property))) return(names[names$property == "displayName", "property_value"])
+		if(any(grepl("standardName", names$property))) return(names[names$property == "standardName", "property_value"])
+		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
+		return(NULL)
+	}
+	
+	data = unfactorize(df[df$id==id,])
+	data = data[tolower(data$property) %in% tolower(property),]
+	
+	#value
+	if(dim(data)[1]>0) {
+		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
+			return(data[,"property_value"])
+		} else {
+			return(data[,"property_attr_value"])
+		}
+	} else {
+		return(NULL)
+	}
 	
 }
 
@@ -620,8 +642,11 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	annotations = matrix(nrow=0, ncol=6)
 	colnames(annotations) = c("class", "id","name","annotation_type", "annotation_id", "annotation")
 	
+	###TODO speed up by removing calls to getinstanceclass & getinstanceproperty and use inline data.frame from selectInstance...
+	df = selectInstances(biopax, id, includeReferencedInstances = T)
+	
 	for(i in 1:length(id)) {
-		instanceclass = getInstanceClass(biopax, id[i])
+		instanceclass = df[df$id==id[i],"class"][1]
 		if(is.na(instanceclass) | is.null(instanceclass)) next;
 		# if its a complex AND we're supposed to split it:
 		if(tolower(instanceclass) == "complex" & splitComplexes) {
@@ -641,24 +666,29 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			}
 		} else {
 			# for any other class do this
-			name = getInstanceProperty(biopax, id[i], property="NAME")[1]
-			xrefs = getInstanceProperty(biopax, id[i], property="XREF")
+			#get instance name
+			#name = getInstanceProperty(biopax, id[i], property="NAME")[1]
+			name = internal_getInstanceProperty_df(df, id[i], property="NAME")[1]
+			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
+			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
+			
 			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
 			if(tolower(instanceclass) %in% c("dna","dnaregion","rna","rnaregion","protein","smallmolecule")) {
 				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference"))
 				if(!is.null(sel)) {
-					referencedEntityReferences = selectInstances(biopax, id=sel)
-					for(rerIds in referencedEntityReferences) {
-						xrefs = cbind(xrefs, getInstanceProperty(biopax, rerIds, property="XREF"))
+					for(rerId in sel) {
+						xrefs = cbind(xrefs, internal_getInstanceProperty_df(df, rerId, property="XREF"))
 					}
 				}
 			}
 			
+			xrefs = xrefs[!is.na(xrefs) & !is.null(xrefs) & nchar(xrefs) > 0 ]
+			if(is.null(xrefs) | length(xrefs) == 0) next;
 			for(xref in xrefs) {
-				if(is.null(xref)) next;
-				annotations = rbind(annotations, c(instanceclass, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
-								paste(getInstanceProperty(biopax, xref, property="DB"),	":",
-										getInstanceProperty(biopax, xref, property="ID"), sep="")
+				
+				annotations = rbind(annotations, c(instanceclass, id[i], name, df[df$id==xref,"class"][1], striphash(xref),
+								paste(internal_getInstanceProperty_df(df, xref, property="DB"),	":",
+										internal_getInstanceProperty_df(df, xref, property="ID"), sep="")
 								))
 			}
 		}

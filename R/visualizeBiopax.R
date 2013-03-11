@@ -34,6 +34,9 @@
 
 pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
+	if(!("biopax" %in% class(biopax))) stop("Error: pathway2AdjacancyMatrix: parameter biopax has to be of class biopax.")
+	if(!("character" %in% class(pwid))) stop("Error: pathway2AdjacancyMatrix: parameter pwid has to be of class character.")
+	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
@@ -76,6 +79,9 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #'  plotRegulatoryGraph(mygraph)
 pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
+	if(!("biopax" %in% class(biopax))) stop("Error: pathway2RegulatoryGraph: parameter biopax has to be of class biopax.")
+	if(!("character" %in% class(pwid))) stop("Error: pathway2RegulatoryGraph: parameter pwid has to be of class character.")
+	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
@@ -93,8 +99,13 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	pw_component_list$property = tolower(pw_component_list$property)
 	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation"),]
 	#verbose
-	if(verbose) {
-		message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
+	if(length(pw_controls$id)==0) {
+		warning("warning: pathway2RegulatoryGraph: supplied graph has no regulatory pathway components. Returning NULL.")
+		return(NULL)
+	} else {
+		if(verbose) {
+			message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
+		}
 	}
 	#consider only controls //TODO: Consider subpathways!
 	for(i in unique(pw_controls$id)) {
@@ -320,6 +331,12 @@ transitiveReduction <- function(mygraph) {
 layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
 		subgraphs=list(), subgraphs.colors=c("#B3E2CD","#FDCDAC","#F4CAE4","#E6F5C9","#FFF2AE")) {
 
+	if(is.null(mygraph)) stop("Error: layoutRegulatoryGraph: supplied graph parameter was NULL.")
+	if(!("graphNEL" %in% class(mygraph))) stop("Error: layoutRegulatoryGraph: supplied graph has to be of class graphNEL.")
+	if(length(nodes(mygraph))==0) {
+		warning("warning: layoutRegulatoryGraph: supplied graph has no nodes. No layout was done.")
+		return(mygraph)
+	}
 	
 	if(!require(graph)) {
 		message("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!")
@@ -397,11 +414,20 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 #'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
 #'  plotRegulatoryGraph(mygraph)
 plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
+
+	if(is.null(mygraph)) stop("Error: plotRegulatoryGraph: supplied graph parameter was NULL.")
 	
 	if(!require(Rgraphviz)) {
 		message("This functions needs the Rgraphviz library installed, albeit it cannot be found. Check out the installation instructions!")
 		return(NULL)
 	}
+	
+	if(!("graphNEL" %in% class(mygraph))) stop("Error: plotRegulatoryGraph: supplied graph has to be of class graphNEL.")
+	if(length(nodes(mygraph))==0) {
+		warning("warning: plotRegulatoryGraph: supplied graph has no nodes. No plotting was done.")
+		return(mygraph)
+	}
+	
 	temp = mygraph
 	if(layoutGraph) {
 		temp = layoutRegulatoryGraph(temp, subgraphs=subgraphs)
@@ -675,6 +701,14 @@ colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowre
 		return(NULL)
 	}
 	
+	if(is.null(graph1)) stop("Error: colorGraphNodes: supplied graph parameter was NULL.")
+	if(!("graphNEL" %in% class(graph1))) stop("Error: colorGraphNodes: supplied graph has to be of class graphNEL.")
+	if(length(nodes(graph1))==0) {
+		warning("warning: colorGraphNodes: supplied graph has no nodes. No coloring was done.")
+		return(graph1)
+	}
+	
+	
 	ncol = length(nodes)
 	r=seq(0,1,length=ncol)
 	r2=seq(-1,1,length=ncol)
@@ -695,7 +729,110 @@ colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowre
 	return(graph1)
 }
 	
+#' This function gracefully removes nodes from a regulatory graph.
+#' 
+#' This function gracefully removes nodes from a regulatory graph. If the node to be removed has both parent and child nodes, these are connected directly.
+#' The weight of the new direct edge is the product of multiplying the incomming and outgoing edge weights of the original node. 
+#' 
+#' @param graph graphNEL
+#' @param nodes vector of node names specifiying which nodes to remove.
+#' @return Returns a graph with specified nodes removed.
+#' @author Frank Kramer
+#' @export
+#' @examples
+#'  # load data and retrieve wnt pathway
+#'  data(biopax2example)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph1 = layoutRegulatoryGraph(mygraph1)
+#'  # retrieve all nodes
+#'  nodes = nodes(mygraph1)
+#'  # random expression data for your nodes 
+#'  values = rnorm(length(nodes), mean=6, sd=2)
+#'  # color nodes of the graph
+#'  mygraph1 = colorGraphNodes(mygraph1, nodes, values, colors="greenred") 
+#'  # plot the now colored graph 
+#'  plotRegulatoryGraph(mygraph1, layoutGraph=FALSE)
+removeNodes <- function(graph, nodes) {
 	
+	if(!require(graph)) {
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	if(is.null(graph)) stop("Error: removeNodes: supplied graph parameter was NULL.")
+	if(!("graphNEL" %in% class(graph))) stop("Error: removeNodes: supplied graph has to be of class graphNEL.")
+	if(length(nodes(graph))==0) {
+		warning("warning: removeNodes: supplied graph has no nodes. No removing was done.")
+		return(graph)
+	}
+	
+	
+	
+	for (j in 1:length(nodes))	{
+		##get outgoing edges of nodes
+		outw = edgeWeights(graph,nodes[j])[[1]]
+		oute=names(outw)
+		##get incoming edges
+		inw=c()
+		for(w in nodes(graph))
+		{inw[w] = edgeWeights(graph)[[w]][nodes[j]]}
+		inw=na.omit(inw)
+		ine=names(inw)
+		###create new edges if necessary and delete nodes
+		if(length(inw)==0 | length(outw)==0) {
+			message(paste("Removing node", nodes[j],"which has either no incomming or no outgoing edges."))
+			graph =removeNode(nodes[j],  graph)
+		}
+		else {
+			for(p in ine) {
+				for(ch in oute) {
+					if(is.na(edgeWeights(graph)[[p]][ch])) {
+						message(paste("Adding edge from", p,"to",ch,"with weight",inw[p]*outw[ch]))
+						graph = addEdge(p, ch, graph, as.integer(inw[[p]])*as.integer(outw[[ch]]))
+					}
+				}
+			}
+			message(paste("Removing node", nodes[j],"."))
+			graph = removeNode(nodes[j],  graph)
+		}
+	}
+	
+	return(graph)
+}
+
+#' This function gracefully combines nodes of a regulatory graph.
+#' 
+#' This gracefully combines nodes from a regulatory graph. This is basically a wrapper for graph::combineNodes(nodes, graph, newName, collapseFunction=max).
+#' If there are duplicated edges for the nodes, the maximum edgeweight will be used for the new connection. 
+#' 
+#' @param nodes vector of node names specifiying which nodes to combine.
+#' @param graph graphNEL
+#' @param newName string. Name of the newly created node that will combine the specified nodes.
+#' @return Returns a graph with specified nodes removed.
+#' @author Frank Kramer
+#' @export
+#' @examples
+#'  # load data and retrieve wnt pathway
+#'  data(biopax2example)
+combineNodes <- function(nodes, graph, newName) {
+	
+	if(!require(graph)) {
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	if(is.null(graph)) stop("Error: combineNodes: supplied graph parameter was NULL.")
+	if(!("graphNEL" %in% class(graph))) stop("Error: combineNodes: supplied graph has to be of class graphNEL.")
+	if(length(nodes(graph))==0) {
+		warning("warning: combineNodes: supplied graph has no nodes. No removing was done.")
+		return(graph)
+	}
+
+	return(graph::combineNodes(nodes, graph, newName, collapseFunction=max))
+}
+
+
 	
 #	
 #	

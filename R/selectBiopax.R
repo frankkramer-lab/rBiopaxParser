@@ -485,8 +485,9 @@ getInstanceClass <- function(biopax, id) {
 #' 
 #' @param biopax A biopax model
 #' @param id string
-#' @param property string. Attention: All properties in Biopax Level 2 are all upper case. 
-#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
+#' @param property string.
+#' @param includeAllNames logical. Biopax Level 3 brought 2 new name properties: displayName and standardName. Per default this return all names of an instance. Disable if you only want the NAME property.  
+#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property data is found.
 #' @author fkramer
 #' @export
 #' @examples
@@ -495,22 +496,21 @@ getInstanceClass <- function(biopax, id) {
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="NAME")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="ORGANISM")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")
-getInstanceProperty <- function(biopax, id, property="NAME") {
+getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRUE) {
 	if(is.null(id) | is.na(id)) return(NULL)
 	id = striphash(id)
 	
 	### speed up and quick fix for biopax level 3 naming:
 	if(tolower(property) == "name") {
-		#names = unfactorize(selectInstances(biopax, id=id, property=))
-		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
 		names = unfactorize(biopax$df[biopax$df$id==id,])
 		if(dim(names)[1] == 0) return(NULL)
-		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
+		if(includeAllNames) {
+			names = names[tolower(names$property) %in% c("name","displayname","standardname"),] 
+		} else {
+			names = names[tolower(names$property) == "name",]
+		}
 		if(dim(names)[1] == 0) return(NULL)
-		if(any(grepl("displayName", names$property))) return(names[names$property == "displayName", "property_value"])
-		if(any(grepl("standardName", names$property))) return(names[names$property == "standardName", "property_value"])
-		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
-		return(NULL)
+		return(names[, "property_value"])
 	}
 	
 	data = selectInstances(biopax, id=id)
@@ -526,7 +526,6 @@ getInstanceProperty <- function(biopax, id, property="NAME") {
 	} else {
 		return(NULL)
 	}
-	
 }
 
 #' This function returns all properties of the specified type for an instance.
@@ -669,12 +668,14 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			#get instance name
 			#name = getInstanceProperty(biopax, id[i], property="NAME")[1]
 			name = internal_getInstanceProperty_df(df, id[i], property="NAME")[1]
+			if(is.null(name)) name=""
 			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
 			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
+			if(is.null(xrefs)) xrefs = NA
 			
 			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
 			if(tolower(instanceclass) %in% c("dna","dnaregion","rna","rnaregion","protein","smallmolecule")) {
-				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference"))
+				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference","memberEntityReference","memberPhysicalEntity"))
 				if(!is.null(sel)) {
 					for(rerId in sel) {
 						xrefs = cbind(xrefs, internal_getInstanceProperty_df(df, rerId, property="XREF"))

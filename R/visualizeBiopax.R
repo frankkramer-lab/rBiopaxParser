@@ -31,7 +31,6 @@
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  pathway2AdjacancyMatrix(biopax, pwid1)
-
 pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 	
 	if(!("biopax" %in% class(biopax))) stop("Error: pathway2AdjacancyMatrix: parameter biopax has to be of class biopax.")

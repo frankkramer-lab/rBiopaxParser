@@ -296,7 +296,7 @@ internal_NrOfXMLNodes <- function(myXMLNode) {
 #' @author Frank Kramer
 internal_XMLInstance2DF <- function(myXMLNode, namespace_rdf) {
 	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-	ret = matrix(data=NA,nrow = 1000, ncol = 6)
+	ret = matrix(data=NA,nrow = 10000, ncol = 6)
 	colnames(ret) = ret_colnames
 	class = XML::xmlName(myXMLNode, full=T)
 	id   = XML::xmlAttrs(myXMLNode)[[1]]	

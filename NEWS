@@ -3,6 +3,7 @@ rBiopaxParser 0.99.10
 
 * Changed function getInstanceProperty, this now returns all names for Biopaxl Level 3 instances: name, displayName and standardName by default. Use parameter to turn this behaivior off.
 * getXrefAnnotations now correctly follows memberEntityReferences and memberPhysicalEntitys to obtain more annotations for physicalEntity instances.
+* Fixed a problem with a too small buffer for generating BioPAX data in internal_propertyListToDF.  
 
 rBiopaxParser 0.99.9
 ===========

@@ -91,7 +91,7 @@ addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
 #' @author Frank Kramer
 internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf") {
 	
-	ret = matrix(data=NA,nrow = 1000, ncol = 6)
+	ret = matrix(data=NA,nrow = 100000, ncol = 6)
 	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
 	colnames(ret) = ret_colnames
 	

@@ -3,7 +3,7 @@
 \title{Internal function to build a data.frame from the list of properties for a new instance}
 \usage{
   internal_propertyListToDF(class, id, properties,
-    namespace_rdf = "rdf")
+    namespace_rdf = "rdf", biopaxlevel = 2)
 }
 \arguments{
   \item{class}{string. Class name}
@@ -14,6 +14,10 @@
 
   \item{namespace_rdf}{string. This defines the rdf
   namespace to use.}
+
+  \item{biopaxlevel}{integer. This sets the version of
+  BioPAX to generate, level 2 and level 3 are supported at
+  the moment.}
 }
 \value{
   Returns a data.frame with the new properties for the

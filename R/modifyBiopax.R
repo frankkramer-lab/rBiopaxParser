@@ -50,7 +50,7 @@ addBiopaxInstances <- function(biopax,newInstancesDF) {
 #' biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",SYNONYMS="p1"))
 #' biopax$df
 addBiopaxInstance <- function(biopax, class, id, properties=list(NAME=c()), verbose=TRUE) {
-	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf)
+	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf, biopaxlevel = biopax$biopaxlevel)
 	biopax$df = rbind(biopax$df,propertyDF)
 	if(verbose) message(paste("Added", class, "with ID:", id))
 	biopax
@@ -74,7 +74,7 @@ addBiopaxInstance <- function(biopax, class, id, properties=list(NAME=c()), verb
 #' biopax$df
 addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
 	class = getInstanceClass(biopax,id)
-	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf)
+	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf, biopaxlevel = biopax$biopaxlevel)
 	biopax$df = rbind(biopax$df,propertyDF)
 	biopax
 }
@@ -87,9 +87,10 @@ addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
 #' @param id string. ID of the instance
 #' @param properties named list of properties.
 #' @param namespace_rdf string. This defines the rdf namespace to use.
+#' @param biopaxlevel integer. This sets the version of BioPAX to generate, level 2 and level 3 are supported at the moment.
 #' @return Returns a data.frame with the new properties for the given instance
 #' @author Frank Kramer
-internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf") {
+internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf", biopaxlevel = 2) {
 	
 	ret = matrix(data=NA,nrow = 100000, ncol = 6)
 	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
@@ -97,15 +98,15 @@ internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf"
 	
 	#every property of an instance is represented as 1 entry in the df
 	rowcount = 0
-	names(properties) = toupper(names(properties))
+	#names(properties) = toupper(names(properties))
 	
 	#
-	classproperties = getClassProperties(class)
+	classproperties = getClassProperties(class, biopaxlevel=biopaxlevel )
 	
 	for(n in names(properties)) {
 		
 		# find out if this is a value or a reference
-		property_type = unlist(classproperties[classproperties$property == n,]$property_type)[1]
+		property_type = unlist(classproperties[tolower(classproperties$property) == tolower(n),]$property_type)[1]
 		
 		for(p in properties[[n]]) {
 			rowcount = rowcount + 1
@@ -165,11 +166,20 @@ addPathway <- function(biopax, NAME, PATHWAY_COMPONENTS=c(), id=NULL, ORGANISM=N
 	if(is.null(id)) id = generateNewUniqueID(biopax, id="pathway")
 	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
 	
-	properties = list(NAME=c(NAME),'PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
-	if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
-	if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
-	
-	biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+	#support for bp level 2 and 3
+	if(biopax$biopaxlevel == 2) {
+		properties = list(NAME=c(NAME),'PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
+		if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list(name=c(NAME),'pathwayComponent'=PATHWAY_COMPONENTS)
+		if(!is.null(ORGANISM)) properties['organism']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class="Pathway", id=id, properties=properties)
+	}
+
 	biopax
 }
 
@@ -198,7 +208,14 @@ addPathway <- function(biopax, NAME, PATHWAY_COMPONENTS=c(), id=NULL, ORGANISM=N
 #' biopax = addPathwayComponents(biopax, id="pw_id1", PATHWAY_COMPONENTS=c("c_id1"))
 #' biopax$df
 addPathwayComponents <- function(biopax, id, PATHWAY_COMPONENTS=c()) {
-	properties = list('PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
+	#support for bp level 2 and 3
+	if(biopax$biopaxlevel == 2) {
+		properties = list('PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list('pathwayComponent'=PATHWAY_COMPONENTS)
+	}
+	
 	biopax = addPropertiesToBiopaxInstance(biopax, id=id, properties=properties)
 	biopax
 }
@@ -232,9 +249,15 @@ addControl <- function(biopax, CONTROL_TYPE=c("ACTIVATION","INHIBITION"), CONTRO
 	if(is.null(id)) id = generateNewUniqueID(biopax, id="control")
 	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
 	
-	properties = list('CONTROL-TYPE'=c(CONTROL_TYPE[1]), CONTROLLER=c(CONTROLLER), CONTROLLED=CONTROLLED)
-	
-	biopax = addBiopaxInstance(biopax, class="control", id=id, properties=properties)
+	if(biopax$biopaxlevel == 2) {
+		properties = list('CONTROL-TYPE'=c(CONTROL_TYPE[1]), CONTROLLER=c(CONTROLLER), CONTROLLED=CONTROLLED)
+		biopax = addBiopaxInstance(biopax, class="control", id=id, properties=properties)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list('controlType'=c(CONTROL_TYPE[1]), controller=c(CONTROLLER), controlled=CONTROLLED)
+		biopax = addBiopaxInstance(biopax, class="Control", id=id, properties=properties)
+	}
+		
 	biopax
 }
 
@@ -263,9 +286,15 @@ addBiochemicalReaction <- function(biopax, LEFT=c(), RIGHT=c(), id=NULL) {
 	if(is.null(id)) id = generateNewUniqueID(biopax, id="biochemicalReaction")
 	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
 	
-	properties = list(LEFT=c(LEFT), RIGHT=c(RIGHT))
+	if(biopax$biopaxlevel == 2) {
+		properties = list(LEFT=c(LEFT), RIGHT=c(RIGHT))
+		biopax = addBiopaxInstance(biopax, class="biochemicalReaction", id=id, properties=properties)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list(left=c(LEFT), right=c(RIGHT))
+		biopax = addBiopaxInstance(biopax, class="BiochemicalReaction", id=id, properties=properties)
+	}
 	
-	biopax = addBiopaxInstance(biopax, class="biochemicalReaction", id=id, properties=properties)
 	biopax
 }
 
@@ -294,11 +323,19 @@ addPhysicalEntity <- function(biopax, class=c("dna","rna","protein","smallMolecu
 	if(is.null(id)) id = generateNewUniqueID(biopax, id="physicalEntity")
 	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
 	
-	properties = list(NAME=c(NAME))
-	if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
-	if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
+	if(biopax$biopaxlevel == 2) {
+		properties = list(NAME=c(NAME))
+		if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class=class, id=id, properties=properties)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list(name=c(NAME))
+		if(!is.null(ORGANISM)) properties['organism']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class=class, id=id, properties=properties)
+	}
 	
-	biopax = addBiopaxInstance(biopax, class=class, id=id, properties=properties)
 	biopax
 }
 
@@ -377,12 +414,22 @@ mergePathways <- function(biopax, pwid1, pwid2, NAME, id=NULL, ORGANISM="", COMM
 	
 	PATHWAY_COMPONENTS = unique(c(listPathwayComponents(biopax,pwid1)$id,listPathwayComponents(biopax,pwid2)$id))
 	
-	properties = list(NAME=c(NAME),'PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
-	if(!is.null(ORGANISM)) if(ORGANISM=="") ORGANISM=getInstanceProperty(biopax, id=pwid1, property="ORGANISM")
-	if(!is.null(ORGANISM)) if(length(ORGANISM)>0) properties['ORGANISM']=c(ORGANISM)
-	if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
-	
-	biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+	#support for bp level 2 and 3
+	if(biopax$biopaxlevel == 2) {
+		properties = list(NAME=c(NAME),'PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
+		if(!is.null(ORGANISM)) if(ORGANISM=="") ORGANISM=getInstanceProperty(biopax, id=pwid1, property="ORGANISM")
+		if(!is.null(ORGANISM)) if(length(ORGANISM)>0) properties['ORGANISM']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+	}
+	if(biopax$biopaxlevel == 3) {
+		properties = list(name=c(NAME),'pathwayComponent'=PATHWAY_COMPONENTS)
+		if(!is.null(ORGANISM)) if(ORGANISM=="") ORGANISM=getInstanceProperty(biopax, id=pwid1, property="ORGANISM")
+		if(!is.null(ORGANISM)) if(length(ORGANISM)>0) properties['organism']=c(ORGANISM)
+		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
+		biopax = addBiopaxInstance(biopax, class="Pathway", id=id, properties=properties)
+	}
+
 	biopax
 	
 }

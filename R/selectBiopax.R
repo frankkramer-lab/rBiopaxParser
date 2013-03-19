@@ -197,8 +197,6 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDo
 		pwcompname = "pathwaycomponent"
 		subpathwayproperties = c("nextStep","stepProcess","pathwayOrder")
 	}
-	#####CONTINUE HERE
-	
 	
 	id = unique(striphash(id))
 	id = id[!is.na(id) & !is.null(id) & nchar(id) > 0 ]

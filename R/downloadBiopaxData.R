@@ -34,8 +34,14 @@ DATABASE_BIOPAX = data.frame(
 						"NCI",			"biocarta",	"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
 						"NCI",			"reactome",	"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
 						"NCI",			"kegg",		"biopax2",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_2/NCI-Nature_Curated.bp2.owl.gz",
-						"reactome",		"reactome",	"biopax2",		"http://www.reactome.org/download/current/biopax.zip",
-						"reactome",		"reactome",	"biopax3",		"http://www.reactome.org/download/current/biopax3.zip"
+						
+						"NCI",			"pid",		"biopax3",		"http://sourceforge.net/mailarchive/attachment.php?list_name=biopax-paxtools&message_id=CALXvGpbptVgL2YRfK6VCwQpHH7hx3tOqZgnSYU9Uiff-8OWSLw%40mail.gmail.com&counter=3",					
+						"NCI",			"biocarta",	"biopax3",		"http://sourceforge.net/mailarchive/attachment.php?list_name=biopax-paxtools&message_id=CALXvGpbptVgL2YRfK6VCwQpHH7hx3tOqZgnSYU9Uiff-8OWSLw%40mail.gmail.com&counter=4",
+						"NCI",			"reactome",	"biopax3",		"http://sourceforge.net/mailarchive/attachment.php?list_name=biopax-paxtools&message_id=CALXvGpbqbVtj30uw5D2LmAgpV_fdLbDzDNCShBuwa-a%2BwTRy%3Dw%40mail.gmail.com&counter=2",
+						"NCI",			"kegg",		"biopax3",		"ftp://ftp1.nci.nih.gov/pub/PID/BioPAX_Level_3/KEGG.bp3.owl.gz",
+						
+						"reactome",		"reactome",	"biopax2",		"http://www.reactome.org/download/current/biopax2.zip",
+						"reactome",		"reactome",	"biopax3",		"http://www.reactome.org/download/current/biopax.zip"
 				)), stringsAsFactors=FALSE)
 
 

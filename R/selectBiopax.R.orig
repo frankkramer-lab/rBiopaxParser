@@ -108,7 +108,11 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 #'  listInstances(biopax, class="pathway")
 #'  # list all interaction including all subclasses of interactions
 #'  listInstances(biopax, class="interaction", includeSubClasses=TRUE)
+<<<<<<< HEAD
 listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubClasses=FALSE, returnIDonly=FALSE) {
+=======
+listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubClasses=FALSE) {
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	sel = rep.int(TRUE,dim(biopax$df)[1])
 
 	if(!is.null(id)) {
@@ -133,7 +137,10 @@ listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubCla
 	bpsel = unfactorize(biopax$df[sel,c("class","id","property","property_value")])
 	ret = unique(bpsel[,c("class","id")])
 	if(dim(ret)[1]==0) return(NULL)
+<<<<<<< HEAD
 	if(returnIDonly) return(unique(bpsel[,"id"]))
+=======
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	
 	bpsel$property = tolower(bpsel$property)
 	bpsel = rbind(bpsel[bpsel$property=="displayname",],bpsel[bpsel$property=="standardname",],bpsel[bpsel$property=="name",])
@@ -208,8 +215,11 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDo
 		pwcomp_list = getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(pwcompname))
 	}
 	if(is.null(pwcomp_list)) return(NULL)
+<<<<<<< HEAD
 	pwcomp_list = pwcomp_list[!is.na(pwcomp_list) & !is.null(pwcomp_list) & nchar(pwcomp_list) > 0 ]
 	if(returnIDonly) return(unique(striphash(pwcomp_list)))
+=======
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	#strip # from front of id
 	listInstances(biopax, id=unique(striphash(pwcomp_list)))
 }
@@ -239,7 +249,10 @@ listComplexComponents <- function(biopax, id, returnIDonly=FALSE) {
 	#get complex component list
 	complexcomp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=FALSE, onlyFollowProperties=c(compname)))))
 	if(is.null(complexcomp_list)) return(NULL)
+<<<<<<< HEAD
 	complexcomp_list = complexcomp_list[!is.na(complexcomp_list) & !is.null(complexcomp_list) & nchar(complexcomp_list) > 0 ]
+=======
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	#strip # from front of id
 	if(returnIDonly) return(unique(striphash(complexcomp_list)))
 	listInstances(biopax, id=unique(striphash(complexcomp_list)))
@@ -275,7 +288,10 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE, returnIDo
 	#get complex component list
 	comp_list = as.character(unique(unlist(getReferencedIDs(biopax, id, recursive=TRUE, onlyFollowProperties=c(compname)))))
 	if(is.null(comp_list)) return(NULL)
+<<<<<<< HEAD
 	comp_list = comp_list[!is.na(comp_list) & !is.null(comp_list) & nchar(comp_list) > 0 ]
+=======
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	#strip # from front of id
 	if(returnIDonly) return(unique(striphash(comp_list)))
 	listInstances(biopax, id=unique(striphash(comp_list)))
@@ -304,9 +320,13 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE) {
 		for(p in pwComponents) {
 			interactionComponents = c(interactionComponents, listInteractionComponents(biopax,id=p, returnIDonly=T))
 		}
+<<<<<<< HEAD
 		interactionComponents = interactionComponents[!is.na(interactionComponents) & !is.null(interactionComponents) & nchar(interactionComponents) > 0 ]
 		if(is.null(interactionComponents)) return(NULL)
-		if(returnIDonly) return(interactionComponents)
+		if(returnIDonly) return(unique(interactionComponents))
+=======
+		if(is.null(interactionComponents)) return(NULL)
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 		return(listInstances(biopax, id=interactionComponents))
 	} else {
 		return(NULL)
@@ -345,12 +365,20 @@ splitComplex <- function(biopax, complexid, recursive=TRUE, returnIDonly=FALSE) 
 	ref = getReferencedIDs(biopax, complexid, recursive=recursive, onlyFollowProperties=compname)
 	if(is.null(ref)) return(NULL)
 	referenced = selectInstances(biopax, id=ref)
+<<<<<<< HEAD
 	
 	sel = tolower(referenced$class) %in% c("dna","rna","protein","smallmolecule")
 	sel = unique(referenced[sel,"id"])
 	if(is.null(sel)) return(NULL)
 	if(returnIDonly) return(striphash(sel))
 	
+=======
+	
+	sel = tolower(referenced$class) %in% c("dna","rna","protein","smallmolecule")
+	sel = unique(referenced[sel,"id"])
+	if(is.null(sel)) return(NULL)
+	
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	listInstances(biopax,id=sel)
 }
 
@@ -494,6 +522,7 @@ getInstanceClass <- function(biopax, id) {
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="NAME")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="ORGANISM")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")
+<<<<<<< HEAD
 getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRUE) {
 	if(is.null(id) | is.na(id)) return(NULL)
 	id = striphash(id)
@@ -536,55 +565,9 @@ getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRU
 #' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
 #' @author fkramer
 internal_getInstanceProperty_df <- function(df, id, property="NAME") {
-	if(is.null(id) | is.na(id)) return(NULL)
-	id = striphash(id)
-	
-	### speed up and quick fix for biopax level 3 naming:
-	if(tolower(property) == "name") {
-		#names = unfactorize(selectInstances(biopax, id=id, property=))
-		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
-		names = unfactorize(df[df$id==id,])
-		if(dim(names)[1] == 0) return(NULL)
-		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
-		if(dim(names)[1] == 0) return(NULL)
-		if(any(grepl("displayName", names$property))) return(names[names$property == "displayName", "property_value"])
-		if(any(grepl("standardName", names$property))) return(names[names$property == "standardName", "property_value"])
-		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
-		return(NULL)
-	}
-	
-<<<<<<< HEAD
-	data = unfactorize(df[df$id==id,])
 =======
-	data = selectInstances(biopax, id=id)
->>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
-	data = data[tolower(data$property) %in% tolower(property),]
-	
-	#value
-	if(dim(data)[1]>0) {
-		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
-			return(data[,"property_value"])
-		} else {
-			return(data[,"property_attr_value"])
-		}
-	} else {
-		return(NULL)
-	}
-<<<<<<< HEAD
-=======
-	
-}
-
-#' This function returns all properties of the specified type for an instance.
-#' 
-#' This function returns all properties of the specified type for an instance. By default this function returns the NAME property of an instance.
-#' 
-#' @param df data.frame of biopax instances
-#' @param id string
-#' @param property string. Attention: All properties in Biopax Level 2 are all upper case. 
-#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
-#' @author fkramer
-internal_getInstanceProperty_df <- function(df, id, property="NAME") {
+getInstanceProperty <- function(biopax, id, property="NAME") {
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	if(is.null(id) | is.na(id)) return(NULL)
 	id = striphash(id)
 	
@@ -615,7 +598,6 @@ internal_getInstanceProperty_df <- function(df, id, property="NAME") {
 	} else {
 		return(NULL)
 	}
->>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	
 }
 
@@ -683,8 +665,13 @@ getNeighborhood <- function(biopax, id, depth=1, onlyInPathways=c()) {
 #' # split up the complex and get annotations for all the molecules involved
 #' getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalEntityParticipants=TRUE) {
+<<<<<<< HEAD
 	if(length(id)==0) return(NULL)
+	id = c(unique(striphash(id)))
+=======
+	if(is.null(id) | is.na(id)) return(NULL)
 	id = c(striphash(id))
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
 	annotations = matrix(nrow=0, ncol=6)
 	colnames(annotations) = c("class", "id","name","annotation_type", "annotation_id", "annotation")
@@ -716,15 +703,10 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			#get instance name
 			#name = getInstanceProperty(biopax, id[i], property="NAME")[1]
 			name = internal_getInstanceProperty_df(df, id[i], property="NAME")[1]
-<<<<<<< HEAD
 			if(is.null(name)) name=""
 			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
 			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
 			if(is.null(xrefs)) xrefs = NA
-=======
-			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
-			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
->>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 			
 			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
 			if(tolower(instanceclass) %in% c("dna","dnaregion","rna","rnaregion","protein","smallmolecule")) {

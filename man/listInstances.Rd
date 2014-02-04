@@ -13,6 +13,8 @@
 
   \item{class}{string. Class of the instances to select}
 
+  \item{class}{string. Class of the instances to select}
+
   \item{name}{string. Name of the instances to select}
 
   \item{includeSubClasses}{logical. If includeSubClasses is

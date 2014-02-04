@@ -92,7 +92,6 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	graph::edgemode(mygraph) = "directed"
 	
 	#get pathway component list
-<<<<<<< HEAD
 	pw_component_list = listPathwayComponents(biopax,pwid, returnIDonly=T)
 	if(length(pw_component_list)==0) return(NULL)  
 	pw_component_list = unfactorize(selectInstances(biopax,id=pw_component_list, includeReferencedInstances=TRUE))
@@ -106,14 +105,6 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 		if(verbose) {
 			message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
 		}
-=======
-	pw_component_list = unfactorize(selectInstances(biopax,id=listPathwayComponents(biopax,pwid)$id, includeReferencedInstances=TRUE))
-	pw_component_list$property = tolower(pw_component_list$property)
-	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation"),]
-	#verbose
-	if(verbose) {
-		message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
->>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	}
 	#consider only controls //TODO: Consider subpathways!
 	for(i in unique(pw_controls$id)) {
@@ -149,11 +140,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			}
 			if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 				if(useIDasNodenames) {
-<<<<<<< HEAD
 					controllers = c(controllers,  as.character( splitComplex(biopax,i2, returnIDonly=T) ))
-=======
-					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$id ))
->>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 				} else {
 					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$name ))						
 				}
@@ -187,11 +174,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 					#split complexes?
 					if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 						if(useIDasNodenames) {
-<<<<<<< HEAD
 							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3, returnIDonly=T) ))
-=======
-							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$id ))
->>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 						} else {
 							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$name ))					
 						}
@@ -770,6 +753,7 @@ colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowre
 #'  # plot the now colored graph 
 #'  plotRegulatoryGraph(mygraph1, layoutGraph=FALSE)
 removeNodes <- function(graph, nodes) {
+<<<<<<< HEAD
 	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
@@ -838,6 +822,76 @@ combineNodes <- function(nodes, graph, newName) {
 		return(NULL)
 	}
 	
+=======
+	
+	if(!require(graph)) {
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+	if(is.null(graph)) stop("Error: removeNodes: supplied graph parameter was NULL.")
+	if(!("graphNEL" %in% class(graph))) stop("Error: removeNodes: supplied graph has to be of class graphNEL.")
+	if(length(nodes(graph))==0) {
+		warning("warning: removeNodes: supplied graph has no nodes. No removing was done.")
+		return(graph)
+	}
+	
+	
+	
+	for (j in 1:length(nodes))	{
+		##get outgoing edges of nodes
+		outw = edgeWeights(graph,nodes[j])[[1]]
+		oute=names(outw)
+		##get incoming edges
+		inw=c()
+		for(w in nodes(graph))
+		{inw[w] = edgeWeights(graph)[[w]][nodes[j]]}
+		inw=na.omit(inw)
+		ine=names(inw)
+		###create new edges if necessary and delete nodes
+		if(length(inw)==0 | length(outw)==0) {
+			message(paste("Removing node", nodes[j],"which has either no incomming or no outgoing edges."))
+			graph =removeNode(nodes[j],  graph)
+		}
+		else {
+			for(p in ine) {
+				for(ch in oute) {
+					if(is.na(edgeWeights(graph)[[p]][ch])) {
+						message(paste("Adding edge from", p,"to",ch,"with weight",inw[p]*outw[ch]))
+						graph = addEdge(p, ch, graph, as.integer(inw[[p]])*as.integer(outw[[ch]]))
+					}
+				}
+			}
+			message(paste("Removing node", nodes[j],"."))
+			graph = removeNode(nodes[j],  graph)
+		}
+	}
+	
+	return(graph)
+}
+
+#' This function gracefully combines nodes of a regulatory graph.
+#' 
+#' This gracefully combines nodes from a regulatory graph. This is basically a wrapper for graph::combineNodes(nodes, graph, newName, collapseFunction=max).
+#' If there are duplicated edges for the nodes, the maximum edgeweight will be used for the new connection. 
+#' 
+#' @param nodes vector of node names specifiying which nodes to combine.
+#' @param graph graphNEL
+#' @param newName string. Name of the newly created node that will combine the specified nodes.
+#' @return Returns a graph with specified nodes removed.
+#' @author Frank Kramer
+#' @export
+#' @examples
+#'  # load data and retrieve wnt pathway
+#'  data(biopax2example)
+combineNodes <- function(nodes, graph, newName) {
+	
+	if(!require(graph)) {
+		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	
+>>>>>>> Mo 11. Mär 16:14:13 CET 2013 Pushing verion 0.99.10. Added functions to gracefully combine and remove nodes. As well as made getXrefAnnotations better.
 	if(is.null(graph)) stop("Error: combineNodes: supplied graph parameter was NULL.")
 	if(!("graphNEL" %in% class(graph))) stop("Error: combineNodes: supplied graph has to be of class graphNEL.")
 	if(length(nodes(graph))==0) {

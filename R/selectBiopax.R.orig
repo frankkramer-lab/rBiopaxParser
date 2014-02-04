@@ -543,11 +543,7 @@ internal_getInstanceProperty_df <- function(df, id, property="NAME") {
 	if(tolower(property) == "name") {
 		#names = unfactorize(selectInstances(biopax, id=id, property=))
 		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
-<<<<<<< HEAD
 		names = unfactorize(df[df$id==id,])
-=======
-		names = unfactorize(biopax$df[biopax$df$id==id,])
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 		if(dim(names)[1] == 0) return(NULL)
 		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
 		if(dim(names)[1] == 0) return(NULL)
@@ -559,57 +555,67 @@ internal_getInstanceProperty_df <- function(df, id, property="NAME") {
 	
 <<<<<<< HEAD
 	data = unfactorize(df[df$id==id,])
+=======
+	data = selectInstances(biopax, id=id)
+>>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	data = data[tolower(data$property) %in% tolower(property),]
 	
 	#value
 	if(dim(data)[1]>0) {
 		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
 			return(data[,"property_value"])
-=======
-	data = unfactorize(selectInstances(biopax, id=id))
-	data = data[tolower(data$property) %in% tolower(property),]
-	
-#	if( biopax$biopaxlevel == 2 ) {
-#		#get class of the instance
-#		class = getInstanceClass(biopax,id)
-#		#get the properties this instance has
-#		classproperties = getClassProperties(class)
-#		#if its a reference return the property_attr_value (its the referenced ids) or return property_value otherwise
-#		property_type = unlist(classproperties[classproperties$property == property,]$property_type)[1]
-#		
-#		#value
-#		if(length(property_type)>0) {
-#			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
-#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_value"])
-#			} else {
-#				as.character(biopax$df[biopax$df$id == id & tolower(biopax$df$property) == tolower(property),"property_attr_value"])
-#			}
-#		} else {
-#			return(NULL)
-#		}
-#	}
-#	
-#	if( biopax$biopaxlevel == 3 ) {
-#		data = selectInstances(biopax, id=id, property=property)
-		
-		#value
-		if(dim(data)[1]>0) {
-			if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
-				return(data[,"property_value"])
-			} else {
-				return(data[,"property_attr_value"])
-			}
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 		} else {
 			return(data[,"property_attr_value"])
 		}
-<<<<<<< HEAD
 	} else {
 		return(NULL)
 	}
+<<<<<<< HEAD
 =======
-#	}	
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
+	
+}
+
+#' This function returns all properties of the specified type for an instance.
+#' 
+#' This function returns all properties of the specified type for an instance. By default this function returns the NAME property of an instance.
+#' 
+#' @param df data.frame of biopax instances
+#' @param id string
+#' @param property string. Attention: All properties in Biopax Level 2 are all upper case. 
+#' @return Returns a character vector with all properties of the selected type for this instance. Returns NULL if no property of this type is found.
+#' @author fkramer
+internal_getInstanceProperty_df <- function(df, id, property="NAME") {
+	if(is.null(id) | is.na(id)) return(NULL)
+	id = striphash(id)
+	
+	### speed up and quick fix for biopax level 3 naming:
+	if(tolower(property) == "name") {
+		#names = unfactorize(selectInstances(biopax, id=id, property=))
+		#names = biopax$df[biopax$df$id==id & tolower(biopax$df$property) %in% c("name","displayname","standardname"),]
+		names = unfactorize(df[df$id==id,])
+		if(dim(names)[1] == 0) return(NULL)
+		names = names[tolower(names$property) %in% c("name","displayname","standardname"),]
+		if(dim(names)[1] == 0) return(NULL)
+		if(any(grepl("displayName", names$property))) return(names[names$property == "displayName", "property_value"])
+		if(any(grepl("standardName", names$property))) return(names[names$property == "standardName", "property_value"])
+		if(any(grepl("name", names$property, ignore.case=T))) return(names[tolower(names$property) == "name", "property_value"])
+		return(NULL)
+	}
+	
+	data = unfactorize(df[df$id==id,])
+	data = data[tolower(data$property) %in% tolower(property),]
+	
+	#value
+	if(dim(data)[1]>0) {
+		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
+			return(data[,"property_value"])
+		} else {
+			return(data[,"property_attr_value"])
+		}
+	} else {
+		return(NULL)
+	}
+>>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 	
 }
 
@@ -687,11 +693,7 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	df = selectInstances(biopax, id, includeReferencedInstances = T)
 	
 	for(i in 1:length(id)) {
-<<<<<<< HEAD
 		instanceclass = df[df$id==id[i],"class"][1]
-=======
-		instanceclass = getInstanceClass(biopax, id[i])
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 		if(is.na(instanceclass) | is.null(instanceclass)) next;
 		# if its a complex AND we're supposed to split it:
 		if(tolower(instanceclass) == "complex" & splitComplexes) {
@@ -714,30 +716,26 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 			#get instance name
 			#name = getInstanceProperty(biopax, id[i], property="NAME")[1]
 			name = internal_getInstanceProperty_df(df, id[i], property="NAME")[1]
+<<<<<<< HEAD
 			if(is.null(name)) name=""
 			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
 			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
 			if(is.null(xrefs)) xrefs = NA
+=======
+			#xrefs = getInstanceProperty(biopax, id[i], property="XREF")
+			xrefs = internal_getInstanceProperty_df(df, id[i], property="XREF")
+>>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 			
 			# if its a physicalentity AND have a BP3 entityReference: add these annotations as well!
 			if(tolower(instanceclass) %in% c("dna","dnaregion","rna","rnaregion","protein","smallmolecule")) {
-<<<<<<< HEAD
 				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference","memberEntityReference","memberPhysicalEntity"))
 				if(!is.null(sel)) {
 					for(rerId in sel) {
 						xrefs = cbind(xrefs, internal_getInstanceProperty_df(df, rerId, property="XREF"))
-=======
-				sel = getReferencedIDs(biopax, id[i], onlyFollowProperties=c("entityReference"))
-				if(!is.null(sel)) {
-					referencedEntityReferences = selectInstances(biopax, id=sel)
-					for(rerIds in referencedEntityReferences) {
-						xrefs = cbind(xrefs, getInstanceProperty(biopax, rerIds, property="XREF"))
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 					}
 				}
 			}
 			
-<<<<<<< HEAD
 			xrefs = xrefs[!is.na(xrefs) & !is.null(xrefs) & nchar(xrefs) > 0 ]
 			if(is.null(xrefs) | length(xrefs) == 0) next;
 			for(xref in xrefs) {
@@ -745,13 +743,6 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 				annotations = rbind(annotations, c(instanceclass, id[i], name, df[df$id==xref,"class"][1], striphash(xref),
 								paste(internal_getInstanceProperty_df(df, xref, property="DB"),	":",
 										internal_getInstanceProperty_df(df, xref, property="ID"), sep="")
-=======
-			for(xref in xrefs) {
-				if(is.null(xref)) next;
-				annotations = rbind(annotations, c(instanceclass, id[i], name, getInstanceClass(biopax, xref), striphash(xref),
-								paste(getInstanceProperty(biopax, xref, property="DB"),	":",
-										getInstanceProperty(biopax, xref, property="ID"), sep="")
->>>>>>> Mi 20. Feb 16:48:06 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 								))
 			}
 		}

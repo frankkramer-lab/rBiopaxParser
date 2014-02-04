@@ -306,7 +306,7 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE) {
 		}
 		interactionComponents = interactionComponents[!is.na(interactionComponents) & !is.null(interactionComponents) & nchar(interactionComponents) > 0 ]
 		if(is.null(interactionComponents)) return(NULL)
-		if(returnIDonly) return(interactionComponents)
+		if(returnIDonly) return(unique(interactionComponents))
 		return(listInstances(biopax, id=interactionComponents))
 	} else {
 		return(NULL)
@@ -634,7 +634,7 @@ getNeighborhood <- function(biopax, id, depth=1, onlyInPathways=c()) {
 #' getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalEntityParticipants=TRUE) {
 	if(length(id)==0) return(NULL)
-	id = c(striphash(id))
+	id = c(unique(striphash(id)))
 	#annotations = data.frame(type=NA, id=NA, name=NA, annotation_type=NA, annotation_id=NA, annotation=NA, stringsAsFactors=FALSE)
 	annotations = matrix(nrow=0, ncol=6)
 	colnames(annotations) = c("class", "id","name","annotation_type", "annotation_id", "annotation")

@@ -96,7 +96,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	if(length(pw_component_list)==0) return(NULL)  
 	pw_component_list = unfactorize(selectInstances(biopax,id=pw_component_list, includeReferencedInstances=TRUE))
 	pw_component_list$property = tolower(pw_component_list$property)
-	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation"),]
+	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation","templatereactionregulation"),]
 	#verbose
 	if(length(pw_controls$id)==0) {
 		warning("warning: pathway2RegulatoryGraph: supplied graph has no regulatory pathway components. Returning NULL.")
@@ -163,8 +163,8 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			#complexAssembly=we deal with a complex. split up or dont and return names
 			#biochemicalReaction=...
 			#any conversion: add up left & rights and get the names
-			if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE))) {
-				leftrights = striphash(c_instance[c_instance$property=="left" | c_instance$property=="right" ,"property_attr_value"])
+			if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE)) | isOfClass(c_instance,c("templatereaction"))) {
+				leftrights = striphash(c_instance[c_instance$property=="left" | c_instance$property=="right" | c_instance$property=="product" ,"property_attr_value"])
 				for(i3 in leftrights) {
 					#every left/right is an physicalentityparticipants, get that as above
 					leftrights_instance = pw_component_list[pw_component_list$id==i3,]
@@ -781,12 +781,17 @@ removeNodes <- function(graph, nodes) {
 		###create new edges if necessary and delete nodes
 		if(length(inw)==0 | length(outw)==0) {
 			message(paste("Removing node", nodes[j],"which has either no incomming or no outgoing edges."))
-			graph =removeNode(nodes[j],  graph)
+			graph = removeNode(nodes[j],  graph)
 		}
 		else {
 			for(p in ine) {
 				for(ch in oute) {
+					if(p == ch) next;
 					if(is.na(edgeWeights(graph)[[p]][ch])) {
+						if(!is.na(edgeWeights(graph)[[ch]][p])) {
+							warning(paste("Not adding edge from", p,"to",ch,"with weight",inw[p]*outw[ch],"because we already have an edge the other way round.") )
+							next;
+						}
 						message(paste("Adding edge from", p,"to",ch,"with weight",inw[p]*outw[ch]))
 						graph = addEdge(p, ch, graph, as.integer(inw[[p]])*as.integer(outw[[ch]]))
 					}

@@ -9,6 +9,8 @@
 #
 ###############################################################################
 
+##TODO: FIX PARSING. SEE PATHWAY COMMONS
+
 #' This function creates a new Biopax model from scratch
 #' 
 #' This function creates a new Biopax model from scratch. This is not necessary if you want to parse a BioPAX export from a file, please see: readBiopax.
@@ -100,6 +102,12 @@ createBiopax <- function(level = 2)  {
 #'  \dontrun{biopax} 
 #' 
 readBiopax <- function(file, verbose=TRUE)  {
+	
+	if(is.null(file) || !file.exists(file)) { 
+		stop(paste("readBiopax: Cannot find file:",file))
+		return(NULL)
+	}
+	
 	biopaxxml = XML::xmlInternalTreeParse(file)
 	ret = list(namespaces = XML::xmlNamespaceDefinitions(XML::xmlRoot(biopaxxml), recursive = TRUE, simplify = TRUE))
 	class(ret) <- c("biopax",class(ret))
@@ -173,7 +181,7 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 	if(verbose)	message("[Info Verbose] Parsing Biopax-Model as a data.frame...")
 	nodecount = sum(XML::xmlElementSummary(biopax$file)$nodeCounts)
 	if(verbose)	message(paste("[Info Verbose] Estimating up to", nodecount,"entries. This will roughly need", round(nodecount*58*2*2/2**20), "MB of RAM."))
-	if(verbose)message(paste("[Info Verbose] Where I came from this would've taken at least", round(3*nodecount/1000),"seconds!"))
+	if(verbose) message(paste("[Info Verbose] Where I came from this would've taken at least", round(3*nodecount/1000),"seconds!"))
 	time_start = proc.time()[1]
 	ret = matrix(data=NA,nrow = nodecount, ncol = 6)
 	
@@ -225,12 +233,12 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 				)
 
 			} else {
+				attribute = paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]], attributes(XML::xmlAttrs(child))$names[[1]], sep=":") #property_attr
+				if(is.null(attribute)) attribute = "undefined"
 				row = c(
 						class, id,
 						XML::xmlName(child, full=T), #property				
-						paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]],
-								attributes(XML::xmlAttrs(child))$names[[1]],
-								sep=":"), #property_attr
+						attribute, #property_attr
 						XML::xmlAttrs(child)[[1]], #property_attr_value
 						XML::xmlValue(child) #property_value
 				)
@@ -338,12 +346,12 @@ internal_XMLInstance2DF <- function(myXMLNode, namespace_rdf) {
 			
 		}
 		else {
+			attribute = paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]], attributes(XML::xmlAttrs(child))$names[[1]], sep=":") #property_attr
+			if(is.null(attribute)) attribute = "undefined"
 			row = c(
 					class, id,
 					XML::xmlName(child, full=T), #property				
-					paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]],
-							attributes(XML::xmlAttrs(child))$names[[1]],
-							sep=":"), #property_attr
+					attribute, #property_attr
 					XML::xmlAttrs(child)[[1]], #property_attr_value
 					XML::xmlValue(child) #property_value
 			)

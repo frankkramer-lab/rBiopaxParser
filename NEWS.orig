@@ -21,12 +21,17 @@ rBiopaxParser 1.0
 
 * The first Bioconductor Release! Yeah!
 
+=======
+>>>>>>> Mo 11. Mär 16:14:13 CET 2013 Pushing verion 0.99.10. Added functions to gracefully combine and remove nodes. As well as made getXrefAnnotations better.
 rBiopaxParser 0.99.10
 ===========
 
 * Changed function getInstanceProperty, this now returns all names for Biopaxl Level 3 instances: name, displayName and standardName by default. Use parameter to turn this behaivior off.
 * getXrefAnnotations now correctly follows memberEntityReferences and memberPhysicalEntitys to obtain more annotations for physicalEntity instances.
+<<<<<<< HEAD
 * Fixed a problem with a too small buffer for generating BioPAX data in internal_propertyListToDF.  
+=======
+>>>>>>> Mo 11. Mär 16:14:13 CET 2013 Pushing verion 0.99.10. Added functions to gracefully combine and remove nodes. As well as made getXrefAnnotations better.
 
 rBiopaxParser 0.99.9
 ===========
@@ -34,8 +39,6 @@ rBiopaxParser 0.99.9
 * Added function removeNodes. This gracefully removes nodes from a regulatory graph: Connecting parents and children by their multiplied edge weights.
 * Added function combineNodes. This gracefully combines nodes from a regulatory graph. This is basically a wrapper for graph::combineNodes(nodes, graph, newName, collapseFunction=max).
 
-=======
->>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 rBiopaxParser 0.99.8
 ===========
 

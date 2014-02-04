@@ -1,0 +1,175 @@
+<<<<<<< HEAD
+rBiopaxParser 0.99.10
+===========
+
+* Changed function getInstanceProperty, this now returns all names for Biopaxl Level 3 instances: name, displayName and standardName by default. Use parameter to turn this behaivior off.
+* getXrefAnnotations now correctly follows memberEntityReferences and memberPhysicalEntitys to obtain more annotations for physicalEntity instances.
+* Fixed a problem with a too small buffer for generating BioPAX data in internal_propertyListToDF.  
+
+rBiopaxParser 0.99.9
+===========
+
+* Added function removeNodes. This gracefully removes nodes from a regulatory graph: Connecting parents and children by their multiplied edge weights.
+* Added function combineNodes. This gracefully combines nodes from a regulatory graph. This is basically a wrapper for graph::combineNodes(nodes, graph, newName, collapseFunction=max).
+
+=======
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
+rBiopaxParser 0.99.8
+===========
+
+* Speed up of many function which were beautifully programmed but became increasingly slow when using the whole Reactome database.
+
+* Fixed a nasty bug where a complex without any pyhsical entities could cause many functions to fail badly.
+
+* Fixed CITATION file. 
+
+rBiopaxParser 0.99.7
+===========
+
+* Fixed getXrefAnnotations. This function now works with Biopax Level 3 and can retrieve all Xref annotations of any given vector of instance ids.
+
+* Added CITATION file! rBiopaxParser was pubished in Bioinformatics! 
+
+* rBiopaxParser - an R package to parse, modify and visualize BioPAX data. Kramer F, Bayerlova M, Klemm F, Bleckmann A, Beissbarth T. Bioinformatics (2013) 29(4): 520-522.
+
+* rBiopaxParser has been accepted to Bioconductor! http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html
+
+* README.md has been updated accordingly with steps to install directly from Bioconductor.
+
+* Function selectInstances correctly returns all referenced instances with parameter "includeReferencedInstances=TRUE" now.
+
+rBiopaxParser 0.99.6
+===========
+
+* Fixed pathway layouting. It broke simarily to: http://permalink.gmane.org/gmane.science.biology.informatics.conductor/44745
+
+* Function createBiopax can create Biopax Level 3 models now!
+
+* Function listInstances was very slow. It is alot faster now with huge databases like Reactome.
+
+* Functions pathway2Geneset, pathway2RegulatoryGraph, pathway2AdjacencyMatrix now fully support nested Subpathways and PathwayOrder/PathwaySteps in Biopax Level 2 and Level 3.
+
+* Started to integrate RUnit tests for some of my functions. More to come. 
+
+rBiopaxParser 0.99.5
+===========
+
+* Submitted some fixes. colorGraphNodes is finally working (again) using graph and Rgraphviz packages.
+
+rBiopaxParser 0.99.3
+===========
+
+* We are finally supporting BioPAX level 3 now! All functions (except for getXrefAnnotations) have been updated and work correctly with BioPAX Level 2 and Level 3 objects.
+
+
+rBiopaxParser 0.99.0
+===========
+
+* Pushing version number to 0.99.0 according to Bioconductor checklist 
+
+rBiopaxParser 0.23
+===========
+
+* Fixes to documentation. All function documentation is featuring examples now. 
+
+rBiopaxParser 0.21
+===========
+
+* Attention: Major function renaming and restructuring in this version! This unfortunatly leads to incompatibilities with the previous versions due to the renaming.
+
+* The variables "instancetype" and "instanceid" have been renamed to "class" and "id". This keeps everyones code shorter and matches general ontology syntax. 
+
+* Function names of the ever-growing number of convenience functions were a mess and hard to understand. I have taken the time to refactor and consolidate the collection of functions to increase usability and give function(name)s a common structure. This will also serve as a stepping stone to allow biopax level 3 integration.
+
+* Functions with names starting "get" were previously being used for all selecting/accessing of data. These functions are now effectively being split up into functions with names "select" and "list".
+
+* Functions with prefix "select" return a TRUE/FALSE index vector for the whole biopax internal data.frame. This allows easy combination of select statements via logical & and |.
+
+* Functions with prefix "list" return a specific list of IDs or items depending on the function definition.
+
+* Functions with prefix "get" return newly created objects or informations about the biopax data.frame or its instance(s). 
+
+rBiopaxParser 0.15
+===========
+
+* Added function createBiopax which creates a new Biopax model from scratch.
+
+* Added some more parameter checks.
+
+* Added verbosity to writeBiopax since re-exporting the NCI Pathway Interaction Database took almost 15 minutes.
+
+* Updated the vignette. Nice pictures, text and more!
+
+rBiopaxParser 0.14
+===========
+
+* Some more sanity checks added to fix sloppy BioPAX models 
+
+* Added functions getBiopaxIDsByName, which does as the name suggests, and getXrefAnnotations, which returns all Xref annontations of given Biopax IDs.
+
+* Function pathway2RegulatoryGraph now has the optional parameter useIDasNodenames, this causes a regulatory graph to be created with the Biopax IDs used instead of the instance names.
+
+* Function plotRegulatoryGraph can be passed logical argument layoutGraph, which can be used to stop the function from re-layouting the graph in case you modified it.
+
+* Added a check for BioPAX Levels different from Level 2 and started to build a foundation to enable those too.
+
+* Unzipping functionality of downloadBiopaxData only works using Linux. Added checks and instructions for Windows users. 
+ 
+rBiopaxParser 0.13
+===========
+
+* Added functions removeInstance, removeProperties, addPhysicalEntity, addPhysicalEntityParticipant, addBiochemicalReaction, addControl.
+
+* See new examples for modifying a biopax model with R in the short vignette! 
+
+rBiopaxParser 0.12
+===========
+
+* Fixed some documentation and vignette pdfs. 
+
+rBiopaxParser 0.11
+===========
+
+* Set packages RCurl and Rgraphviz from imports to suggests. This means you will not have to have these installed to run most of the commands. However layouting the graphs requires Rgraphviz and downloading data requires RCurl. 
+
+rBiopaxParser 0.10
+===========
+
+* Detailed installation instructions are available now. rBiopaxParser depends on some packages which might be a hassle to install. Check out the README or github front page for instructions!
+
+* Provided some more documentation.
+
+* Fixed a very embarrassing typo in downloadBiopaxData.
+
+rBiopaxParser 0.09
+===========
+
+* Provided some more documentation.
+
+* getNeighborhood: a function to build a neigborhood graph for molecules
+
+rBiopaxParser 0.08
+===========
+
+* First version on GitHub! Code still needs some cleaning up but everything works, longer examples comming next!
+
+rBiopaxParser 0.06
+===========
+
+* Visualization & Layouting added. Check out new functions 
+
+* layoutRegulatoryBiopaxGraph, plotRegulatoryBiopaxGraph
+
+* intersectGraphs, uniteGraphs, diffGraphs
+
+rBiopaxParser 0.04
+===========
+
+* Building regulatory graphs from biopax model works now!
+
+* pathway2adjacancyMatrix, pathway2RegulatoryGraph, 
+
+rBiopaxParser 0.01
+===========
+
+* Parsing works! Alot of thing changing quickly now, still bugs to fix.

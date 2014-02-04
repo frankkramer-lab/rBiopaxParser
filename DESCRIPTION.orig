@@ -1,0 +1,34 @@
+Package: rBiopaxParser
+Type: Package
+Title: Parses BioPax files and represents them in R
+<<<<<<< HEAD
+Version: 1.3.1
+Date: 2013-03-13
+=======
+Version: 0.99.8
+Date: 2013-02-19
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
+Author: Frank Kramer
+Maintainer: Frank Kramer <dev@frankkramer.de>
+Description: Parses BioPAX files and represents them in R, at the moment BioPAX
+    level 2 and level 3 are supported.
+License: GPL (>= 2)
+Imports:
+    XML
+Suggests:
+    Rgraphviz,
+    RCurl,
+    graph,
+    RUnit,
+    BiocGenerics
+URL: https://github.com/frankkramer/rBiopaxParser
+Collate:
+    'biopax2Classes.R'
+    'downloadBiopaxData.R'
+    'helperFunctions.R'
+    'modifyBiopax.R'
+    'parseBiopax.R'
+    'rBiopaxParser-package.R'
+    'selectBiopax.R'
+    'visualizeBiopax.R'
+    'writeBiopax.R'

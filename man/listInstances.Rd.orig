@@ -3,15 +3,17 @@
 \title{Lists all instances that conform to the selection criteria.}
 \usage{
   listInstances(biopax, id = NULL, class = NULL,
+<<<<<<< HEAD
     name = NULL, includeSubClasses = FALSE,
     returnIDonly = FALSE)
+=======
+    name = NULL, includeSubClasses = FALSE)
+>>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 }
 \arguments{
   \item{biopax}{A biopax model}
 
   \item{id}{string. ID of the instances to select}
-
-  \item{class}{string. Class of the instances to select}
 
   \item{class}{string. Class of the instances to select}
 

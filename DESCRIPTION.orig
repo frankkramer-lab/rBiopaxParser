@@ -7,7 +7,7 @@ Date: 2013-03-13
 =======
 Version: 0.99.8
 Date: 2013-02-19
->>>>>>> Mi 20. Feb 14:19:46 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
+>>>>>>> Do 21. Feb 16:54:11 CET 2013 Pushing verion 0.99.8. Fixed bug with empty complexes. Speed up on many functions.
 Author: Frank Kramer
 Maintainer: Frank Kramer <dev@frankkramer.de>
 Description: Parses BioPAX files and represents them in R, at the moment BioPAX

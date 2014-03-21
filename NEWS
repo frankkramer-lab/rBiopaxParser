@@ -1,3 +1,8 @@
+rBiopaxParser 2.1.3
+===========
+
+* BUGFIX: Switched from rep_len to rep in order to continue R<3.0 support.
+
 rBiopaxParser 2.1.1
 ===========
 

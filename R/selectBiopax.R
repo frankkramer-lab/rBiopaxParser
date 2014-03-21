@@ -59,7 +59,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 		stop("selectInstances: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
 	
-	sel = rep_len(TRUE,dim(df)[1])
+	sel = rep(TRUE,length.out=dim(df)[1])
 	
 	if(!is.null(var_id)) {
 		var_id = unique(striphash(var_id))

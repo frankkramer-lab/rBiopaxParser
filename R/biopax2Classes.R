@@ -31,7 +31,7 @@
 #' @format A data frame with 46 rows and 2 columns
 #' @export
 CLASS_INHERITANCE_BP2 = data.frame(
-		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= list(
+		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= c(
 "entity",								"",
 
 "pathway",								"entity",
@@ -89,7 +89,7 @@ CLASS_INHERITANCE_BP2 = data.frame(
 "unificationXref",						"xref",
 "relationshipXref",						"xref",
 "publicationXref",						"xref"
-				))
+				)),	stringsAsFactors = FALSE
 		)
 
 #' Class properties in Biopax Level 2.
@@ -114,7 +114,7 @@ CLASS_INHERITANCE_BP2 = data.frame(
 #' @format A data frame with 106 rows and 4 columns
 #' @export
 CLASS_PROPERTIES_BP2 = data.frame(
-		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
+		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= c(
 "entity",								"NAME",						"http://www.w3.org/2001/XMLSchema#string",			"1",
 "entity",								"SHORT-NAME",				"http://www.w3.org/2001/XMLSchema#string",			"1",
 "entity",								"SYNONYMS",					"http://www.w3.org/2001/XMLSchema#string",			"*",
@@ -251,7 +251,7 @@ CLASS_PROPERTIES_BP2 = data.frame(
 "publicationXref",						"URL",						"http://www.w3.org/2001/XMLSchema#string",			"*",
 "publicationXref",						"SOURCE",					"http://www.w3.org/2001/XMLSchema#string",			"*"
 
-			))		
+			)),	stringsAsFactors = FALSE		
 		)
 
 #' Class inheritance relationships in Biopax Level 3.
@@ -274,7 +274,7 @@ CLASS_PROPERTIES_BP2 = data.frame(
 #' @format A data frame with 46 rows and 2 columns
 #' @export
 CLASS_INHERITANCE_BP3 = data.frame(
-		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= list(
+		matrix(ncol=2,byrow=T, dimnames=list(list(),list("class","superclass")),data= c(
 						"Entity",								"",
 						
 						"Pathway",								"Entity",
@@ -292,11 +292,11 @@ CLASS_INHERITANCE_BP3 = data.frame(
 						"TransportWithBiochemicalReaction",		"Transport",
 						
 						"PhysicalEntity",						"Entity",
-						"Dna",									"physicalEntity",
-						"Rna",									"physicalEntity",
-						"Protein",								"physicalEntity",
-						"SmallMolecule",						"physicalEntity",
-						"Complex",								"physicalEntity",
+						"Dna",									"PhysicalEntity",
+						"Rna",									"PhysicalEntity",
+						"Protein",								"PhysicalEntity",
+						"SmallMolecule",						"PhysicalEntity",
+						"Complex",								"PhysicalEntity",
 						
 						"UtilityClass",							"",
 						
@@ -310,8 +310,8 @@ CLASS_INHERITANCE_BP3 = data.frame(
 						"EntityRference",						"UtilityClass",
 						"SequenceLocation",						"UtilityClass",
 						
-						"SequenceInterval",						"sequenceLocation",
-						"SequenceSite",							"sequenceLocation",
+						"SequenceInterval",						"SequenceLocation",
+						"SequenceSite",							"SequenceLocation",
 						
 						"PhysicalEntityParticipant",			"UtilityClass",
 						
@@ -331,7 +331,7 @@ CLASS_INHERITANCE_BP3 = data.frame(
 						"UnificationXref",						"Xref",
 						"RelationshipXref",						"Xref",
 						"PublicationXref",						"Xref"
-				))
+				)),	stringsAsFactors = FALSE
 )
 
 #' Class properties in Biopax Level 3.
@@ -356,7 +356,7 @@ CLASS_INHERITANCE_BP3 = data.frame(
 #' @format A data frame with 106 rows and 4 columns
 #' @export
 CLASS_PROPERTIES_BP3 = data.frame(
-		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= list(
+		matrix(ncol=4,byrow=T, dimnames=list(list(),list("class","property","property_type","cardinality")),data= c(
 						"Entity",								"name",						"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"Entity",								"displayName",				"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"Entity",								"standardName",				"http://www.w3.org/2001/XMLSchema#string",			"*",
@@ -479,7 +479,7 @@ CLASS_PROPERTIES_BP3 = data.frame(
 						"PublicationXref",						"URL",						"http://www.w3.org/2001/XMLSchema#string",			"*",
 						"PublicationXref",						"SOURCE",					"http://www.w3.org/2001/XMLSchema#string",			"*"
 				
-				))		
+				)),	stringsAsFactors = FALSE
 )
 
 		
@@ -494,7 +494,7 @@ CLASS_PROPERTIES_BP3 = data.frame(
 #' @export
 #' @examples
 #'  getSubClasses("control")
-getSubClasses <- function(classname, biopaxlevel=2) {
+getSubClasses <- function(classname, biopaxlevel=3) {
 	classname = stripns(classname)
 	ret = list()
 	for(x in 1:10) {
@@ -520,7 +520,7 @@ getSubClasses <- function(classname, biopaxlevel=2) {
 #' @export
 #' @examples
 #'  getSuperClasses("control")
-getSuperClasses <- function(classname, biopaxlevel=2) {
+getSuperClasses <- function(classname, biopaxlevel=3) {
 	classname = stripns(classname)
 	ret = list()
 	for(x in 1:10) {
@@ -547,14 +547,14 @@ getSuperClasses <- function(classname, biopaxlevel=2) {
 #' @export
 #' @examples
 #'  getClassProperties("control")
-getClassProperties <- function(classname, biopaxlevel=2) {
+getClassProperties <- function(classname, biopaxlevel=3) {
 	classname = stripns(classname)
 	if(biopaxlevel==2) {
-		classes = unlist(c(classname,getSuperClasses(classname,biopaxlevel)))
+		classes = c(classname,getSuperClasses(classname,biopaxlevel))
 		return(CLASS_PROPERTIES_BP2[CLASS_PROPERTIES_BP2$class %in% classes,])
 	}
 	if(biopaxlevel==3) {
-		classes = unlist(c(classname,getSuperClasses(classname,biopaxlevel)))
+		classes = c(classname,getSuperClasses(classname,biopaxlevel))
 		return(CLASS_PROPERTIES_BP3[CLASS_PROPERTIES_BP3$class %in% classes,])
 	}
 	return(NULL)

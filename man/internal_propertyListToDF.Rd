@@ -2,8 +2,8 @@
 \alias{internal_propertyListToDF}
 \title{Internal function to build a data.frame from the list of properties for a new instance}
 \usage{
-  internal_propertyListToDF(class, id, properties,
-    namespace_rdf = "rdf", biopaxlevel = 2)
+internal_propertyListToDF(class, id, properties, namespace_rdf = "rdf",
+  biopaxlevel = 2)
 }
 \arguments{
   \item{class}{string. Class name}
@@ -20,14 +20,14 @@
   the moment.}
 }
 \value{
-  Returns a data.frame with the new properties for the
-  given instance
+Returns a data.frame with the new properties for the given
+instance
 }
 \description{
-  Internal function to build a data.frame from the list of
-  properties for a new instance
+Internal function to build a data.frame from the list of
+properties for a new instance
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

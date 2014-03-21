@@ -50,7 +50,7 @@ rm(list=ls())
 \title{rBiopaxParser Vignette}
 \author{ Frank Kramer\footnote{University Medical Center Göttingen, Department
 of Medical Statistics, Workgroup Statistical Bioinformatics, Humboldtallee
-32, 37073 Göttingen, Germany. eMail: mail@frankkramer.de}}
+32, 37073 Göttingen, Germany. eMail: dev@frankkramer.de}}
 \date{\today}
 \maketitle
 
@@ -297,8 +297,8 @@ name of the downloaded file.
 \label{sec:parse}
 
 BioPAX data can be parsed into R using the rBiopaxParser. The readBiopax
-function reads in a BioPAX .owl file and generates the internal data.frame format
-used in this package. This function can take a while with large BioPAX files like
+function reads in a BioPAX .owl file and generates the internal data.table
+format used in this package. This function can take a while with large BioPAX files like
 NCIs Pathway Interaction Database or Reactome.
 
 The following command reads in the BioPAX file which was previously downloaded
@@ -366,19 +366,19 @@ popular databases. The Pathway Interaction Database of the NCI consists of more
 than 50000 BioPAX instances, for example. Unfortunately mapping these instances
 to S3 or S4 classes within R and managing them within lists is not feasible, therefore
 the classes and their respective properties are internally mapped to a single R matrix
-and then converted to a data.frame. This allows for efficient indexing and selecting of
-subsets of this data.frame.
+and then converted to a data.table. This allows for efficient indexing and
+selecting of subsets of this data.table.
 
 The mapping of BioPAX data is performed as revertible as possible, with one caveat,
 however. The XML structure of the data would allow for an infinite nesting of
 instance declarations. An example would be to instantiate an external publication
 reference within a protein instance, which could itself be instantiated in another
 instance. This is not desirable when attempting to map the data to a tabular format
-like data.frame. The trick here is to move these instances into the main XML tree and
-reference the specific instance with an rdf:resource attribute.
+like data.frame or data.table. The trick here is to move these instances into
+the main XML tree and reference the specific instance with an rdf:resource attribute.
 
-An excerpt of the internal data.frame of a biopax model, as created in the last section
-of this document "Modifying BioPAX":
+An excerpt of the internal data.table of a biopax model, as created in the last
+section of this document "Modifying BioPAX":
 
 \begin{table}[H]\footnotesize
   \centering
@@ -403,17 +403,17 @@ of this document "Modifying BioPAX":
 
 
 
-This data.frame represents instances as a collection of their properties. The
+This data.table represents instances as a collection of their properties. The
 first column specifies the class and the second column specifies the id of the instance. The
 properties, for example "NAME", can either be of rdf:datatype, usually a string like
 "pathway1", or of type rdf:resource, which is a reference to another instance, like
 "\#control\_1".
 
-For comprehensive databases this data.frame can reach quite extensive sizes. The
-data.frame itself can be accessed directly via the slot "df" of
+For comprehensive databases this data.table can reach quite extensive sizes. The
+data.table itself can be accessed directly via the slot "dt" of
 the parsed object, e.g. by accessing 
 <<label=displaydataframe,echo=TRUE, eval=TRUE>>=
-head(biopax$df)
+head(biopax$dt)
 @
 
 \section{Accessing the Data}
@@ -425,12 +425,12 @@ function to function.
 
 The most basic function to select distinct instances is selectInstances. This
 functions allows the user to specify conditions like class, id or name to select
-a subset of the internal data.frame meeting these conditions. This functions is
+a subset of the internal data.table meeting these conditions. This functions is
 vectorized to allow the user to select multiple instances. The user can extend
 the selection criteria by several parameters to include, for example, inherited
 classes or all referenced instances.
 
-The next type of functions return (compared to the internal data.frame)
+The next type of functions return (compared to the internal data.table)
 nicely formatted lists: listInstances, listPathways, listPathwayComponents,
 listComplexComponents. These functions return a list of class, ID and names
 of instances.
@@ -549,7 +549,7 @@ plotRegulatoryGraph(layoutRegulatoryGraph(mergedpw_graph))
 @
 
 Although it is possible to directly edit the parsed BioPAX data by accessing
-biopax\$df, there are quite a few convenience functions to make life easier.
+biopax\$dt, there are quite a few convenience functions to make life easier.
 In the following code block a new BioPAX model will be created from scratch using
 createBiopax. Functions addPhysicalEntity, addPhysicalEntityParticipant,
 addBiochemicalReaction, addControl and addPathway will be used to build 2

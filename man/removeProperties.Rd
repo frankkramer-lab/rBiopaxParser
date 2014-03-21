@@ -2,7 +2,7 @@
 \alias{removeProperties}
 \title{This function removes a property}
 \usage{
-  removeProperties(biopax, id, properties)
+removeProperties(biopax, id, properties)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -13,14 +13,14 @@
   properties to remove.}
 }
 \value{
-  Returns the supplied biopax model with properties removed
-  from this instance.
+Returns the supplied biopax model with properties removed
+from this instance.
 }
 \description{
-  This function removes a property fram an existing biopax
-  instance.
+This function removes a property fram an existing biopax
+instance.
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

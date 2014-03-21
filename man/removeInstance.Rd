@@ -2,7 +2,7 @@
 \alias{removeInstance}
 \title{This function removes an instance}
 \usage{
-  removeInstance(biopax, id)
+removeInstance(biopax, id)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -10,14 +10,14 @@
   \item{id}{string. ID of the instance}
 }
 \value{
-  Returns the supplied biopax model with the instance
-  removed from it.
+Returns the supplied biopax model with the instance removed
+from it.
 }
 \description{
-  This function removes an instance from an existing biopax
-  model.
+This function removes an instance from an existing biopax
+model.
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

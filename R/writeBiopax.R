@@ -21,6 +21,7 @@
 #' @return Returns the xmlTree object generated from the biopax model. If a filename is supplied the XML is written to this file.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #'  # load data
 #'  data(biopax2example)
@@ -55,8 +56,8 @@ writeBiopax <- function(biopax, file="", verbose=TRUE, overwrite=FALSE, namespac
 #' @author Frank Kramer
 checkValidity <- function(biopax) {
 	if(! any(grepl("biopax",class(biopax)))) stop("Supplied biopax object doesnt seem to be of class biopax!")
-	if(nrow(biopax$df) < 1) stop("Internal data.frame of supplied biopax object seems to be empty!")
-	if(ncol(biopax$df) != 6) stop("Internal data.frame of supplied biopax object seems to be invalid!")
+	if(nrow(biopax$dt) < 1) stop("Internal data.frame of supplied biopax object seems to be empty!")
+	if(ncol(biopax$dt) != 6) stop("Internal data.frame of supplied biopax object seems to be invalid!")
 }
 
 ### TODO: fix comment: add URL to gibhub
@@ -70,6 +71,7 @@ checkValidity <- function(biopax) {
 #' @param verbose logical
 #' @return Returns the xmlTree generated from the supplied biopax model.
 #' @author Frank Kramer
+#' @import data.table
 internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbose=TRUE ) {
 	## create new xml document
 	d = XML::xmlTree("rdf:RDF", namespaces=namespaces) #, attrs= c('xml:base'="http://pid.nci.nih.gov/biopax"))
@@ -83,29 +85,29 @@ internal_generateXMLfromBiopax <- function(biopax, namespaces=namespaces, verbos
 	d$closeTag()
 	
 	## add biopax nodes
-	instanceList = unique(biopax$df[,c(1,2)])
+	instanceList = unique(biopax$dt[,list(class,id)])
 	count = 1
 	for(i in 1:dim(instanceList)[1] ) {
-		instance = biopax$df[biopax$df$class == instanceList$class[i] & biopax$df$id == instanceList$id[i],]
+		instance = biopax$dt[class == instanceList[i]$class & id == instanceList[i]$id,]
 		
 		#add class instance
-		d$addNode(as.character(instance$class[1]), namespace="bp", attrs=c('rdf:ID'=as.character(instance$id[1])), close=FALSE)
+		d$addNode(as.character(instance[1]$class), namespace="bp", attrs=c('rdf:ID'=as.character(instance[1]$id)), close=FALSE)
 		
 		#add properties
 		for(p in 1:dim(instance)[1]) {
-			attrs = c(as.character(instance$property_attr_value[p]))
-			names(attrs) = as.character(instance$property_attr[p])
-			if(nchar(as.character(instance$property_value[p])) > 0) {
-				d$addNode(as.character(instance$property[p]), as.character(instance$property_value[p]), namespace="bp", attrs=attrs)
+			attrs = c(as.character(instance[p]$property_attr_value))
+			names(attrs) = as.character(instance[p]$property_attr)
+			if(nchar(as.character(instance[p]$property_value)) > 0) {
+				d$addNode(as.character(instance[p]$property), as.character(instance[p]$property_value), namespace="bp", attrs=attrs)
 			} else {
-				d$addNode(as.character(instance$property[p]), namespace="bp", attrs=attrs)
+				d$addNode(as.character(instance[p]$property), namespace="bp", attrs=attrs)
 			}	
 		}
 		d$closeTag()
 		
 		### be verbose about the work
 		if(verbose) {
-			if(i%%1000 == 0) message(paste("INFO: Wrote instance nr",i,"of", (dim(instanceList)[1] - i) ,"with id", instance$id,".")) 
+			if(i%%1000 == 0) message(paste("INFO: Wrote instance nr",i,"of", dim(instanceList)[1] ,"with id", instance$id[1],".")) 
 			count = count + 1
 		}
 	}

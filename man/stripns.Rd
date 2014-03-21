@@ -2,19 +2,19 @@
 \alias{stripns}
 \title{Strips a namespace tag off a supplied classname string}
 \usage{
-  stripns(classname)
+stripns(classname)
 }
 \arguments{
   \item{classname}{A string containing a classname
   preceeded by a namespace tag}
 }
 \value{
-  The classname with the namespace tag stripped off it.
+The classname with the namespace tag stripped off it.
 }
 \description{
-  Strips a namespace tag off a supplied classname string
+Strips a namespace tag off a supplied classname string
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

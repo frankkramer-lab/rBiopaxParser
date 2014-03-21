@@ -2,7 +2,7 @@
 \alias{generateNewUniqueID}
 \title{This function generates a new unique id for a biopax model}
 \usage{
-  generateNewUniqueID(biopax, id = "")
+generateNewUniqueID(biopax, id = "")
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -10,14 +10,14 @@
   \item{id}{string. This is used as a prefix for the id.}
 }
 \value{
-  Returns an unused unique ID.
+Returns an unused unique ID.
 }
 \description{
-  This function generates a new unique id for a biopax
-  model. Pass it an startin g point like "pathway" or
-  "protein" to get a niceer looking id.
+This function generates a new unique id for a biopax model.
+Pass it an startin g point like "pathway" or "protein" to
+get a niceer looking id.
 }
 \author{
-  fkramer
+fkramer
 }
 

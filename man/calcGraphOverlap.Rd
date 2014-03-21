@@ -2,7 +2,7 @@
 \alias{calcGraphOverlap}
 \title{This function calculates the overlap of 2 graphs}
 \usage{
-  calcGraphOverlap(graph1, graph2)
+calcGraphOverlap(graph1, graph2)
 }
 \arguments{
   \item{graph1}{graphNEL}
@@ -10,12 +10,12 @@
   \item{graph2}{graphNEL}
 }
 \value{
-  Returns a list containing the compared graphs and edge-
-  and node-wise overlap between them.
+Returns a list containing the compared graphs and edge- and
+node-wise overlap between them.
 }
 \description{
-  This function calculates the overlap of supplied graph1
-  with graph2. Layout and weights of graph1 are kept.
+This function calculates the overlap of supplied graph1
+with graph2. Layout and weights of graph1 are kept.
 }
 \examples{
 # load data
@@ -27,6 +27,6 @@
  calcGraphOverlap(mygraph1,mygraph2)
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

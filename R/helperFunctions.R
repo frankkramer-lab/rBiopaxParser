@@ -92,9 +92,9 @@ striphash <- function(x) {
 	sub("#","",x)
 }
 
-#' Checks if instances in the biopax data.frame are of the given class
+#' Checks if instances in the biopax data.table are of the given class
 #' 
-#' This function checks if instances in the supplied biopax data.frame are of a given class. 
+#' This function checks if instances in the supplied biopax data.table are of a given class. 
 #' If considerInheritance is set to TRUE it also checks if instances are of a given class or any of its inherited classes.
 #' 
 #' @param df A data.frame with biopax instances 
@@ -103,26 +103,28 @@ striphash <- function(x) {
 #' @param biopaxlevel Numeric. Specifies the Biopax Level to use.
 #' @return Returns TRUE for every row in the data.frame which is of the supplied class 
 #' @author Frank Kramer
+#' @import data.table
 #' @export
 isOfClass <- function (df, class, considerInheritance=FALSE, biopaxlevel=2) {
 	class = stripns(class)
 	if(considerInheritance) {
 		class = c(class,getSubClasses(class,biopaxlevel))
 	}
-	tolower(as.character(df$class)) %in% tolower(class)
+	tolower(as.character(df$class)) %chin% tolower(class)
 }
 
-#' Checks if instances in the biopax data.frame have a given property
+#' Checks if instances in the biopax data.table have a given property
 #' 
-#' Checks if instances in the biopax data.frame have a given property
+#' Checks if instances in the biopax data.table have a given property
 #'  
 #' @param df A data.frame with biopax instances 
 #' @param property A string containing the name of the property to check for
 #' @return Returns TRUE for every row in the data.frame with contains the supplied property. Logical vector with length corresponding to the number of rows in the data.frame.
 #' @author Frank Kramer
+#' @import data.table
 #' @export
 hasProperty <- function (df, property) {
-	tolower(as.character(df$property)) %in% stripns(tolower(property))
+	tolower(as.character(df$property)) %chin% stripns(tolower(property))
 }
 
 #' This function checks the supplied arguments if they abid to the given restrictions

@@ -2,10 +2,9 @@
 \alias{internal_checkArguments}
 \title{This function checks the supplied arguments if they abid to the given restrictions}
 \usage{
-  internal_checkArguments(args = c(),
-    allowedValues = list(), allowNULL = FALSE,
-    allowNA = FALSE, allowEmptyString = TRUE,
-    allowInf = TRUE)
+internal_checkArguments(args = c(), allowedValues = list(),
+  allowNULL = FALSE, allowNA = FALSE, allowEmptyString = TRUE,
+  allowInf = TRUE)
 }
 \arguments{
   \item{args}{The vector of arguments to check}
@@ -24,14 +23,14 @@
   not}
 }
 \value{
-  Returns 1 if all checks completed successfully, returns
-  error message otherwise.
+Returns 1 if all checks completed successfully, returns
+error message otherwise.
 }
 \description{
-  This function checks the supplied arguments if they abid
-  to the given restrictions
+This function checks the supplied arguments if they abid to
+the given restrictions
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

@@ -25,6 +25,7 @@
 #' @return Returns the adjacency matrix representing the regulatory graph of the supplied pathway.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #'  # load data
 #'  data(biopax2example)
@@ -69,6 +70,7 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #' @return Returns the representing the regulatory graph of the supplied pathway in a node-edge-list graph.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #'  # load data
 #'  data(biopax2example)
@@ -77,9 +79,9 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
 #'  plotRegulatoryGraph(mygraph)
 pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
-	
-	if(!("biopax" %in% class(biopax))) stop("Error: pathway2RegulatoryGraph: parameter biopax has to be of class biopax.")
-	if(!("character" %in% class(pwid))) stop("Error: pathway2RegulatoryGraph: parameter pwid has to be of class character.")
+
+	if(is.null(biopax) || !("biopax" %in% class(biopax))) stop("Error: pathway2RegulatoryGraph: parameter biopax has to be of class biopax.")
+	if(is.null(pwid) ||!("character" %in% class(pwid))) stop("Error: pathway2RegulatoryGraph: parameter pwid has to be of class character.")
 	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
@@ -93,10 +95,12 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	
 	#get pathway component list
 	pw_component_list = listPathwayComponents(biopax,pwid, returnIDonly=T)
-	if(length(pw_component_list)==0) return(NULL)  
-	pw_component_list = unfactorize(selectInstances(biopax,id=pw_component_list, includeReferencedInstances=TRUE))
+	if(length(pw_component_list)==0) {warning("Pathway seems to have no pathway components"); return(NULL)}  
+	pw_component_list = selectInstances(biopax,id=pw_component_list, includeReferencedInstances=TRUE, returnCopy=TRUE)
 	pw_component_list$property = tolower(pw_component_list$property)
-	pw_controls = pw_component_list[tolower(pw_component_list$class)%in% c("control","catalysis","modulation","templatereactionregulation"),]
+	setkeyv(pw_component_list, cols=c("id","class","property"))
+	pw_controls = pw_component_list[tolower(pw_component_list$class) %chin% c("control","catalysis","modulation","templatereactionregulation"),]
+	
 	#verbose
 	if(length(pw_controls$id)==0) {
 		warning("warning: pathway2RegulatoryGraph: supplied graph has no regulatory pathway components. Returning NULL.")
@@ -108,18 +112,18 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	}
 	#consider only controls //TODO: Consider subpathways!
 	for(i in unique(pw_controls$id)) {
-		instance = pw_controls[pw_controls$id==i,]
+		instance = pw_controls[id==i,]
 		
 		#if type neither inhibition nor activation i dont know what to do anyways. 
-		#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2standards. quick fix here:
+		#Cancer Cell Map doesnt set control-type of catalysises to ACTIVATION although it is required by biopax level 2 standards. quick fix here:
 		if(biopax$biopaxlevel == 2) {
-			type = as.character(instance[instance$property=="control-type","property_value"])
+			type = as.character(instance[property=="control-type"]$property_value)
 		}
 		if(biopax$biopaxlevel == 3) {
-			type = as.character(instance[instance$property=="controltype","property_value"])
+			type = as.character(instance[property=="controltype"]$property_value)
 		}
 		if(length(type)==0) {
-			if(tolower(instance[1,"class"]) == "catalysis") {
+			if(tolower(as.character(instance[1,class])) == "catalysis") {
 				type="ACTIVATION"
 			} else {
 				next
@@ -130,59 +134,59 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 		}
 		
 		#controllers are physicalentityparticipants, get those
-		controller_ids = striphash(unique(instance[instance$property=="controller","property_attr_value"]))
+		controller_ids = striphash(as.character(unique(instance[property=="controller"]$property_attr_value)))
 		controllers = NA
 		for(i2 in controller_ids) {
-			c_instance = pw_component_list[pw_component_list$id==i2,]
+			c_instance = pw_component_list[id==i2,]
 			#each physicalentityparticipant has exactly 1 physicalentity, get that and get the name!
 			if(biopax$biopaxlevel == 2) {
-				c_instance = pw_component_list[pw_component_list$id==striphash(c_instance[c_instance$property=="physical-entity","property_attr_value"]),]
+				c_instance = pw_component_list[id==striphash(c_instance[property=="physical-entity"]$property_attr_value),]
 			}
 			if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 				if(useIDasNodenames) {
-					controllers = c(controllers,  as.character( splitComplex(biopax,i2, returnIDonly=T) ))
+					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, returnIDonly=T, biopax$biopaxlevel) ))
 				} else {
-					controllers = c(controllers,  as.character( splitComplex(biopax,i2)$name ))						
+					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, biopax$biopaxlevel)$name ))						
 				}
 			} else {
 				if(useIDasNodenames) {
 					controllers = c(controllers, c_instance$id[1])
 				} else {
-					controllers = c(controllers, getInstanceProperty(biopax,c_instance$id[1]))					
+					controllers = c(controllers, getInstanceProperty(pw_component_list,c_instance$id[1]))					
 				}
 			}	
 		}
 		
 		#controlleds are interactions or pathways. ignoring pathways for now
-		controlled_ids = striphash(unique(instance[instance$property=="controlled","property_attr_value"]))
+		controlled_ids = striphash(as.character(unique(instance[property=="controlled"]$property_attr_value)))
 		controlleds = NA
 		for(i2 in controlled_ids) {
-			c_instance = pw_component_list[pw_component_list$id==i2,]
+			c_instance = pw_component_list[id==i2,]
 			#depending on type of c_instance we must differentiate here. 
 			#pathway=ignore,interaction=ignore(this is only a nice field with a name in PID anyways),
 			#complexAssembly=we deal with a complex. split up or dont and return names
 			#biochemicalReaction=...
 			#any conversion: add up left & rights and get the names
-			if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE)) | isOfClass(c_instance,c("templatereaction"))) {
-				leftrights = striphash(c_instance[c_instance$property=="left" | c_instance$property=="right" | c_instance$property=="product" ,"property_attr_value"])
+			if(any(isOfClass(c_instance,c("conversion"),considerInheritance = TRUE)) || any(isOfClass(c_instance,c("templatereaction")))) {
+				leftrights = striphash(c_instance[property=="left" | property=="right" | property=="product"]$property_attr_value)
 				for(i3 in leftrights) {
 					#every left/right is an physicalentityparticipants, get that as above
-					leftrights_instance = pw_component_list[pw_component_list$id==i3,]
+					leftrights_instance = pw_component_list[id==i3,]
 					if(biopax$biopaxlevel == 2) {
-						leftrights_instance = pw_component_list[pw_component_list$id==striphash(leftrights_instance[leftrights_instance$property=="physical-entity","property_attr_value"]),]
+						leftrights_instance = pw_component_list[id==striphash(leftrights_instance[property=="physical-entity"]$property_attr_value),]
 					}
 					#split complexes?
 					if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 						if(useIDasNodenames) {
-							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3, returnIDonly=T) ))
+							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, returnIDonly=T, biopax$biopaxlevel) ))
 						} else {
-							controlleds = c(controlleds,  as.character( splitComplex(biopax,i3)$name ))					
+							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, biopax$biopaxlevel)$name ))					
 						}
 					} else {
 						if(useIDasNodenames) {
-							controlleds = c(controlleds, leftrights_instance$id[1])
+							controlleds = c(controlleds, as.character(leftrights_instance[1]$id))
 						} else {
-							controlleds = c(controlleds, getInstanceProperty(biopax,leftrights_instance$id[1]))					
+							controlleds = c(controlleds, getInstanceProperty(pw_component_list,leftrights_instance[1]$id))					
 						}
 					}
 				}
@@ -235,11 +239,10 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 
 
 
-#TODO transitive reduction & closure
 #' This function generates the transitive closure of the supplied graph.
 #' 
 #' This function generates the transitive closure of the supplied graph. In short: if A->B->C then an edge A->C is added.
-#' Edge weights are conserved if possible (in a hopefully smart way). 
+#' Edge weights are conserved if possible (in a hopefully smart way). This is a simple convenience wrapper for the RBGL function transitive.closure.
 #' 
 #' @param mygraph graphNEL
 #' @return Returns the transitive closure of the supplied graph.
@@ -248,26 +251,33 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 transitiveClosure <- function(mygraph) {
 	
 	if(!require(graph)) {
-		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		message(paste("This functions needs the graph package installed, albeit it cannot be found. Check out the installation instructions!","\n"))
 		return(NULL)
 	}
 	
-	accessibles = acc(mygraph,graph::nodes(mygraph))
-	for(n in names(accessibles)) {
-		for(c in names(accessibles[[n]])) {
-			if(accessibles[[n]][[c]]>1) {
-				#cat(paste("adding",n,c,"\n"))
-				mygraph = graph::addEdge(from=n,to=c, graph=mygraph, weights=1) ###FIX! XXX
-			}
-		}
+	if(!require(RBGL)) {
+		message(paste("This functions needs the RBGL package installed, albeit it cannot be found.","\n"))
+		return(NULL)
 	}
-	mygraph
+	
+	RBGL::transitive.closure(mygraph)
+	
+#	accessibles = acc(mygraph,graph::nodes(mygraph))
+#	for(n in names(accessibles)) {
+#		for(c in names(accessibles[[n]])) {
+#			if(accessibles[[n]][[c]]>1) {
+#				#cat(paste("adding",n,c,"\n"))
+#				mygraph = graph::addEdge(from=n,to=c, graph=mygraph, weights=1) ###FIX! XXX
+#			}
+#		}
+#	}
+#	mygraph
 }
 
 #' This function generates the transitive reduction of the supplied graph.
 #' 
 #' This function generates the transitive reduction of the supplied graph. In short: if A->B->C AND A->C then edge A->C is removed.
-#' Edge weights are conserved if possible (in a hopefully smart way). 
+#' This is a simple convenience wrapper for the NEM function transitive.reduction. Be aware of implications on the edge weights!
 #' 
 #' @param mygraph graphNEL
 #' @return Returns the transitive reduction of the supplied graph.
@@ -280,30 +290,37 @@ transitiveReduction <- function(mygraph) {
 		return(NULL)
 	}
 	
-	temp=mygraph
-	#remove temps wedge weights
-	for(e in names(graph::edges(temp))) {
-		for(t in graph::edges(temp)[[e]]) {
-			graph::edgeData(temp,e,t,attr="weight") <-  1
-		}
+	if(!require(nem)) {
+		message(paste("This functions needs the nem package installed, albeit it cannot be found.","\n"))
+		return(NULL)
 	}
 	
-	#enumarte pathws and remove all paths that have longer equivalents and same end node
+	as(nem::transitive.reduction(g=mygraph),"graphNEL")
 	
-#	ttt = as(mygraph,"graphAM")
-#	as(ttt,"matrix")
-#	# order by outdegree
-#	# check crossing between every 2 edges?
-#	
-#	accessibles = acc(mygraph,nodes(mygraph))
-#	for(n in names(accessibles)) {
-#		for(c in names(accessibles[[n]])) {
-#			if(accessibles[[n]][[c]]>1) {
-#				graph::removeEdge(from=n,to=c, mygraph)
-#			}
+#	temp=mygraph
+#	#remove temps wedge weights
+#	for(e in names(graph::edges(temp))) {
+#		for(t in graph::edges(temp)[[e]]) {
+#			graph::edgeData(temp,e,t,attr="weight") <-  1
 #		}
 #	}
-	mygraph
+#	
+#	#enumarte pathws and remove all paths that have longer equivalents and same end node
+#	
+##	ttt = as(mygraph,"graphAM")
+##	as(ttt,"matrix")
+##	# order by outdegree
+##	# check crossing between every 2 edges?
+##	
+##	accessibles = acc(mygraph,nodes(mygraph))
+##	for(n in names(accessibles)) {
+##		for(c in names(accessibles[[n]])) {
+##			if(accessibles[[n]][[c]]>1) {
+##				graph::removeEdge(from=n,to=c, mygraph)
+##			}
+##		}
+##	}
+#	mygraph
 	
 }
 

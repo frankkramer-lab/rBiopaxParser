@@ -2,8 +2,8 @@
 \alias{addPathway}
 \title{This function adds a new pathway to the biopax model.}
 \usage{
-  addPathway(biopax, NAME, PATHWAY_COMPONENTS = c(),
-    id = NULL, ORGANISM = NULL, COMMENT = NULL)
+addPathway(biopax, NAME, PATHWAY_COMPONENTS = c(), id = NULL,
+  ORGANISM = NULL, COMMENT = NULL)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -23,11 +23,11 @@
   \item{COMMENT}{string. An optional comment}
 }
 \value{
-  Returns the biopax model with the added pathway.
+Returns the biopax model with the added pathway.
 }
 \description{
-  This function adds a new pathway + its PATHWAY-COMPONENTS
-  (references to interaction/pathways/pathwaySteps)
+This function adds a new pathway + its PATHWAY-COMPONENTS
+(references to interaction/pathways/pathwaySteps)
 }
 \examples{
 biopax = createBiopax(level=2)
@@ -40,9 +40,9 @@ biopax = addPhysicalEntity(biopax, class="protein", id="p_id3", NAME="controller
 biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
 biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
 biopax = addPathway(biopax, NAME="mypathway1", PATHWAY_COMPONENTS=c("c_id1"), id="pw_id1")
-biopax$df
+biopax$dt
 }
 \author{
-  fkramer
+fkramer
 }
 

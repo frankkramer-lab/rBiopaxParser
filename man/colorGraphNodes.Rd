@@ -2,8 +2,7 @@
 \alias{colorGraphNodes}
 \title{This function colors the nodes of a graph.}
 \usage{
-  colorGraphNodes(graph1, nodes, values,
-    colors = c("greenred", "yellowred"))
+colorGraphNodes(graph1, nodes, values, colors = c("greenred", "yellowred"))
 }
 \arguments{
   \item{graph1}{graphNEL}
@@ -19,14 +18,13 @@
   specifying which color gradient to use.}
 }
 \value{
-  Returns a graph with specified nodes colored according to
-  the foldChanges
+Returns a graph with specified nodes colored according to
+the foldChanges
 }
 \description{
-  This function colors nodes of a graph, usually this is
-  used to color subgraphs or add a color hue correlating
-  with the expression level or fold change to the
-  molecules.
+This function colors nodes of a graph, usually this is used
+to color subgraphs or add a color hue correlating with the
+expression level or fold change to the molecules.
 }
 \examples{
 # load data and retrieve wnt pathway
@@ -44,6 +42,6 @@
  plotRegulatoryGraph(mygraph1, layoutGraph=FALSE)
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

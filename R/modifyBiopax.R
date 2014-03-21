@@ -12,13 +12,14 @@
 
 #' This function adds new instances to an existing biopax model.
 #' 
-#' This function adds new instances (supplied as a compatible data.frame) to an existing biopax model via rbind. Usually you want to start out at createBiopax and addPhysicalEntity and work your way up the ontology ladder.
+#' This function adds new instances (supplied as a compatible data.table) to an existing biopax model via rbind. Usually you want to start out at createBiopax and addPhysicalEntity and work your way up the ontology ladder.
 #' 
 #' @param biopax A biopax model 
-#' @param newInstancesDF data.frame. Compatible with internal Biopax Level 2 implementation.
+#' @param newInstancesDF data.table or data.frame. Must be compatible with internal biopax implementation.
 #' @return Returns the supplied biopax model with the new instances added.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #' # load data
 #'  data(biopax2example)
@@ -27,7 +28,15 @@
 #'  selectInstances(biopax_temp)
 #'  biopax = addBiopaxInstances(biopax, selectInstances(biopax_temp))
 addBiopaxInstances <- function(biopax,newInstancesDF) {
-	biopax$df = rbind(biopax$df, newInstancesDF)
+	
+	if(is.null(biopax)) stop("addBiopaxInstances: parameter biopax is null")
+	if(is.null(newInstancesDF) || dim(newInstancesDF)[2] != 6 || dim(newInstancesDF)[1] == 0) {
+		stop(paste("addBiopaxInstances: parameter newInstancesDF is null, empty or malformed. newInstancesDF:",paste(newInstancesDF, collapse="")))
+	}
+	
+	biopax$dt = rbindlist(list(biopax$dt, newInstancesDF))
+	setkey(biopax$dt, id, class, property)
+	class(biopax$dt) <- c("biopax_df",class(biopax$dt))
 	biopax
 }
 
@@ -45,13 +54,21 @@ addBiopaxInstances <- function(biopax,newInstancesDF) {
 #' @return Returns the supplied biopax model with the new instance added.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",SYNONYMS="p1"))
-#' biopax$df
+#' biopax$dt
 addBiopaxInstance <- function(biopax, class, id, properties=list(NAME=c()), verbose=TRUE) {
+	if(is.null(biopax)) stop("addBiopaxInstance: parameter biopax is null")
+	if(is.null(class) || class=="" ) stop(paste("addBiopaxInstance: parameter class is null or empty. class:",paste(class, collapse="")))
+	if(is.null(id) || id=="" ) stop(paste("addBiopaxInstance: parameter id is null or empty.",paste(id, collapse="")))
+	if(is.null(properties) || !is.list(properties) || length(properties) == 0 || length(properties[[1]]) == 0) stop(paste("addBiopaxInstance: parameter properties is null, empty or malformed.",paste(properties, collapse="")))
+	
 	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf, biopaxlevel = biopax$biopaxlevel)
-	biopax$df = rbind(biopax$df,propertyDF)
+	biopax$dt = rbindlist(list(biopax$dt,propertyDF))
+	setkey(biopax$dt, id, class, property)
+	class(biopax$dt) <- c("biopax_df",class(biopax$dt))
 	if(verbose) message(paste("Added", class, "with ID:", id))
 	biopax
 }
@@ -66,16 +83,23 @@ addBiopaxInstance <- function(biopax, class, id, properties=list(NAME=c()), verb
 #' @return Returns the supplied biopax model with new properties added to this instance.
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",SYNONYMS="p1"))
-#' biopax$df
+#' biopax$dt
 #' biopax = addPropertiesToBiopaxInstance(biopax, id="id1", properties=list(COMMENT="this is my first protein!"))
-#' biopax$df
+#' biopax$dt
 addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
+	if(is.null(biopax)) stop("addPropertiesToBiopaxInstance: parameter biopax is null")
+	if(is.null(id) || id=="" ) stop(paste("addPropertiesToBiopaxInstance: parameter id is null or empty.",paste(id, collapse="")))
+	if(is.null(properties) || !is.list(properties) || length(properties) == 0 || length(properties[[1]]) == 0) stop(paste("addBiopaxInstance: parameter properties is null, empty or malformed.",paste(properties, collapse="")))
+	
 	class = getInstanceClass(biopax,id)
 	propertyDF = internal_propertyListToDF(class, id, properties, namespace_rdf=biopax$ns_rdf, biopaxlevel = biopax$biopaxlevel)
-	biopax$df = rbind(biopax$df,propertyDF)
+	biopax$dt = rbindlist(list(biopax$dt,propertyDF))
+	setkey(biopax$dt, id, class, property)
+	class(biopax$dt) <- c("biopax_df",class(biopax$dt))
 	biopax
 }
 
@@ -90,17 +114,22 @@ addPropertiesToBiopaxInstance <- function(biopax,id, properties) {
 #' @param biopaxlevel integer. This sets the version of BioPAX to generate, level 2 and level 3 are supported at the moment.
 #' @return Returns a data.frame with the new properties for the given instance
 #' @author Frank Kramer
+#' @import data.table
 internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf", biopaxlevel = 2) {
+	if(is.null(class) || class=="") stop(paste("internal_propertyListToDF: parameter class is null or empty. class:",paste(class, collapse="")))
+	if(is.null(id) || id=="" ) stop(paste("internal_propertyListToDF: parameter id is null or empty. id:",paste(id, collapse="")))
+	if(is.null(properties) || !is.list(properties) || length(properties) == 0 || length(properties[[1]]) == 0) stop(paste("internal_propertyListToDF: parameter properties is null, empty or malformed. properties:",paste(properties, collapse="")))
 	
-	ret = matrix(data=NA,nrow = 100000, ncol = 6)
-	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-	colnames(ret) = ret_colnames
 	
-	#every property of an instance is represented as 1 entry in the df
-	rowcount = 0
-	#names(properties) = toupper(names(properties))
+	ret = data.table(class="",id="",property="",property_attr="",property_attr_value="",property_value="", key=c("id","class","property"))
+	#ret = copy(ret[,2:7, with=F])
+	ret = copy(ret[0])
+	setkey(ret, id, class, property)
 	
-	#
+	
+	#every property of an instance is represented as 1 entry in the dt
+	rowcount = 1
+	
 	classproperties = getClassProperties(class, biopaxlevel=biopaxlevel )
 	
 	for(n in names(properties)) {
@@ -109,29 +138,28 @@ internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf"
 		property_type = unlist(classproperties[tolower(classproperties$property) == tolower(n),]$property_type)[1]
 		
 		for(p in properties[[n]]) {
-			rowcount = rowcount + 1
-			
 			#value
 			if(grepl("string",property_type) || grepl("double",property_type) || grepl("float",property_type) || grepl("integer",property_type)) {
-				ret[rowcount,] = c(
-						class, id,
-						n, #property				
-						paste(namespace_rdf,":datatype",sep=""), #property_attr
-						property_type, #property_attr_value
-						p #property_value
-				)
+				ret = rbindlist(list(ret, list(
+						class=class, id=id,
+						property=n, #property				
+						property_attr=paste(namespace_rdf,":datatype",sep=""), #property_attr
+						property_attr_value=property_type, #property_attr_value
+						property_value=p #property_value
+				)))
 			} else { #reference
-				ret[rowcount,] = c(
-						class, id,
-						n, #property				
-						paste(namespace_rdf,":resource",sep=""), #property_attr
-						paste("#",p,sep=""), #property_attr_value
-						"" #property_value
-				)
+				ret = rbindlist(list(ret, list(
+						class=class, id=id,
+						property=n, #property				
+						property_attr=paste(namespace_rdf,":resource",sep=""), #property_attr
+						property_attr_value=paste("#",p,sep=""), #property_attr_value
+						property_value="" #property_value
+				)))
 			}
+			rowcount = rowcount + 1
 		}
 	}
-	matrix( ret[!is.na(ret[,1]),], ncol=6, dimnames=list(list(),ret_colnames))
+	ret
 	
 }
 
@@ -149,6 +177,7 @@ internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf"
 #' @return Returns the biopax model with the added pathway.
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
@@ -160,24 +189,26 @@ internal_propertyListToDF <- function(class, id, properties, namespace_rdf="rdf"
 #' biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
 #' biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
 #' biopax = addPathway(biopax, NAME="mypathway1", PATHWAY_COMPONENTS=c("c_id1"), id="pw_id1")
-#' biopax$df
+#' biopax$dt
 addPathway <- function(biopax, NAME, PATHWAY_COMPONENTS=c(), id=NULL, ORGANISM=NULL, COMMENT=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="pathway")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="pathway")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	#support for bp level 2 and 3
 	if(biopax$biopaxlevel == 2) {
 		properties = list(NAME=c(NAME),'PATHWAY-COMPONENTS'=PATHWAY_COMPONENTS)
 		if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="pathway", id=var_id, properties=properties)
 	}
 	if(biopax$biopaxlevel == 3) {
 		properties = list(name=c(NAME),'pathwayComponent'=PATHWAY_COMPONENTS)
 		if(!is.null(ORGANISM)) properties['organism']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class="Pathway", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="Pathway", id=var_id, properties=properties)
 	}
 
 	biopax
@@ -194,6 +225,7 @@ addPathway <- function(biopax, NAME, PATHWAY_COMPONENTS=c(), id=NULL, ORGANISM=N
 #' @return Returns the biopax model with the pathway components added to the pathway
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
@@ -206,7 +238,7 @@ addPathway <- function(biopax, NAME, PATHWAY_COMPONENTS=c(), id=NULL, ORGANISM=N
 #' biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
 #' biopax = addPathway(biopax, NAME="mypathway1", PATHWAY_COMPONENTS=c(), id="pw_id1")
 #' biopax = addPathwayComponents(biopax, id="pw_id1", PATHWAY_COMPONENTS=c("c_id1"))
-#' biopax$df
+#' biopax$dt
 addPathwayComponents <- function(biopax, id, PATHWAY_COMPONENTS=c()) {
 	#support for bp level 2 and 3
 	if(biopax$biopaxlevel == 2) {
@@ -233,6 +265,7 @@ addPathwayComponents <- function(biopax, id, PATHWAY_COMPONENTS=c()) {
 #' @return Returns the biopax model with the added pathway.
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
@@ -243,19 +276,21 @@ addPathwayComponents <- function(biopax, id, PATHWAY_COMPONENTS=c()) {
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id3", NAME="controllerProtein1")
 #' biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
 #' biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
-#' biopax$df
+#' biopax$dt
 addControl <- function(biopax, CONTROL_TYPE=c("ACTIVATION","INHIBITION"), CONTROLLER="", CONTROLLED=c(), id=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="control")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="control")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	if(biopax$biopaxlevel == 2) {
 		properties = list('CONTROL-TYPE'=c(CONTROL_TYPE[1]), CONTROLLER=c(CONTROLLER), CONTROLLED=CONTROLLED)
-		biopax = addBiopaxInstance(biopax, class="control", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="control", id=var_id, properties=properties)
 	}
 	if(biopax$biopaxlevel == 3) {
 		properties = list('controlType'=c(CONTROL_TYPE[1]), controller=c(CONTROLLER), controlled=CONTROLLED)
-		biopax = addBiopaxInstance(biopax, class="Control", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="Control", id=var_id, properties=properties)
 	}
 		
 	biopax
@@ -273,6 +308,7 @@ addControl <- function(biopax, CONTROL_TYPE=c("ACTIVATION","INHIBITION"), CONTRO
 #' @return Returns the biopax model with the added pathway.
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
@@ -280,19 +316,21 @@ addControl <- function(biopax, CONTROL_TYPE=c("ACTIVATION","INHIBITION"), CONTRO
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id2", NAME="protein2")
 #' biopax = addPhysicalEntityParticipant(biopax, "p_id2", id="PEP_p_id2")
 #' biopax = addBiochemicalReaction(biopax, LEFT=c("PEP_p_id1"), RIGHT=c("PEP_p_id2"), id="biochem_id_1")
-#' biopax$df
+#' biopax$dt
 addBiochemicalReaction <- function(biopax, LEFT=c(), RIGHT=c(), id=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="biochemicalReaction")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="biochemicalReaction")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	if(biopax$biopaxlevel == 2) {
 		properties = list(LEFT=c(LEFT), RIGHT=c(RIGHT))
-		biopax = addBiopaxInstance(biopax, class="biochemicalReaction", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="biochemicalReaction", id=var_id, properties=properties)
 	}
 	if(biopax$biopaxlevel == 3) {
 		properties = list(left=c(LEFT), right=c(RIGHT))
-		biopax = addBiopaxInstance(biopax, class="BiochemicalReaction", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="BiochemicalReaction", id=var_id, properties=properties)
 	}
 	
 	biopax
@@ -312,28 +350,31 @@ addBiochemicalReaction <- function(biopax, LEFT=c(), RIGHT=c(), id=NULL) {
 #' @return Returns the biopax model with the added physical entity.
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addBiopaxInstance(biopax, class="protein", id="id1", properties=list(NAME="protein1",COMMENT="this is my first protein!"))
-#' biopax$df
+#' biopax$dt
 #' biopax = addPhysicalEntity(biopax, class="protein", id="id2", NAME="protein2", COMMENT="This is a protein added using the convenience function addPhysicalEntitiy")
-#' biopax$df
+#' biopax$dt
 addPhysicalEntity <- function(biopax, class=c("dna","rna","protein","smallMolecule","complex")[1], NAME, id=NULL, ORGANISM=NULL, COMMENT=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="physicalEntity")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="physicalEntity")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	if(biopax$biopaxlevel == 2) {
 		properties = list(NAME=c(NAME))
 		if(!is.null(ORGANISM)) properties['ORGANISM']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class=class, id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class=class, id=var_id, properties=properties)
 	}
 	if(biopax$biopaxlevel == 3) {
 		properties = list(name=c(NAME))
 		if(!is.null(ORGANISM)) properties['organism']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class=class, id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class=class, id=var_id, properties=properties)
 	}
 	
 	biopax
@@ -350,6 +391,7 @@ addPhysicalEntity <- function(biopax, class=c("dna","rna","protein","smallMolecu
 #' @return Returns the biopax model with the added physicalEntityParticipant.
 #' @author fkramer
 #' @export
+#' @import data.table
 #' @examples
 #' biopax = createBiopax(level=2)
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id1", NAME="protein1")
@@ -357,15 +399,17 @@ addPhysicalEntity <- function(biopax, class=c("dna","rna","protein","smallMolecu
 #' biopax = addPhysicalEntity(biopax, class="protein", id="p_id2", NAME="protein2")
 #' biopax = addPhysicalEntityParticipant(biopax, "p_id2", id="PEP_p_id2")
 #' biopax = addBiochemicalReaction(biopax, LEFT=c("PEP_p_id1"), RIGHT=c("PEP_p_id2"), id="biochem_id1")
-#' biopax$df
+#' biopax$dt
 addPhysicalEntityParticipant <- function(biopax, referencedPhysicalEntityID, id=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="physicalEntityParticipant")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="physicalEntityParticipant")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	properties = list('PHYSICAL-ENTITY'=c(referencedPhysicalEntityID))
 	
-	biopax = addBiopaxInstance(biopax, class="physicalEntityParticipant", id=id, properties=properties)
+	biopax = addBiopaxInstance(biopax, class="physicalEntityParticipant", id=var_id, properties=properties)
 	biopax
 }
 
@@ -377,13 +421,14 @@ addPhysicalEntityParticipant <- function(biopax, referencedPhysicalEntityID, id=
 #' @param id string. This is used as a prefix for the id.
 #' @return Returns an unused unique ID.
 #' @author fkramer
+#' @import data.table
 #' @export
 generateNewUniqueID <- function(biopax, id="") {
 	if(id=="") id="id"
 		
-	for(i in 1:500000) {
+	for(i in 1:5000000) {
 		myid = paste(id,i,sep="_")
-		if( !(myid %in% biopax$df$id) ) {
+		if( !(myid %chin% biopax$dt$id) ) {
 			return(myid)
 		}
 	}
@@ -406,11 +451,14 @@ generateNewUniqueID <- function(biopax, id="") {
 #' @param COMMENT string. An optional comment 
 #' @return A biopax model with the merged pathway added.
 #' @author fkramer
+#' @import data.table
 #' @export
 mergePathways <- function(biopax, pwid1, pwid2, NAME, id=NULL, ORGANISM="", COMMENT=NULL) {
+	var_id = id
+	rm(id)
 	
-	if(is.null(id)) id = generateNewUniqueID(biopax, id="pathway")
-	if( id %in% biopax$df$id ) id = generateNewUniqueID(biopax, id=id)
+	if(is.null(var_id)) var_id = generateNewUniqueID(biopax, id="pathway")
+	if( var_id %chin% biopax$dt$id ) var_id = generateNewUniqueID(biopax, id=var_id)
 	
 	PATHWAY_COMPONENTS = unique(c(listPathwayComponents(biopax,pwid1)$id,listPathwayComponents(biopax,pwid2)$id))
 	
@@ -420,14 +468,14 @@ mergePathways <- function(biopax, pwid1, pwid2, NAME, id=NULL, ORGANISM="", COMM
 		if(!is.null(ORGANISM)) if(ORGANISM=="") ORGANISM=getInstanceProperty(biopax, id=pwid1, property="ORGANISM")
 		if(!is.null(ORGANISM)) if(length(ORGANISM)>0) properties['ORGANISM']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['COMMENT']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class="pathway", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="pathway", id=var_id, properties=properties)
 	}
 	if(biopax$biopaxlevel == 3) {
 		properties = list(name=c(NAME),'pathwayComponent'=PATHWAY_COMPONENTS)
 		if(!is.null(ORGANISM)) if(ORGANISM=="") ORGANISM=getInstanceProperty(biopax, id=pwid1, property="ORGANISM")
 		if(!is.null(ORGANISM)) if(length(ORGANISM)>0) properties['organism']=c(ORGANISM)
 		if(!is.null(COMMENT)) properties['comment']=c(COMMENT)
-		biopax = addBiopaxInstance(biopax, class="Pathway", id=id, properties=properties)
+		biopax = addBiopaxInstance(biopax, class="Pathway", id=var_id, properties=properties)
 	}
 
 	biopax
@@ -442,9 +490,12 @@ mergePathways <- function(biopax, pwid1, pwid2, NAME, id=NULL, ORGANISM="", COMM
 #' @param id string. ID of the instance
 #' @return Returns the supplied biopax model with the instance removed from it.
 #' @author Frank Kramer
+#' @import data.table
 #' @export
 removeInstance <- function(biopax, id) {
-	biopax$df = biopax$df[biopax$df$id != id, ]
+	var_id = id
+	rm(id)
+	biopax$dt = biopax$dt[id != var_id, ]
 	biopax
 }
 
@@ -457,8 +508,11 @@ removeInstance <- function(biopax, id) {
 #' @param properties character vector. listing the properties to remove.
 #' @return Returns the supplied biopax model with properties removed from this instance.
 #' @author Frank Kramer
+#' @import data.table
 #' @export
 removeProperties <- function(biopax, id, properties) {
-	biopax$df = biopax$df[biopax$df$id != id | !(tolower(biopax$df$property) %in% tolower(properties)), ]
+	var_id = id
+	rm(id)
+	biopax$dt = biopax$dt[id != var_id | !(tolower(property) %in% tolower(properties)), ]
 	biopax
 }

@@ -2,8 +2,8 @@
 \alias{listPathwayComponents}
 \title{This function lists all pathway components of a given pathway.}
 \usage{
-  listPathwayComponents(biopax, id,
-    includeSubPathways = TRUE, returnIDonly = FALSE)
+listPathwayComponents(biopax, id, includeSubPathways = TRUE,
+  returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -18,11 +18,11 @@
   names for every single ID.}
 }
 \value{
-  data.frame
+data.frame
 }
 \description{
-  This function returns a (unique) data.frame listing all
-  component IDs, names and classes of the supplied pathway.
+This function returns a (unique) data.frame listing all
+component IDs, names and classes of the supplied pathway.
 }
 \examples{
 # load data
@@ -30,6 +30,6 @@
  listPathwayComponents(biopax, id="pid_p_100002_wntpathway")
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

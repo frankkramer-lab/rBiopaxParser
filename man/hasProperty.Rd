@@ -1,8 +1,8 @@
 \name{hasProperty}
 \alias{hasProperty}
-\title{Checks if instances in the biopax data.frame have a given property}
+\title{Checks if instances in the biopax data.table have a given property}
 \usage{
-  hasProperty(df, property)
+hasProperty(df, property)
 }
 \arguments{
   \item{df}{A data.frame with biopax instances}
@@ -11,16 +11,15 @@
   property to check for}
 }
 \value{
-  Returns TRUE for every row in the data.frame with
-  contains the supplied property. Logical vector with
-  length corresponding to the number of rows in the
-  data.frame.
+Returns TRUE for every row in the data.frame with contains
+the supplied property. Logical vector with length
+corresponding to the number of rows in the data.frame.
 }
 \description{
-  Checks if instances in the biopax data.frame have a given
-  property
+Checks if instances in the biopax data.table have a given
+property
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

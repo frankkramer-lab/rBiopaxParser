@@ -2,24 +2,23 @@
 \alias{addBiopaxInstances}
 \title{This function adds new instances to an existing biopax model.}
 \usage{
-  addBiopaxInstances(biopax, newInstancesDF)
+addBiopaxInstances(biopax, newInstancesDF)
 }
 \arguments{
   \item{biopax}{A biopax model}
 
-  \item{newInstancesDF}{data.frame. Compatible with
-  internal Biopax Level 2 implementation.}
+  \item{newInstancesDF}{data.table or data.frame. Must be
+  compatible with internal biopax implementation.}
 }
 \value{
-  Returns the supplied biopax model with the new instances
-  added.
+Returns the supplied biopax model with the new instances
+added.
 }
 \description{
-  This function adds new instances (supplied as a
-  compatible data.frame) to an existing biopax model via
-  rbind. Usually you want to start out at createBiopax and
-  addPhysicalEntity and work your way up the ontology
-  ladder.
+This function adds new instances (supplied as a compatible
+data.table) to an existing biopax model via rbind. Usually
+you want to start out at createBiopax and addPhysicalEntity
+and work your way up the ontology ladder.
 }
 \examples{
 # load data
@@ -30,6 +29,6 @@
  biopax = addBiopaxInstances(biopax, selectInstances(biopax_temp))
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

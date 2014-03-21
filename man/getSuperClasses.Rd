@@ -2,7 +2,7 @@
 \alias{getSuperClasses}
 \title{This function returns the superclasses of the supplied biopax class.}
 \usage{
-  getSuperClasses(classname, biopaxlevel = 2)
+getSuperClasses(classname, biopaxlevel = 3)
 }
 \arguments{
   \item{classname}{A string containing a class name}
@@ -11,17 +11,17 @@
   use.}
 }
 \value{
-  Returns character vector containing the superclasses of
-  the supplied class
+Returns character vector containing the superclasses of the
+supplied class
 }
 \description{
-  This function returns the superclasses of the supplied
-  biopax class.
+This function returns the superclasses of the supplied
+biopax class.
 }
 \examples{
 getSuperClasses("control")
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

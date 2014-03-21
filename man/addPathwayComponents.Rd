@@ -2,8 +2,7 @@
 \alias{addPathwayComponents}
 \title{This function adds pathway components to an existing pathway}
 \usage{
-  addPathwayComponents(biopax, id,
-    PATHWAY_COMPONENTS = c())
+addPathwayComponents(biopax, id, PATHWAY_COMPONENTS = c())
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -15,14 +14,14 @@
   interaction/pathway/pathwayStep (or their subclasses).}
 }
 \value{
-  Returns the biopax model with the pathway components
-  added to the pathway
+Returns the biopax model with the pathway components added
+to the pathway
 }
 \description{
-  This function adds pathway components to an existing
-  pathway. Property PATHWAY-COMPONENTS are references to
-  IDs of interaction/pathways/pathwaySteps (or subclasses
-  of those)
+This function adds pathway components to an existing
+pathway. Property PATHWAY-COMPONENTS are references to IDs
+of interaction/pathways/pathwaySteps (or subclasses of
+those)
 }
 \examples{
 biopax = createBiopax(level=2)
@@ -36,9 +35,9 @@ biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
 biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
 biopax = addPathway(biopax, NAME="mypathway1", PATHWAY_COMPONENTS=c(), id="pw_id1")
 biopax = addPathwayComponents(biopax, id="pw_id1", PATHWAY_COMPONENTS=c("c_id1"))
-biopax$df
+biopax$dt
 }
 \author{
-  fkramer
+fkramer
 }
 

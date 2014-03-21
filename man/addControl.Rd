@@ -2,9 +2,8 @@
 \alias{addControl}
 \title{This function adds a new control to the biopax model.}
 \usage{
-  addControl(biopax,
-    CONTROL_TYPE = c("ACTIVATION", "INHIBITION"),
-    CONTROLLER = "", CONTROLLED = c(), id = NULL)
+addControl(biopax, CONTROL_TYPE = c("ACTIVATION", "INHIBITION"),
+  CONTROLLER = "", CONTROLLED = c(), id = NULL)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -24,14 +23,14 @@
   generated with prefix "control".}
 }
 \value{
-  Returns the biopax model with the added pathway.
+Returns the biopax model with the added pathway.
 }
 \description{
-  This function adds a new interaction of class control to
-  the biopax model. This is a convenience function to add
-  controls, internally the function addBiopaxInstance is
-  called with properties CONTROL-TYPE, CONTROLLER and
-  CONTROLLED set.
+This function adds a new interaction of class control to
+the biopax model. This is a convenience function to add
+controls, internally the function addBiopaxInstance is
+called with properties CONTROL-TYPE, CONTROLLER and
+CONTROLLED set.
 }
 \examples{
 biopax = createBiopax(level=2)
@@ -43,9 +42,9 @@ biopax = addBiochemicalReaction(biopax, LEFT=c("PEP_p_id1"), RIGHT=c("PEP_p_id2"
 biopax = addPhysicalEntity(biopax, class="protein", id="p_id3", NAME="controllerProtein1")
 biopax = addPhysicalEntityParticipant(biopax, "p_id3", id="PEP_p_id3")
 biopax = addControl(biopax, CONTROL_TYPE="ACTIVATION", CONTROLLER="PEP_p_id3", CONTROLLED="biochem_id_1", id="c_id1")
-biopax$df
+biopax$dt
 }
 \author{
-  fkramer
+fkramer
 }
 

@@ -2,9 +2,8 @@
 \alias{pathway2AdjacancyMatrix}
 \title{This function generates an adjacency matrix from the activations/inhibitions of a pathway in a biopax model.}
 \usage{
-  pathway2AdjacancyMatrix(biopax, pwid,
-    expandSubpathways = TRUE, splitComplexMolecules = TRUE,
-    useIDasNodenames = FALSE, verbose = TRUE)
+pathway2AdjacancyMatrix(biopax, pwid, expandSubpathways = TRUE,
+  splitComplexMolecules = TRUE, useIDasNodenames = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -29,14 +28,14 @@
   \item{verbose}{logical}
 }
 \value{
-  Returns the adjacency matrix representing the regulatory
-  graph of the supplied pathway.
+Returns the adjacency matrix representing the regulatory
+graph of the supplied pathway.
 }
 \description{
-  This function internally first calls
-  pathway2RegulatoryGraph, then converts the regulatory
-  graph to an adjacency matrix. See pathway2RegulatoryGraph
-  for more details.
+This function internally first calls
+pathway2RegulatoryGraph, then converts the regulatory graph
+to an adjacency matrix. See pathway2RegulatoryGraph for
+more details.
 }
 \examples{
 # load data
@@ -46,6 +45,6 @@
  pathway2AdjacancyMatrix(biopax, pwid1)
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

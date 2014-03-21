@@ -1,3 +1,21 @@
+rBiopaxParser 2.1.1
+===========
+
+* Attention: This is a major update and might introduce backwards incompatibility to previously parsed data!
+* Speed issues in previous versions were common with huge databases like Reactome or PathwayCommons, and with search & replace operations in the internal data.frame.
+* The data.table package is now required and imported for rBiopaxParser.
+* The internal data model has been switched from data.frame to data.table to speed up working with the rBiopaxParser. 
+
+* The "df" slot of the biopax object, a data.frame object, is gone. Use the "dt" slot, a data.table, to directly access to biopax data.
+* If you work with the "df" slot of the biopax object in your current code, you have to make yourself comfortable with using the data.table syntax!
+* All functions which return a subset of the internal data, return a data.table object now.
+
+* A long standing bug of deeply nested XML instances has been fixed. See http://permalink.gmane.org/gmane.science.biology.informatics.conductor/48534
+
+* The default parameter specifying the Biopax Level (usually called biopaxlevel) has been changed and defaults to 3 now.
+
+* Functions selectInstances, getInstanceProperty, getReferencedIDs, splitComplex, getInstanceClass and many others now acceps either a biopax object or a compatible internal data.table.
+
 rBiopaxParser 1.3.3
 ===========
 

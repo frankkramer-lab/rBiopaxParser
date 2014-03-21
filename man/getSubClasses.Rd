@@ -2,7 +2,7 @@
 \alias{getSubClasses}
 \title{This function returns the subclasses of the supplied biopax class.}
 \usage{
-  getSubClasses(classname, biopaxlevel = 2)
+getSubClasses(classname, biopaxlevel = 3)
 }
 \arguments{
   \item{classname}{A string containing a class name}
@@ -11,17 +11,17 @@
   use.}
 }
 \value{
-  Returns character vector containing the subclasses of the
-  supplied class
+Returns character vector containing the subclasses of the
+supplied class
 }
 \description{
-  This function returns the subclasses of the supplied
-  biopax class.
+This function returns the subclasses of the supplied biopax
+class.
 }
 \examples{
 getSubClasses("control")
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

@@ -2,8 +2,7 @@
 \alias{getNeighborhood}
 \title{This function returns the neighborhood of a physicalEntity}
 \usage{
-  getNeighborhood(biopax, id, depth = 1,
-    onlyInPathways = c())
+getNeighborhood(biopax, id, depth = 1, onlyInPathways = c())
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -19,15 +18,15 @@
   Search only in these pathways for neighbors.}
 }
 \value{
-  Returns ids of interactions within 'depth' number of
-  steps of the specified physicalEntity
+Returns ids of interactions within 'depth' number of steps
+of the specified physicalEntity
 }
 \description{
-  This function searches the supplied biopax for
-  interactions that are connected to the molecule or within
-  'depth' number of steps from it.
+This function searches the supplied biopax for interactions
+that are connected to the molecule or within 'depth' number
+of steps from it.
 }
 \author{
-  fkramer
+fkramer
 }
 

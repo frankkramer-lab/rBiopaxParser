@@ -29,36 +29,36 @@ test_DATABASE_BIOPAX <- function() {
 test_getSubClasses <- function() {
 	
 	#check that namespaces are correctly stripped off class names
-	checkEquals(getSubClasses("bp:control"), getSubClasses("control"))
+	checkEquals(getSubClasses("bp:Control"), getSubClasses("Control"))
 	
-	#check that "control" is a subclass of "interaction" in BP2
-	checkTrue( "control" %in% getSubClasses("interaction") )
+	#check that "control" is a subclass of "interaction"
+	checkTrue( "control" %in% tolower(getSubClasses("Interaction")) )
 	
-	#check that "dna" is a subclass of "physicalEntity" in BP2
-	checkTrue( "dna" %in% getSubClasses("physicalEntity") )
+	#check that "dna" is a subclass of "PhysicalEntity"
+	checkTrue( "dna" %in% tolower(getSubClasses("PhysicalEntity")) )
 	
 } 
 
 test_getSuperClasses <- function() {
 	
 	#check that namespaces are correctly stripped off class names
-	checkEquals(getSuperClasses("bp:control"), getSuperClasses("control"))
+	checkEquals(getSuperClasses("bp:Control"), getSuperClasses("Control"))
 	
-	#check that "interaction" is a superclass of "control" in BP2
-	checkTrue( "interaction" %in% getSuperClasses("control") )
+	#check that "interaction" is a superclass of "control"
+	checkTrue( "interaction" %in% tolower(getSuperClasses("Control")) )
 	
-	#check that "physicalEntity" is a superclass of "dna" in BP2
-	checkTrue( "physicalEntity" %in% getSuperClasses("dna") )
+	#check that "physicalEntity" is a superclass of "dna"
+	checkTrue( "physicalentity" %in% tolower(getSuperClasses("Dna")) )
 	
 } 
 
 test_getClassProperties <- function() {
 	
 	#check that namespaces are correctly stripped off class names
-	checkEquals(getClassProperties("bp:control"), getClassProperties("control"))
+	checkEquals(getClassProperties("bp:Control"), getClassProperties("Control"))
 	
-	#check that "control" has a property "CONTROL-TYPE" in BP2
-	checkTrue( "CONTROL-TYPE" %in% unlist(getClassProperties("control")$property) )
+	#check that "control" has a property "CONTROL-TYPE"
+	checkTrue( tolower("controlType") %in% tolower(getClassProperties("Control")$property) )
 	
 } 
 

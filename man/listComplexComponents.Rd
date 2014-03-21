@@ -2,7 +2,7 @@
 \alias{listComplexComponents}
 \title{This function lists all components of a given complex.}
 \usage{
-  listComplexComponents(biopax, id, returnIDonly = FALSE)
+listComplexComponents(biopax, id, returnIDonly = FALSE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -14,11 +14,11 @@
   names for every single ID.}
 }
 \value{
-  data.frame
+data.frame
 }
 \description{
-  This function returns a (unique) data.frame listing all
-  component IDs, names and classes of the supplied complex.
+This function returns a (unique) data.frame listing all
+component IDs, names and classes of the supplied complex.
 }
 \examples{
 # load data
@@ -26,6 +26,6 @@
  listComplexComponents(biopax, id="ex_m_100650")
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

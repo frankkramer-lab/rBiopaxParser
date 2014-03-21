@@ -3,15 +3,18 @@
 \alias{CLASS_INHERITANCE_BP2}
 \title{CLASS_INHERITANCE_BP2}
 \format{A data frame with 46 rows and 2 columns}
+\usage{
+CLASS_INHERITANCE_BP2
+}
 \description{
-  Class inheritance relationships in Biopax Level 2.
+Class inheritance relationships in Biopax Level 2.
 }
 \details{
-  A data.frame listing all direct superclasses for every
-  Biopax Level 2 class. The variables are as follows:
+A data.frame listing all direct superclasses for every
+Biopax Level 2 class. The variables are as follows:
 
-  \itemize{ \item class. Name of the class \item
-  superclass. Name of the superclass }
+\itemize{ \item class. Name of the class \item superclass.
+Name of the superclass }
 }
 \keyword{datasets}
 

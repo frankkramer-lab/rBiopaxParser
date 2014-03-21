@@ -2,8 +2,8 @@
 \alias{mergePathways}
 \title{This function merges two given pathways}
 \usage{
-  mergePathways(biopax, pwid1, pwid2, NAME, id = NULL,
-    ORGANISM = "", COMMENT = NULL)
+mergePathways(biopax, pwid1, pwid2, NAME, id = NULL, ORGANISM = "",
+  COMMENT = NULL)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -24,20 +24,19 @@
   \item{COMMENT}{string. An optional comment}
 }
 \value{
-  A biopax model with the merged pathway added.
+A biopax model with the merged pathway added.
 }
 \description{
-  This function merges two given pathways and appends it to
-  the supplied biopax model. The user has to specify a new
-  name for the pathways and can supply ID, ORGANISM and
-  COMMENT properties for the new pathway. If no ID is
-  supplied, a new unique ID is generated. If no organism
-  property is supplied the organism property of the first
-  pathway is re-used. If ORGANISM is NULL the property is
-  not set. Optionally a comment can be added to the
-  pathway.
+This function merges two given pathways and appends it to
+the supplied biopax model. The user has to specify a new
+name for the pathways and can supply ID, ORGANISM and
+COMMENT properties for the new pathway. If no ID is
+supplied, a new unique ID is generated. If no organism
+property is supplied the organism property of the first
+pathway is re-used. If ORGANISM is NULL the property is not
+set. Optionally a comment can be added to the pathway.
 }
 \author{
-  fkramer
+fkramer
 }
 

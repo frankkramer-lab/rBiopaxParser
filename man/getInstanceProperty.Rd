@@ -2,8 +2,7 @@
 \alias{getInstanceProperty}
 \title{This function returns all properties of the specified type for an instance.}
 \usage{
-  getInstanceProperty(biopax, id, property = "NAME",
-    includeAllNames = TRUE)
+getInstanceProperty(biopax, id, property = "NAME", includeAllNames = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -18,14 +17,14 @@
   you only want the NAME property.}
 }
 \value{
-  Returns a character vector with all properties of the
-  selected type for this instance. Returns NULL if no
-  property data is found.
+Returns a character vector with all properties of the
+selected type for this instance. Returns NULL if no
+property data is found.
 }
 \description{
-  This function returns all properties of the specified
-  type for an instance. By default this function returns
-  the NAME property of an instance.
+This function returns all properties of the specified type
+for an instance. By default this function returns the NAME
+property of an instance.
 }
 \examples{
 # load data
@@ -35,6 +34,6 @@
  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")
 }
 \author{
-  fkramer
+fkramer
 }
 

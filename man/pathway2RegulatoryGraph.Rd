@@ -2,9 +2,8 @@
 \alias{pathway2RegulatoryGraph}
 \title{This function generates the regulatory graph from the activations/inhibitions of a pathway in a biopax model.}
 \usage{
-  pathway2RegulatoryGraph(biopax, pwid,
-    expandSubpathways = TRUE, splitComplexMolecules = TRUE,
-    useIDasNodenames = FALSE, verbose = TRUE)
+pathway2RegulatoryGraph(biopax, pwid, expandSubpathways = TRUE,
+  splitComplexMolecules = TRUE, useIDasNodenames = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -29,20 +28,20 @@
   \item{verbose}{logical}
 }
 \value{
-  Returns the representing the regulatory graph of the
-  supplied pathway in a node-edge-list graph.
+Returns the representing the regulatory graph of the
+supplied pathway in a node-edge-list graph.
 }
 \description{
-  This functions builds a graph from the pathway components
-  of the supplied pathway. Only instances of class
-  'control' are considered, this leads a functinal graph
-  with all edges either representing activations or
-  inhibitions. No transports, no translocation, etc. If
-  desired complexes can be split up into several nodes,
-  this can sometimes lead to a more complex and cluttered
-  graph. There can not be multiple edges between 2 nodes.
-  Whenever duplicated edges are generated (especially by
-  splitting up complexes) a warning is thrown.
+This functions builds a graph from the pathway components
+of the supplied pathway. Only instances of class 'control'
+are considered, this leads a functinal graph with all edges
+either representing activations or inhibitions. No
+transports, no translocation, etc. If desired complexes can
+be split up into several nodes, this can sometimes lead to
+a more complex and cluttered graph. There can not be
+multiple edges between 2 nodes. Whenever duplicated edges
+are generated (especially by splitting up complexes) a
+warning is thrown.
 }
 \examples{
 # load data
@@ -53,6 +52,6 @@
  plotRegulatoryGraph(mygraph)
 }
 \author{
-  Frank Kramer
+Frank Kramer
 }
 

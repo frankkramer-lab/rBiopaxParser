@@ -3,17 +3,20 @@
 \alias{CLASS_INHERITANCE_BP3}
 \title{CLASS_INHERITANCE_BP3}
 \format{A data frame with 46 rows and 2 columns}
+\usage{
+CLASS_INHERITANCE_BP3
+}
 \description{
-  Class inheritance relationships in Biopax Level 3.
+Class inheritance relationships in Biopax Level 3.
 }
 \details{
-  A data.frame listing all direct superclasses for every
-  Biopax Level 3 class. The variables are as follows:
+A data.frame listing all direct superclasses for every
+Biopax Level 3 class. The variables are as follows:
 
-  \itemize{ \item class. Name of the class \item
-  superclass. Name of the superclass }
+\itemize{ \item class. Name of the class \item superclass.
+Name of the superclass }
 
-  NOT UPDATED TO BP3 yet!
+NOT UPDATED TO BP3 yet!
 }
 \keyword{datasets}
 

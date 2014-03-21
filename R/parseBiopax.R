@@ -9,8 +9,6 @@
 #
 ###############################################################################
 
-##TODO: FIX PARSING. SEE PATHWAY COMMONS
-
 #' This function creates a new Biopax model from scratch
 #' 
 #' This function creates a new Biopax model from scratch. This is not necessary if you want to parse a BioPAX export from a file, please see: readBiopax.
@@ -27,20 +25,22 @@
 #' @return A biopax model
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #'  biopax = createBiopax(level=2)
 #' 
-createBiopax <- function(level = 2)  {
+createBiopax <- function(level = 3)  {
 	ret = list(file = NULL)
 	class(ret) <- c("biopax",class(ret))
 	
 	if(level==1) message("BioPAX level 1 OWL is unfortunatly not supported.")
 	if(level==2) {
 		ret$biopaxlevel = 2
-		df_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-		ret$df = data.frame(rbind(df_colnames,0))
-		colnames(ret$df) = df_colnames
-		ret$df = ret$df[0,]
+		ret$dt = data.table(rowcount=1:5,class="",id="",property="",property_attr="",property_attr_value="",property_value="", key=c("id","class","property"))
+		ret$dt = copy(ret$dt[,2:7, with=F])
+		ret$dt = copy(ret$dt[0])
+		class(ret$dt) = c("biopax_df",class(ret$dt))
+		setkey(ret$dt, id, class, property)
 
 		# deal with namespaces, we're interested in owl, rdf, biopax
 		ret$ns_rdf = "rdf"
@@ -56,10 +56,11 @@ createBiopax <- function(level = 2)  {
 	} 
 	if(level==3) {
 		ret$biopaxlevel = 3
-		df_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-		ret$df = data.frame(rbind(df_colnames,0))
-		colnames(ret$df) = df_colnames
-		ret$df = ret$df[0,]
+		ret$dt = data.table(rowcount=1:5,class="",id="",property="",property_attr="",property_attr_value="",property_value="", key=c("id","class","property"))
+		ret$dt = copy(ret$dt[,2:7, with=F])
+		ret$dt = copy(ret$dt[0])
+		class(ret$dt) = c("biopax_df",class(ret$dt))
+		setkey(ret$dt, id, class, property)
 		
 		# deal with namespaces, we're interested in owl, rdf, biopax
 		ret$ns_rdf = "rdf"
@@ -97,6 +98,7 @@ createBiopax <- function(level = 2)  {
 #' @return A biopax model
 #' @author Frank Kramer
 #' @export
+#' @import data.table
 #' @examples
 #'  \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
 #'  \dontrun{biopax} 
@@ -125,12 +127,12 @@ readBiopax <- function(file, verbose=TRUE)  {
 	if(any(grepl("biopax-level2",ret$namespaces,ignore.case=TRUE))) {
 		if(verbose) message("Found a BioPAX level 2 OWL. Parsing...\n")
 		ret$biopaxlevel = 2
-		ret$df = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
+		ret$dt = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
 	}
 	if(any(grepl("biopax-level3",ret$namespaces,ignore.case=TRUE))) {
 		if(verbose) message("Found a BioPAX level 3 OWL. Parsing...\n")
 		ret$biopaxlevel = 3
-		ret$df = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
+		ret$dt = internal_getBiopaxModelAsDataFrame(ret, biopaxxml, verbose=verbose)
 	}
 	
 	ret
@@ -141,6 +143,7 @@ readBiopax <- function(file, verbose=TRUE)  {
 #' @param x A \code{biopax} object to print.
 #' @param ... Other arguments to be passed to \code{print}.
 #' @export
+#' @import data.table
 #' @method print biopax
 #' @examples
 #'  data(biopax2example)
@@ -153,9 +156,9 @@ print.biopax <- function(x, ...) {
 	cat("\nInternal data:\n")
 	print(x[!(names(x) %in% c("biopaxxml","df"))],...)
 	
-	cat(paste("Dimension of internal data.frame: ",paste(dim(x$df), collapse=","),"\n\n"))
-	cat("Summary of parsed internal data.frame \n")
-	print(summary(x$df))
+	cat(paste("Dimension of internal data.table: ",paste(dim(x$dt), collapse=","),"\n\n"))
+	cat("Summary of parsed internal data.table \n")
+	print(summary(x$dt))
 	
 	invisible(x)
 }
@@ -170,6 +173,7 @@ print.biopax <- function(x, ...) {
 #' @param verbose logical 
 #' @return Returns the parsed biopax model in the internal data.frame format.
 #' @author Frank Kramer
+#' @import data.table
 internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE) {
 	
 	### THIS FUNCTION ONLY RETURNS INSTANCES OF THE BIOPAX NAMESPACE! NAMESPACE MARKERS ARE STRIPPED AT THE END!
@@ -178,18 +182,19 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 	model = XML::getNodeSet(biopaxxml, paste("/",biopax$ns_rdf,":RDF/*",sep=""))
 	
 	## data.frame will be put together in the end by vectors
-	if(verbose)	message("[Info Verbose] Parsing Biopax-Model as a data.frame...")
+	if(verbose)	message("[Info Verbose] Parsing Biopax-Model as a data.table...")
 	nodecount = sum(XML::xmlElementSummary(biopax$file)$nodeCounts)
 	if(verbose)	message(paste("[Info Verbose] Estimating up to", nodecount,"entries. This will roughly need", round(nodecount*58*2*2/2**20), "MB of RAM."))
 	if(verbose) message(paste("[Info Verbose] Where I came from this would've taken at least", round(3*nodecount/1000),"seconds!"))
 	time_start = proc.time()[1]
-	ret = matrix(data=NA,nrow = nodecount, ncol = 6)
 	
 	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-	colnames(ret) = ret_colnames
+	ret = data.table(rowcount=1:nodecount,class="",id="",property="",property_attr="",property_attr_value="",property_value="", key="rowcount")
 	## for each instance get data.frame entries and add them together in a df
-	rowcount = 0
+	rowcount = 1
 	for(i in 1:XML::xmlSize(model)) {
+		
+		## TODO Go on here: extra function. construct data.table, merge the data.tables. how to pass the dts?
 		
 		#class and id are name and attr
 		class = XML::xmlName(model[[i]], full=T)
@@ -199,91 +204,90 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 			tryCatch({ 
 						child = XML::xmlChildren(model[[i]])[[p]] 
 					},
-				error = function(e) { message(paste("Debug: i=",i," p=",p," instance:",class, id)) } 
+				error = function(e) { message(paste("Debug: i=",i," p=",p," class:",class, " instance:", id)) } 
 			)
 			
 			if( (XML::xmlSize(child) > 0) && !any(class(XML::xmlChildren(child)[[1]]) %in% c("XMLInternalTextNode","XMLTextNode"))) {
 				#found instancianted class here. make it a real instance, give it an id and reference it here using rdf:resource
-				# can check with i = 7290, p=3 on PID
-				newInstance = internal_XMLInstance2DF(XML::xmlChildren(child)[[1]], namespace_rdf=biopax$ns_rdf)
-				for(x in 1:dim(newInstance)[[1]]) {
-					rowcount = rowcount + 1
-					tryCatch( {
-						ret[rowcount,] = matrix(newInstance,ncol=6)[x,]
-						},
-						error = function(e) { 
-							message(paste("Error: internal_getBioPaxModelAsDataFrame - NewInstance:","x=",x,"p=",p," instance:",class, id));
-							message(paste("ret:",ret[1:(max(1,rowcount)),],"newInstance:",newInstance, rowcount))}
-					)
+				
+				newInstanceResult = internal_XMLInstance2DF(XML::xmlChildren(child)[[1]], namespace_rdf=biopax$ns_rdf, ret, rowcount)
+				if(is.null(newInstanceResult) || is.null(newInstanceResult$id)) {
+					warning(paste("Something went wrong in internal_XMLInstance2DF: rowcount:", rowcount, " class:",class, " id:", id,". Debug: i=",i," p=",p))
 				}
-
+				rowcount = newInstanceResult$rowcount
+				
 				#generate new row to be added: reference to new instance
 				tryCatch( {
 					row = c(
 							class, id,
 							XML::xmlName(child, full=T), #property				
 							paste(biopax$ns_rdf,":resource",sep=""), #property_attr
-							paste("#",newInstance[1,"id"],sep=""), #property_attr_value
+							paste("#",newInstanceResult$id,sep=""), #property_attr_value
 							"" #property_value
 					)
 				},
 				error = function(e) { 
-					message(paste("Error: internal_getBioPaxModelAsDataFrame - NewInstance:","p=",p," instance:",class, id));
-					message(paste("ret:",ret[1:(max(1,rowcount)),],"newInstance:",newInstance,rowcount)) }
+					message(paste("Error: internal_getBioPaxModelAsDataFrame - generate new instance row:\n","p=",p," class:",class," instance:", id, " rowcount:",rowcount," newInstance:",newInstanceResult$id)) }
 				)
 
 			} else {
-				attribute = paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]], attributes(XML::xmlAttrs(child))$names[[1]], sep=":") #property_attr
+				attrs1 = XML::xmlAttrs(child)
+				attrs2 = attributes(attrs1)
+				attribute = paste(	attrs2$namespaces[[1]], attrs2$names[[1]], sep=":") #property_attr
 				if(is.null(attribute)) attribute = "undefined"
 				row = c(
 						class, id,
 						XML::xmlName(child, full=T), #property				
 						attribute, #property_attr
-						XML::xmlAttrs(child)[[1]], #property_attr_value
+						attrs1[[1]], #property_attr_value
 						XML::xmlValue(child) #property_value
 				)
 			}
 			
 			#naive error check + add row
 			if(length(row) != 6) {
-				warning(paste("Something went wrong parsing:",class, id," Parsed ",row,". Debug: i=",i," p=",p))
+				warning(paste("Something went wrong parsing: rowcount: ", rowcount, "class: ",class, "id: ", id," Parsed row: ", paste(row,collapse="|"),". Debug: i=",i," p=",p))
 				
 			} else {
+				
+				set(ret, as.integer(rowcount), 2L, row[1] )  #class
+				set(ret, as.integer(rowcount), 3L, row[2] )  #id
+				set(ret, as.integer(rowcount), 4L, row[3] )  #property
+				set(ret, as.integer(rowcount), 5L, row[4] )  #property_attr
+				set(ret, as.integer(rowcount), 6L, row[5] )  #property_attr_value
+				set(ret, as.integer(rowcount), 7L, row[6] )  #property_value
+
 				rowcount = rowcount + 1
-				ret[rowcount,] = row
-				if(verbose)	if(rowcount%%8192 == 0) message(paste("[Info Verbose] Internal Rowcount: ",rowcount,"InstanceNr:",i,"Instance:",id,sep=" "))
+				if(verbose)	if(rowcount%%8192 == 0) message(paste("[Info Verbose] Internal Rowcount: ",rowcount," Instance:",id,sep=" "))
 			}
 			# done with property
 		}
 		#done with instance
 		#if(rowcount > 1000) break
 	}
+
 	# return result. leave out all entries that are either na or are of a different namespace than bp
-	ret2 = data.frame( ret[ !(is.na(ret[,1]) | !(isOfNamespace(ret[,1],biopax$ns_bp)) ) ,] )
+	x = rowcount
+	ret = copy(ret[rowcount<x & id!="",2:7, with=F])
+	setkey(ret, id,class,property)
+	
 	# strip namespace from df$property & df$class
-	levels(ret2$property) =  stripns(levels(ret2$property))
-	levels(ret2$class) =  stripns(levels(ret2$class))
-
-	# take care if matrix has only one row
-	if(dim(ret2)[[1]]==6 & dim(ret2)[[2]]==1) {
-		ret2=t(ret2)
-		rownames(ret2)=1
-	}
-
-	colnames(ret2) = ret_colnames
-	rm(ret)
-	if(verbose)	message(paste("[Info Verbose] Finished! Created a data.frame with", rowcount,"rows within only",(proc.time()[1]-time_start),"seconds."))
-	class(ret2) <- c("biopax_df",class(ret2))
-	ret2
+	set(ret, NULL, "property", stripns(ret$property))
+	set(ret, NULL, "class", stripns(ret$class))
+	
+	if(verbose)	message(paste("[Info Verbose] Finished! Created a data.frame with ", rowcount," rows within only ",(proc.time()[1]-time_start)," seconds."))
+	class(ret) <- c("biopax_df",class(ret))
+	ret
 }
 
-#' This function in an internal function to count the Number of nodes and child nodes of an XMLNode.
+#' This function is an internal function to count the Number of nodes and child nodes of an XMLNode.
 #' 
-#' This function in an internal function to count the Number of nodes and child nodes of an XMLNode.
+#' This function is an internal function to count the Number of nodes and child nodes of an XMLNode.
 #'  
 #' @param myXMLNode XMLNode to analyze
 #' @return This function returns the number of Nodes and child Nodes an XMLNode has.
 #' @author Frank Kramer
+#' @import data.table
 internal_NrOfXMLNodes <- function(myXMLNode) {
 	ret = 1
 	if((XML::xmlSize(myXMLNode) > 0)  && !any(class(XML::xmlChildren(myXMLNode)[[1]]) %in% c("XMLInternalTextNode","XMLTextNode"))) {
@@ -294,78 +298,84 @@ internal_NrOfXMLNodes <- function(myXMLNode) {
 	ret
 }
 
-#' This function in an internal function that parses a Biopax Level 2 XMLNode.
+#' This function is an internal function that parses a Biopax XMLNode.
 #' 
-#' This function in an internal function that parses a Biopax Level 2 XMLNode.
+#' This function is an internal function that parses a Biopax XMLNode. Do not call it manually.
 #' 
 #' @param myXMLNode XMLNode
 #' @param namespace_rdf String specifying the namespace to use for rdf:resource and rdf:datatype
-#' @return Returns the matrix generated by parsing the XMLNode
+#' @param ret data.table object contaning the already parsed data to attach this instance to
+#' @param rowcount Numeric specifying the row at which further parsed data is inserted into the data.table
+#' @return Returns a list contianing the new rowcount and the instance id of the added instance
 #' @author Frank Kramer
-internal_XMLInstance2DF <- function(myXMLNode, namespace_rdf) {
-	ret_colnames = c("class","id","property","property_attr","property_attr_value","property_value")
-	ret = matrix(data=NA,nrow = 10000, ncol = 6)
-	colnames(ret) = ret_colnames
+#' @import data.table
+internal_XMLInstance2DF <- function(myXMLNode, namespace_rdf, ret, rowcount) {
+
 	class = XML::xmlName(myXMLNode, full=T)
 	id   = XML::xmlAttrs(myXMLNode)[[1]]	
 	#every property of an instance is represented as 1 entry in the df
-	rowcount = 0
+	
 	for(x in 1:XML::xmlSize(myXMLNode)) {
 		tryCatch({ 
 					child = XML::xmlChildren(myXMLNode)[[x]] 
 				},
-				error = function(e) { message(paste("Debug: internal_XMLInstance2DF xmlChildren x=",x," instance:",class, id)) } 
+				error = function(e) { message(paste("Debug: internal_XMLInstance2DF xmlChildren x=",x," class:",class, " instance:", id)) } 
 		)
 		if( (XML::xmlSize(child) > 0) && !any(class(XML::xmlChildren(child)[[1]]) %in% c("XMLInternalTextNode","XMLTextNode"))) {
-			#found instancianted class here. make it a real instance, give it an id and referece it here using rdf:resource
-			newInstance = internal_XMLInstance2DF(XML::xmlChildren(child)[[1]])
-			for(y in 1:dim(newInstance)[[1]]) {
-				rowcount = rowcount + 1
-				tryCatch( {
-							ret[rowcount,] = matrix(newInstance,ncol=6)[y,]
-						},
-						error = function(e) { 
-							message(paste("Error: internal_XMLInstance2DF - NewInstance:","x=",x,"y=",y," instance:",class, id));
-							message(paste("ret:",ret[1:(max(1,rowcount)),],"newInstance:",newInstance,rowcount)) }
-				)
+			
+			#found instancianted class here. make it a real instance, give it an id and reference it here using rdf:resource
+			newInstanceResult = internal_XMLInstance2DF(XML::xmlChildren(child)[[1]], namespace_rdf=namespace_rdf, ret, rowcount)
+			if(is.null(newInstanceResult) || is.null(newInstanceResult$id)) {
+				warning(paste("Something went wrong in internal_XMLInstance2DF: rowcount:", rowcount, " class:",class, " id:", id,". Debug: i=",i," p=",p))
 			}
+			rowcount = newInstanceResult$rowcount
+			
+			
 			#generate new row to be added: reference to new instance
 			tryCatch( {
 						row = c(
 								class, id,
 								XML::xmlName(child, full=T), #property				
 								paste(namespace_rdf,":resource",sep=""), #property_attr
-								paste("#",newInstance[1,"id"],sep=""), #property_attr_value
+								paste("#",newInstanceResult$id,sep=""), #property_attr_value
 								"" #property_value
 						)
 					},
 					error = function(e) { 
-						message(paste("Error: internal_XMLInstance2DF - NewInstance:","x=",x," instance:",class, id, XML::xmlName(child, full=T)));
-						message(paste(("ret:"),ret[1:(max(1,rowcount)),],"newInstance:",newInstance,rowcount)) }
+						message(paste("Error: internal_XMLInstance2DF - generate new instance row:\n","x=",x," class:",class," instance:", id, " rowcount:",rowcount," newInstance:",newInstanceResult$id)) }
 			)
 			
 		}
 		else {
-			attribute = paste(	attributes(XML::xmlAttrs(child))$namespaces[[1]], attributes(XML::xmlAttrs(child))$names[[1]], sep=":") #property_attr
+			attrs1 = XML::xmlAttrs(child)
+			attrs2 = attributes(attrs1)
+			attribute = paste(	attrs2$namespaces[[1]], attrs2$names[[1]], sep=":") #property_attr
 			if(is.null(attribute)) attribute = "undefined"
 			row = c(
 					class, id,
 					XML::xmlName(child, full=T), #property				
 					attribute, #property_attr
-					XML::xmlAttrs(child)[[1]], #property_attr_value
+					attrs1[[1]], #property_attr_value
 					XML::xmlValue(child) #property_value
 			)
 		}
 		
 		#naive error check + add row
 		if(length(row) != 6) {
-			warning(paste("Something went wrong parsing:",class, id,". Parsed ",row,". It was an instance created inside of a property. Debug: x=",x," y=",y))
+			warning(paste("Something went wrong parsing: rowcount:", rowcount, "class:",class, "id:", id," Parsed row:", paste(row,collapse="|"),". Debug: x=",x))
 		} else {
+			
+			set(ret, as.integer(rowcount), 2L, row[1] )  #class
+			set(ret, as.integer(rowcount), 3L, row[2] )  #id
+			set(ret, as.integer(rowcount), 4L, row[3] )  #property
+			set(ret, as.integer(rowcount), 5L, row[4] )  #property_attr
+			set(ret, as.integer(rowcount), 6L, row[5] )  #property_attr_value
+			set(ret, as.integer(rowcount), 7L, row[6] )  #property_value
+			
 			rowcount = rowcount + 1
-			ret[rowcount,] = row
 		}
 		# done with child
 	}
-	matrix( ret[!is.na(ret[,1]),], ncol=6, dimnames=list(list(),ret_colnames))
+	list(rowcount=rowcount, id=id)
 }
 ################### PARSING END ###################

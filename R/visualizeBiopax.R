@@ -28,7 +28,7 @@
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  pathway2AdjacancyMatrix(biopax, pwid1)
@@ -73,7 +73,7 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
@@ -86,10 +86,6 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
-		return(NULL)
-	}
-	if(!require(data.table)) {
-		message(paste("This functions needs the data.table library installed, albeit it cannot be found.","\n"))
 		return(NULL)
 	}
 	
@@ -429,7 +425,7 @@ layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
@@ -468,7 +464,7 @@ plotRegulatoryGraph <- function(mygraph, subgraphs=list(), layoutGraph=TRUE) {
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
@@ -498,7 +494,7 @@ calcGraphOverlap <- function(graph1, graph2) {
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
@@ -539,7 +535,7 @@ intersectGraphs <- function(graph1, graph2) {
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
@@ -576,7 +572,7 @@ diffGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FDC
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pwid2 = "pid_p_100146_hespathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
@@ -703,7 +699,7 @@ uniteGraphs <- function(graph1, graph2, colorNodes=TRUE, colors=c("#B3E2CD","#FD
 #' @export
 #' @examples
 #'  # load data and retrieve wnt pathway
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
 #'  mygraph1 = layoutRegulatoryGraph(mygraph1)
@@ -762,7 +758,7 @@ colorGraphNodes <- function(graph1, nodes, values, colors=c("greenred","yellowre
 #' @export
 #' @examples
 #'  # load data and retrieve wnt pathway
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
 #'  mygraph1 = layoutRegulatoryGraph(mygraph1)
@@ -840,7 +836,7 @@ removeNodes <- function(graph, nodes) {
 #' @export
 #' @examples
 #'  # load data and retrieve wnt pathway
-#'  data(biopax2example)
+#'  data(biopaxexample)
 combineNodes <- function(nodes, graph, newName) {
 	
 	if(!require(graph)) {

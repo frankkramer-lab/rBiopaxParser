@@ -146,7 +146,7 @@ readBiopax <- function(file, verbose=TRUE)  {
 #' @import data.table
 #' @method print biopax
 #' @examples
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  print(biopax) 
 print.biopax <- function(x, ...) {
 	

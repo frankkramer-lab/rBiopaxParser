@@ -25,7 +25,7 @@ be used for the new connection.
 }
 \examples{
 # load data and retrieve wnt pathway
- data(biopax2example)
+ data(biopaxexample)
 }
 \author{
 Frank Kramer

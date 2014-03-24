@@ -29,7 +29,7 @@ component IDs, names and classes of the supplied pathway.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  listPathwayComponents(biopax, id="pid_p_100002_wntpathway")
 }
 \author{

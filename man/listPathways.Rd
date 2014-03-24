@@ -19,7 +19,7 @@ This function returns a vector of all pathway ids.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  listPathways(biopax)
 }
 \author{

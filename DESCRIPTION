@@ -9,6 +9,7 @@ Description: Parses BioPAX files and represents them in R, at the moment BioPAX
     level 2 and level 3 are supported.
 License: GPL (>= 2)
 Depends:
+    R (>= 3.0.0),
     data.table
 Imports:
     XML

@@ -2,10 +2,13 @@
 \alias{listPathways}
 \title{This function returns a list of all pathway ids.}
 \usage{
-listPathways(biopax)
+listPathways(biopax, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 Returns a character vector containing the names of all

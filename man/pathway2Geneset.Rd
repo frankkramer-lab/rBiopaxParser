@@ -2,7 +2,7 @@
 \alias{pathway2Geneset}
 \title{This function generates the gene set of a pathway.}
 \usage{
-pathway2Geneset(biopax, pwid, returnIDonly = FALSE)
+pathway2Geneset(biopax, pwid, returnIDonly = FALSE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -12,6 +12,9 @@ pathway2Geneset(biopax, pwid, returnIDonly = FALSE)
   \item{returnIDonly}{logical. If TRUE only IDs of the
   components are returned. This saves tiem for looking up
   names for every single ID.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 Returns the gene set of the supplied pathway. Returns NULL

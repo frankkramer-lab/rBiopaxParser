@@ -3,7 +3,7 @@
 \title{This function lists all components of a given interaction.}
 \usage{
 listInteractionComponents(biopax, id, splitComplexes = TRUE,
-  returnIDonly = FALSE)
+  returnIDonly = FALSE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -17,6 +17,9 @@ listInteractionComponents(biopax, id, splitComplexes = TRUE,
   \item{returnIDonly}{logical. If TRUE only IDs of the
   components are returned. This saves tiem for looking up
   names for every single ID.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 data.frame

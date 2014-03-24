@@ -3,7 +3,7 @@
 \title{This function returns the annotations of the supplied instances.}
 \usage{
 getXrefAnnotations(biopax, id, splitComplexes = FALSE,
-  followPhysicalEntityParticipants = TRUE)
+  followPhysicalEntityParticipants = TRUE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -19,6 +19,9 @@ getXrefAnnotations(biopax, id, splitComplexes = FALSE,
   physicalEntityParticipants are resolved to their
   corresponding physicalEntities and their annotation is
   added.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 Returns data.table with annotations

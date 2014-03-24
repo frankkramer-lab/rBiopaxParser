@@ -81,10 +81,15 @@ pathway2AdjacancyMatrix <- function(biopax, pwid, expandSubpathways=TRUE, splitC
 pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, splitComplexMolecules=TRUE, useIDasNodenames=FALSE, verbose=TRUE) {
 
 	if(is.null(biopax) || !("biopax" %in% class(biopax))) stop("Error: pathway2RegulatoryGraph: parameter biopax has to be of class biopax.")
+	biopaxlevel = biopax$biopaxlevel
 	if(is.null(pwid) ||!("character" %in% class(pwid))) stop("Error: pathway2RegulatoryGraph: parameter pwid has to be of class character.")
 	
 	if(!require(graph)) {
 		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
+		return(NULL)
+	}
+	if(!require(data.table)) {
+		message(paste("This functions needs the data.table library installed, albeit it cannot be found.","\n"))
 		return(NULL)
 	}
 	
@@ -110,7 +115,7 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			message(paste("Found",length(unique(pw_controls$id)), "pathway components. Putting them together..."))
 		}
 	}
-	#consider only controls //TODO: Consider subpathways!
+	#currently considers only controls //TODO: Consider subpathways!
 	for(i in unique(pw_controls$id)) {
 		instance = pw_controls[id==i,]
 		
@@ -144,15 +149,15 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 			}
 			if(splitComplexMolecules & any(isOfClass(c_instance,"complex"))) {
 				if(useIDasNodenames) {
-					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, returnIDonly=T, biopax$biopaxlevel) ))
+					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, returnIDonly=T, biopaxlevel=biopaxlevel) ))
 				} else {
-					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, biopax$biopaxlevel)$name ))						
+					controllers = c(controllers,  as.character( splitComplex(pw_component_list, i2, biopaxlevel=biopaxlevel)$name ))						
 				}
 			} else {
 				if(useIDasNodenames) {
 					controllers = c(controllers, c_instance$id[1])
 				} else {
-					controllers = c(controllers, getInstanceProperty(pw_component_list,c_instance$id[1]))					
+					controllers = c(controllers, getInstanceProperty(pw_component_list,c_instance$id[1], biopaxlevel=biopaxlevel))					
 				}
 			}	
 		}
@@ -178,15 +183,15 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 					#split complexes?
 					if(splitComplexMolecules & any(isOfClass(leftrights_instance,"complex"))) {
 						if(useIDasNodenames) {
-							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, returnIDonly=T, biopax$biopaxlevel) ))
+							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, returnIDonly=T, biopaxlevel=biopaxlevel) ))
 						} else {
-							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, biopax$biopaxlevel)$name ))					
+							controlleds = c(controlleds,  as.character( splitComplex(pw_component_list, i3, biopaxlevel=biopaxlevel)$name ))					
 						}
 					} else {
 						if(useIDasNodenames) {
 							controlleds = c(controlleds, as.character(leftrights_instance[1]$id))
 						} else {
-							controlleds = c(controlleds, getInstanceProperty(pw_component_list,leftrights_instance[1]$id))					
+							controlleds = c(controlleds, getInstanceProperty(pw_component_list,leftrights_instance[1]$id, biopaxlevel=biopaxlevel))					
 						}
 					}
 				}

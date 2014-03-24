@@ -2,7 +2,8 @@
 \alias{getNeighborhood}
 \title{This function returns the neighborhood of a physicalEntity}
 \usage{
-getNeighborhood(biopax, id, depth = 1, onlyInPathways = c())
+getNeighborhood(biopax, id, depth = 1, onlyInPathways = c(),
+  biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -16,6 +17,9 @@ getNeighborhood(biopax, id, depth = 1, onlyInPathways = c())
 
   \item{onlyInPathways}{character vector of pathway IDs.
   Search only in these pathways for neighbors.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 Returns ids of interactions within 'depth' number of steps

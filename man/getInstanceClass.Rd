@@ -17,7 +17,7 @@ This function returns the class name of the instance.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  getInstanceClass(biopax, id="ex_m_100650")
 }
 \author{

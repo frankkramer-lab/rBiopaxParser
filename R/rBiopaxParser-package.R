@@ -28,8 +28,8 @@ NULL
 #' @keywords datasets
 #' @format An example biopax model parsed in via readBiopax.
 #' @name biopax
-#' @alias biopax2example
+#' @alias biopaxexample
 #' @examples
-#' data(biopax2example)
+#' data(biopaxexample)
 #' biopax
 NULL

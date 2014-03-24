@@ -34,7 +34,7 @@
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  # select the subset of the internal data.table that belongs to class "protein"
 #'  selectInstances(biopax, class="protein")
 #'  # select the subset of the internal data.table that belongs to class "interaction"
@@ -116,7 +116,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 #' @export
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  # list all instances of class "protein"
 #'  listInstances(biopax, class="protein")
 #'  # list all instances of class "pathway"
@@ -186,7 +186,7 @@ listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubCla
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listPathways(biopax)
 listPathways <- function(biopax, biopaxlevel=3) {
 	
@@ -215,7 +215,7 @@ listPathways <- function(biopax, biopaxlevel=3) {
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listPathwayComponents(biopax, id="pid_p_100002_wntpathway")
 listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDonly=FALSE, biopaxlevel=3) {
 	
@@ -266,7 +266,7 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDo
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listComplexComponents(biopax, id="ex_m_100650")
 listComplexComponents <- function(biopax, id, returnIDonly=FALSE, biopaxlevel=3) {
 	
@@ -308,7 +308,7 @@ listComplexComponents <- function(biopax, id, returnIDonly=FALSE, biopaxlevel=3)
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listInteractionComponents(biopax, id="ex_i_100036_activator_1")
 listInteractionComponents <- function(biopax, id, splitComplexes=TRUE, returnIDonly=FALSE, biopaxlevel=3) {
 	
@@ -353,7 +353,7 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE, returnIDo
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  pwid1 = "pid_p_100002_wntpathway"
 #'  pathway2Geneset(biopax, pwid=pwid1)
 pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE, biopaxlevel=3) {
@@ -398,7 +398,7 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE, biopaxlevel=3) {
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  selectInstances(biopax, id="ex_m_100650")
 #'  listInstances(biopax, id="ex_m_100650")
 #'  listComplexComponents(biopax, id="ex_m_100650")
@@ -449,7 +449,7 @@ splitComplex <- function(biopax, complexid, recursive=TRUE, returnIDonly=FALSE, 
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listComplexComponents(biopax, id="ex_m_100650")
 #'  getReferencedIDs(biopax, id="ex_m_100650", recursive=FALSE)
 #'  getReferencedIDs(biopax, id="ex_m_100650", recursive=TRUE)
@@ -515,7 +515,7 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  listComplexComponents(biopax, id="ex_m_100650")
 #'  getReferencingIDs(biopax, id="ex_m_100650", recursive=FALSE)
 #'  getReferencingIDs(biopax, id="ex_m_100650", recursive=TRUE)
@@ -578,7 +578,7 @@ getReferencingIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  getInstanceClass(biopax, id="ex_m_100650")
 getInstanceClass <- function(biopax, id) {
 	var_id = striphash(id)
@@ -610,7 +610,7 @@ getInstanceClass <- function(biopax, id) {
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="NAME")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="ORGANISM")
 #'  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")
@@ -721,7 +721,7 @@ getNeighborhood <- function(biopax, id, depth=1, onlyInPathways=c(), biopaxlevel
 #' @import data.table
 #' @examples
 #'  # load data
-#'  data(biopax2example)
+#'  data(biopaxexample)
 #' # example of annotation for a protein:
 #' getXrefAnnotations(biopax, id="ex_m_100647")
 #' # no annotations for exactly the complex

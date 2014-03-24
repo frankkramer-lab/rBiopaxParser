@@ -22,7 +22,7 @@ outgoing edge weights of the original node.
 }
 \examples{
 # load data and retrieve wnt pathway
- data(biopax2example)
+ data(biopaxexample)
  pwid1 = "pid_p_100002_wntpathway"
  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
  mygraph1 = layoutRegulatoryGraph(mygraph1)

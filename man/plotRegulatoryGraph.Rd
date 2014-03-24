@@ -28,7 +28,7 @@ vectors with node names.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  pwid1 = "pid_p_100002_wntpathway"
  pwid2 = "pid_p_100146_hespathway"
  mygraph = pathway2RegulatoryGraph(biopax, pwid1)

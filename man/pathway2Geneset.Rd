@@ -28,7 +28,7 @@ listed.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  pwid1 = "pid_p_100002_wntpathway"
  pathway2Geneset(biopax, pwid=pwid1)
 }

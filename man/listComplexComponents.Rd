@@ -25,7 +25,7 @@ component IDs, names and classes of the supplied complex.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  listComplexComponents(biopax, id="ex_m_100650")
 }
 \author{

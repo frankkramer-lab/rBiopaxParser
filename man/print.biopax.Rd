@@ -13,7 +13,7 @@
 Print a biopax object.
 }
 \examples{
-data(biopax2example)
+data(biopaxexample)
  print(biopax)
 }
 

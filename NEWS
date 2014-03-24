@@ -2,6 +2,7 @@ rBiopaxParser 2.1.5
 ===========
 
 * BUGFIX: Fixed several bugs relating to the default BioPAX version parameter biopaxlevel.
+* The package requires R >= 3.0 due to data.table requiring Reshape2, requiring plyr, requiring Rcpp. :-(
 
 rBiopaxParser 2.1.3
 ===========

@@ -73,7 +73,7 @@ or merge knowledge from different data bases.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  # select the subset of the internal data.table that belongs to class "protein"
  selectInstances(biopax, class="protein")
  # select the subset of the internal data.table that belongs to class "interaction"

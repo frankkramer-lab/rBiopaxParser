@@ -310,7 +310,7 @@ print(biopax)
 
 %for the sake of this vignette (no downloading NCI data every compiling), we load mock data
 <<label=loaddata,echo=FALSE, eval=TRUE, results=hide>>=
-data(biopax2example)
+data(biopaxexample)
 @
 
 

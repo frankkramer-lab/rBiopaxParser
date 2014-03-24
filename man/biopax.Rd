@@ -8,7 +8,7 @@ A dataset containing two regulatory pathways encoded in
 Biopax Level 2 and parsed in via readBiopax().
 }
 \examples{
-data(biopax2example)
+data(biopaxexample)
 biopax
 }
 \keyword{datasets}

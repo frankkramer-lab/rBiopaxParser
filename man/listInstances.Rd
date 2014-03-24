@@ -46,7 +46,7 @@ subclass of class control.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  # list all instances of class "protein"
  listInstances(biopax, class="protein")
  # list all instances of class "pathway"

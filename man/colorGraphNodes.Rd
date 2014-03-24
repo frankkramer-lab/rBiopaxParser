@@ -28,7 +28,7 @@ expression level or fold change to the molecules.
 }
 \examples{
 # load data and retrieve wnt pathway
- data(biopax2example)
+ data(biopaxexample)
  pwid1 = "pid_p_100002_wntpathway"
  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)
  mygraph1 = layoutRegulatoryGraph(mygraph1)

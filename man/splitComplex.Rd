@@ -29,7 +29,7 @@ the names of all its components.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  selectInstances(biopax, id="ex_m_100650")
  listInstances(biopax, id="ex_m_100650")
  listComplexComponents(biopax, id="ex_m_100650")

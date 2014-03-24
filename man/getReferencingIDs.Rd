@@ -28,7 +28,7 @@ complexes or physicalEntities.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  listComplexComponents(biopax, id="ex_m_100650")
  getReferencingIDs(biopax, id="ex_m_100650", recursive=FALSE)
  getReferencingIDs(biopax, id="ex_m_100650", recursive=TRUE)

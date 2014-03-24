@@ -32,7 +32,7 @@ in a data.table.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
 # example of annotation for a protein:
 getXrefAnnotations(biopax, id="ex_m_100647")
 # no annotations for exactly the complex

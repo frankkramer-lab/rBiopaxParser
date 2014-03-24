@@ -32,7 +32,7 @@ property of an instance.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  getInstanceProperty(biopax, id="ex_m_100650", property="NAME")
  getInstanceProperty(biopax, id="ex_m_100650", property="ORGANISM")
  getInstanceProperty(biopax, id="ex_m_100650", property="COMPONENTS")

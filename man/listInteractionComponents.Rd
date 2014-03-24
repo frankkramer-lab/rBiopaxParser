@@ -31,7 +31,7 @@ interaction.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  listInteractionComponents(biopax, id="ex_i_100036_activator_1")
 }
 \author{

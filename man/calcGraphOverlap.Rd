@@ -19,7 +19,7 @@ with graph2. Layout and weights of graph1 are kept.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  pwid1 = "pid_p_100002_wntpathway"
  pwid2 = "pid_p_100146_hespathway"
  mygraph1 = pathway2RegulatoryGraph(biopax, pwid1)

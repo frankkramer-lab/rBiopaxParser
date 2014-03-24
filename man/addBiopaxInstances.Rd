@@ -22,7 +22,7 @@ and work your way up the ontology ladder.
 }
 \examples{
 # load data
- data(biopax2example)
+ data(biopaxexample)
  biopax_temp = createBiopax(level=2)
  biopax_temp = addBiopaxInstance(biopax_temp, class="protein", id="id1", properties=list(NAME="protein1",SYNONYMS="p1"))
  selectInstances(biopax_temp)

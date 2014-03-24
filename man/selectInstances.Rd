@@ -4,8 +4,7 @@
 \usage{
 selectInstances(biopax, id = NULL, class = NULL, property = NULL,
   name = NULL, returnValues = TRUE, includeSubClasses = FALSE,
-  includeReferencedInstances = FALSE, returnCopy = TRUE,
-  biopaxlevel = NULL)
+  includeReferencedInstances = FALSE, returnCopy = TRUE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model or a compatible internal

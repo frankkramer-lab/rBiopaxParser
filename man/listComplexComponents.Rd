@@ -2,7 +2,7 @@
 \alias{listComplexComponents}
 \title{This function lists all components of a given complex.}
 \usage{
-listComplexComponents(biopax, id, returnIDonly = FALSE)
+listComplexComponents(biopax, id, returnIDonly = FALSE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -12,6 +12,9 @@ listComplexComponents(biopax, id, returnIDonly = FALSE)
   \item{returnIDonly}{logical. If TRUE only IDs of the
   components are returned. This saves tiem for looking up
   names for every single ID.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 data.frame

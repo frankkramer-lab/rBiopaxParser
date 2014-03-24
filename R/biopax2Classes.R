@@ -506,7 +506,7 @@ getSubClasses <- function(classname, biopaxlevel=3) {
 		}
 		
 	}
-	unlist(ret)
+	ret
 }
 
 #' This function returns the superclasses of the supplied biopax class.
@@ -531,7 +531,6 @@ getSuperClasses <- function(classname, biopaxlevel=3) {
 			ret = CLASS_INHERITANCE_BP3$superclass[CLASS_INHERITANCE_BP3$class %in% c(classname,ret)]
 		}
 	}
-	ret = unlist(ret)
 	ret[ret != ""]
 }
 

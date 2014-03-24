@@ -2,7 +2,8 @@
 \alias{getInstanceProperty}
 \title{This function returns all properties of the specified type for an instance.}
 \usage{
-getInstanceProperty(biopax, id, property = "NAME", includeAllNames = TRUE)
+getInstanceProperty(biopax, id, property = "NAME", includeAllNames = TRUE,
+  biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}
@@ -15,6 +16,9 @@ getInstanceProperty(biopax, id, property = "NAME", includeAllNames = TRUE)
   new name properties: displayName and standardName. Per
   default this return all names of an instance. Disable if
   you only want the NAME property.}
+
+  \item{biopaxlevel}{integer. Set the biopax level here if
+  you supply a data.table directly.}
 }
 \value{
 Returns a character vector with all properties of the

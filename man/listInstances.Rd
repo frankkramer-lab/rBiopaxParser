@@ -3,7 +3,7 @@
 \title{Lists all instances that conform to the selection criteria.}
 \usage{
 listInstances(biopax, id = NULL, class = NULL, name = NULL,
-  includeSubClasses = FALSE, returnIDonly = FALSE, biopaxlevel = NULL)
+  includeSubClasses = FALSE, returnIDonly = FALSE, biopaxlevel = 3)
 }
 \arguments{
   \item{biopax}{A biopax model}

@@ -627,11 +627,6 @@ getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRU
 	} else if("biopax_df" %in% class(biopax)) {
 		df = biopax
 	}  else {
-		cat("getInstanceProperty called with:\n")
-		cat("dim(x):\n"); cat(dim(biopax)); cat("\n") #### TEST THIS LOCALLY AND ON GITHUB!!
-		cat("class(x):\n"); cat(paste(class(biopax),collapse=" ")); cat("\n")
-		cat("id:\n"); cat(id); cat("\n")
-		
 		stop("getInstanceProperty: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
 	

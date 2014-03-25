@@ -153,11 +153,6 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 				if(useIDasNodenames) {
 					controllers = c(controllers, c_instance$id[1])
 				} else {
-					cat("getInstanceProperty called with:\n")
-					cat("dim(x):\n"); cat(dim(pw_component_list)); cat("\n") #### TEST THIS LOCALLY AND ON GITHUB!!
-					cat("class(x):\n"); cat(paste(class(pw_component_list),collapse=" ")); cat("\n")
-					cat("c_instance$id[1]:\n"); cat(c_instance$id[1]); cat("\n")
-					
 					controllers = c(controllers, getInstanceProperty(pw_component_list,c_instance$id[1], biopaxlevel=biopaxlevel))					
 				}
 			}	

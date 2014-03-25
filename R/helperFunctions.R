@@ -71,6 +71,17 @@ stripns <- function(classname) {
 	gsub(".*:", "", classname, perl=TRUE)
 }
 
+#' Check if a string is an URL, preceeded by "http:"
+#' 
+#' This function checks if the supplied input string starts with "http:"
+#' 
+#' @param string A string containing the classname to check
+#' @return This function returns TRUE if the supplied classname string starts with "http:", and FALSE if not.
+#' @author Frank Kramer
+isURL <- function(string) {
+	grepl(pattern="http:", string, ignore.case=T)
+} 
+
 #' Adds a hash in front of a string
 #' 
 #' Adds a hash in front of a string 

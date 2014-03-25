@@ -277,6 +277,7 @@ internal_getBiopaxModelAsDataFrame <- function (biopax, biopaxxml, verbose=TRUE)
 	
 	if(verbose)	message(paste("[Info Verbose] Finished! Created a data.frame with ", rowcount," rows within only ",(proc.time()[1]-time_start)," seconds."))
 	class(ret) <- c("biopax_df",class(ret))
+	setkey(ret, id,class,property)
 	ret
 }
 

@@ -1,3 +1,10 @@
+rBiopaxParser 2.1.7
+===========
+
+* BUGFIX: fixed setkey for parsed biopax models
+* BUGFIX: fixed possible uses of complete URLs for ids (e.g. in PathwayCommons)
+* BUGFIX: fixed parameter checking failing due to data.table version 1.9.2. This will be fixed anyways when data.table 1.9.3. is out.
+
 rBiopaxParser 2.1.5
 ===========
 

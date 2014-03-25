@@ -52,7 +52,7 @@ selectInstances <- function (biopax, id=NULL, class=NULL, property=NULL, name=NU
 	if("biopax" %in% class(biopax)) {
 		df = biopax$dt
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		df = biopax
 	}  else {
 		stop("selectInstances: parameter biopax is neither biopax object nor compatible biopax data.table")
@@ -132,7 +132,7 @@ listInstances <- function (biopax, id=NULL, class=NULL, name=NULL, includeSubCla
 	if("biopax" %in% class(biopax)) {
 		bpsel = biopax$dt
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		bpsel = biopax
 	}  else {
 		stop("listInstances: parameter biopax is neither biopax object nor compatible biopax data.table")
@@ -192,7 +192,7 @@ listPathways <- function(biopax, biopaxlevel=3) {
 	
 	if("biopax" %in% class(biopax)) {
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 	}  else {
 		stop("listPathways: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
@@ -221,7 +221,7 @@ listPathwayComponents <- function(biopax, id, includeSubPathways=TRUE, returnIDo
 	
 	if("biopax" %in% class(biopax)) {
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 	}  else {
 		stop("listPathwayComponents: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
@@ -272,7 +272,7 @@ listComplexComponents <- function(biopax, id, returnIDonly=FALSE, biopaxlevel=3)
 	
 	if("biopax" %in% class(biopax)) {
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 	}  else {
 		stop("listComplexComponents: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
@@ -314,7 +314,7 @@ listInteractionComponents <- function(biopax, id, splitComplexes=TRUE, returnIDo
 	
 	if("biopax" %in% class(biopax)) {
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 	}  else {
 		stop("listInteractionComponents: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
@@ -360,7 +360,7 @@ pathway2Geneset <- function(biopax, pwid, returnIDonly=FALSE, biopaxlevel=3) {
 	
 	if("biopax" %in% class(biopax)) {
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 	}  else {
 		stop("pathway2Geneset: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
@@ -408,7 +408,7 @@ splitComplex <- function(biopax, complexid, recursive=TRUE, returnIDonly=FALSE, 
 	if("biopax" %in% class(biopax)) {
 		df = biopax$dt
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		df = biopax
 	}  else {
 		stop("splitComplex: parameter biopax is neither biopax object nor compatible biopax data.table")
@@ -460,44 +460,39 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 	
 	if("biopax" %in% class(biopax)) {
 		bpsel = biopax$dt[property_attr == "rdf:resource",]
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		bpsel = biopax[property_attr == "rdf:resource",]
 	}  else {
 		stop("getReferencedIDs: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
 	
-	#every ref in instances of id
 	if(length(onlyFollowProperties) > 0) {
-		propertysel = tolower(bpsel$property) %chin% tolower(onlyFollowProperties)
-		newIDs = bpsel[propertysel][id %chin% var_id]$property_attr_value	
-	} else {
-		newIDs =  bpsel[id %chin% var_id]$property_attr_value
+		bpsel = bpsel[tolower(property) %chin% tolower(onlyFollowProperties),] 
 	}
 	
-	if(length(newIDs)==0) return(NULL)
-	newIDs = unique(striphash(newIDs))
+	newIDs = striphash(bpsel[id %chin% var_id]$property_attr_value)
+	
+	newIDs = unique(newIDs)
 	newIDs = newIDs[!(newIDs %chin% var_id)]
+	if(length(newIDs)==0) return(NULL)
 	referencedIDs = c(referencedIDs,newIDs)
 	
 	if(recursive) {
 		while(length(newIDs)>0) {
-			if(length(onlyFollowProperties) > 0) {
-				newIDs = bpsel[propertysel][id %chin% newIDs]$property_attr_value
-			} else {
-				newIDs = bpsel[id %chin% newIDs]$property_attr_value
-			}
-			newIDs = unique(striphash(newIDs))
+			newIDs = striphash(bpsel[id %chin% newIDs]$property_attr_value)
+			newIDs = unique(newIDs)
 			newIDs = newIDs[!(newIDs %chin% c(referencedIDs,var_id))]
 			referencedIDs = c(referencedIDs,newIDs)
 		}
 	}
 	
-	ret = unique(striphash(referencedIDs))
+	ret = unique(referencedIDs)
 	ret = ret[ret!=""]
 	if(length(ret)==0) return(NULL)
 	return(ret)
 
 }
+
 
 #' This function returns a vector of ids of all instances that reference the supplied id.
 #' 
@@ -522,49 +517,45 @@ getReferencedIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c(
 getReferencingIDs <- function(biopax, id, recursive=TRUE, onlyFollowProperties=c()) {
 	var_id = unique(id)
 	rm(id)
-	var_id = addhash(var_id)
+	var_id = striphash(var_id)
 	referencingIDs = vector()
 	
 	if("biopax" %in% class(biopax)) {
 		bpsel = biopax$dt[property_attr == "rdf:resource",]
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		bpsel = biopax[property_attr == "rdf:resource",]
 	}  else {
 		stop("getReferencedIDs: parameter biopax is neither biopax object nor compatible biopax data.table")
 	}
-	
-
 	if(length(onlyFollowProperties) > 0) {
-		propertysel = tolower(bpsel$property) %chin% tolower(onlyFollowProperties)
-		newIDs = bpsel[propertysel][property_attr_value %chin% var_id]$id
-	} else {
-		newIDs = bpsel[property_attr_value %chin% var_id]$id
+		bpsel = bpsel[tolower(property) %chin% tolower(onlyFollowProperties),] 
 	}
 	
+	bpselproperty_attr_value = striphash(bpsel$property_attr_value)
+	
+	newIDs = bpsel[bpselproperty_attr_value %chin% var_id]$id
+	
 	if(length(newIDs)==0) return(NULL)
-	newIDs = unique(addhash(newIDs))
+	newIDs = unique(newIDs)
 	newIDs = newIDs[!(newIDs %chin% var_id)]
 	if(length(newIDs)>0) referencingIDs = c(referencingIDs, newIDs)
 	
 	if(recursive) {
 		while(length(newIDs)>0) {
-			if(length(onlyFollowProperties) > 0) {
-				newIDs = bpsel[propertysel][property_attr_value %chin% newIDs]$id
-			} else {
-				newIDs = bpsel[property_attr_value %chin% newIDs]$id
-			}
-			newIDs = unique(addhash(newIDs))
+			newIDs = bpsel[bpselproperty_attr_value %chin% newIDs]$id
+			newIDs = unique(newIDs)
 			newIDs = newIDs[!(newIDs %chin% c(referencingIDs,var_id))]
 			if(length(newIDs)>0) referencingIDs = c(referencingIDs, newIDs)
 		}
 	}
 
-	ret = unique(striphash(referencingIDs))
+	ret = unique(referencingIDs)
 	ret = ret[ret!=""]
 	if(length(ret)==0) return(NULL)
 	return(ret)
 	
 }
+
 
 #' This function returns the class name of the instance.
 #' 
@@ -586,7 +577,7 @@ getInstanceClass <- function(biopax, id) {
 	
 	if("biopax" %in% class(biopax)) {
 		df = biopax$dt
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		df = biopax
 	}  else {
 		stop("getInstanceClass: parameter biopax is neither biopax object nor compatible biopax data.table")
@@ -624,7 +615,7 @@ getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRU
 	if("biopax" %in% class(biopax)) {
 		df = biopax$dt
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		df = biopax
 	}  else {
 		stop("getInstanceProperty: parameter biopax is neither biopax object nor compatible biopax data.table")
@@ -737,7 +728,7 @@ getXrefAnnotations <- function(biopax, id, splitComplexes=FALSE, followPhysicalE
 	if("biopax" %in% class(biopax)) {
 		df = biopax$dt
 		biopaxlevel = biopax$biopaxlevel
-	} else if("biopax_df" %in% class(biopax)) {
+	} else if("data.table" %in% class(biopax)) {
 		df = biopax
 	}  else {
 		stop("getInstanceProperty: parameter biopax is neither biopax object nor compatible biopax data.table")

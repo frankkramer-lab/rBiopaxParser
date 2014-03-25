@@ -467,7 +467,7 @@ splitComplexMolecules parameter is available to split all complexes into their m
 atomic members, all members will share the same in- and outgoing edges.
 
 Transform pathways into a regulatory graph or an adjacency matrix:
-<<label=pathwaytoregulatorygraphs,echo=TRUE, eval=FALSE, results=hide>>=  % set eval=TRUE if data.table updates
+<<label=pathwaytoregulatorygraphs,echo=TRUE, eval=TRUE, results=hide>>=
 pw_1_adj = pathway2AdjacancyMatrix(biopax, pwid1, expandSubpathways=TRUE,
 splitComplexMolecules=TRUE, verbose=TRUE)
 pw_1_graph = pathway2RegulatoryGraph(biopax, pwid1,
@@ -479,7 +479,7 @@ splitComplexMolecules=TRUE, verbose=TRUE)
 @
 
 Layout the graphs using Rgraphviz:
-<<label=layoutgraphs, echo=TRUE, eval=FALSE, results=hide>>=  % set eval=TRUE if data.table updates
+<<label=layoutgraphs, echo=TRUE, eval=TRUE, results=hide>>=
 pw_1_graph_laidout = layoutRegulatoryGraph(pw_1_graph)
 pw_2_graph_laidout = layoutRegulatoryGraph(pw_2_graph)
 @
@@ -597,7 +597,7 @@ biopax = mergePathways(biopax, "pwid1", "pwid2", NAME="pw3", id="pwid3")
 @
 
 Now these new pathways are ready to be viewed!
-<<label=createbiopax4,echo=TRUE, eval=FALSE, results=hide>>=   % set eval=TRUE if data.table updates
+<<label=createbiopax4,echo=TRUE, eval=TRUE, results=hide>>=
 pw1_graph = pathway2RegulatoryGraph(biopax, "pwid1",
 	splitComplexMolecules=TRUE, verbose=TRUE)
 pw2_graph = pathway2RegulatoryGraph(biopax, "pwid2",

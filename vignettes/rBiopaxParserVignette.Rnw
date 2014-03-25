@@ -467,7 +467,7 @@ splitComplexMolecules parameter is available to split all complexes into their m
 atomic members, all members will share the same in- and outgoing edges.
 
 Transform pathways into a regulatory graph or an adjacency matrix:
-<<label=pathwaytoregulatorygraphs,echo=TRUE, eval=TRUE, results=hide>>=
+<<label=pathwaytoregulatorygraphs,echo=TRUE, eval=TRUE, results=verbatim>>=
 pw_1_adj = pathway2AdjacancyMatrix(biopax, pwid1, expandSubpathways=TRUE,
 splitComplexMolecules=TRUE, verbose=TRUE)
 pw_1_graph = pathway2RegulatoryGraph(biopax, pwid1,

@@ -22,7 +22,7 @@ http://bioinformatics.oxfordjournals.org/content/29/4/520.abstract
 
 You can retrieve rBiopaxParser from Bioconductor or GitHub:
 http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html
-https://github.com/frankkramer/rBiopaxParser  
+https://github.com/frankkramer-lab/rBiopaxParser  
 
   
 ### Prerequisites:  
@@ -144,14 +144,14 @@ Finally:
 ## Installing rBiopaxParser from Bioconductor:  
 <code>
 	source("http://bioconductor.org/biocLite.R") 
-	biocLite("rBiopaxParser", siteRepos="http://bioconductor.org/packages/2.12/bioc")
+	biocLite("rBiopaxParser")
 </code>
 
 ## Installing rBiopaxParser from GitHub:  
 <code>
 	install.packages("devtools")  
 	library(devtools)  
-	install_github(repo="rBiopaxParser", username="frankkramer")
+	install_github(repo="rBiopaxParser", username="frankkramer-lab")
 </code>
 
 

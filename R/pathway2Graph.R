@@ -15,6 +15,17 @@
 #' @examples
 #'  # load data
 #' example data
+#' load("biopaxLevel3Example.RData") # location of the data
+#' pwid <- "Pathway1019"
+#' build pathway using pathway2Graph
+#' pathwayAsGraph <- pathway2Graph(biopax = biopaxLevel3Example, pwid = pwid, splitComplexMolecules = FALSE, useIDasNodenames = TRUE, verbose = FALSE, withDisconnectedParts = TRUE)
+#' pathwayAsGraph # should have 23 nodes, 24 edges
+#' plotRegulatoryGraph(pathwayAsGraph)
+#' # build pathway discarding the disconnected parts of the graph
+#' pathwayAsGraph <- pathway2Graph(biopax = biopaxLevel3Example, pwid = pwid, splitComplexMolecules = FALSE, useIDasNodenames = TRUE, verbose = FALSE, withDisconnectedParts = FALSE)
+#' pathwayAsGraph # should have 10 nodes, 11 edges
+#' plotRegulatoryGraph(pathwayAsGraph)
+
 
 pathway2Graph <- function (biopax, pwid, expandSubpathways = TRUE, splitComplexMolecules = FALSE, useIDasNodenames = TRUE, verbose = FALSE, withDisconnectedParts = TRUE) { 
   

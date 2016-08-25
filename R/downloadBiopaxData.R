@@ -88,7 +88,7 @@ downloadBiopaxData <- function(database="NCI", model=c("pid","biocarta","reactom
 	
 	# for reactome: extract homo sapiens data
 	if(database=="reactome") {
-		content2 = readBin(unz(outputfile, "Homo sapiens.owl", open="rb"),"raw", n=500000000)
+		content2 = readBin(unz(outputfile, "Homo_sapiens.owl", open="rb"),"raw", n=500000000)
 		outputfile = paste(outputfile,".owl",sep="")
 		writeBin(content2, useBytes = TRUE, con = outputfile )
 	}

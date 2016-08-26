@@ -28,8 +28,22 @@ NULL
 #' @keywords datasets
 #' @format An example biopax model parsed in via readBiopax.
 #' @name biopax
-#' @alias biopaxexample
+#' @aliases biopaxexample
 #' @examples
 #' data(biopaxexample)
+#' biopax
+NULL
+
+#' Biopax example data set Nr 2
+#' 
+#' Another dataset containing pathways encoded in Biopax Level 2 and parsed in via readBiopax().
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format An example biopax model parsed in via readBiopax.
+#' @name biopax
+#' @aliases biopaxLevel3Example
+#' @examples
+#' data(biopaxLevel3Example)
 #' biopax
 NULL

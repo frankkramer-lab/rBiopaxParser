@@ -14,10 +14,9 @@
 #' @import data.table
 #' @examples
 #'  # load data
-#' example data
-#' load("biopaxLevel3Example.RData") # location of the data
+#' data(biopaxLevel3Example) # location of the data
 #' pwid <- "Pathway1019"
-#' build pathway using pathway2Graph
+#' # build pathway using pathway2Graph
 #' pathwayAsGraph <- pathway2Graph(biopax = biopaxLevel3Example, pwid = pwid, splitComplexMolecules = FALSE, useIDasNodenames = TRUE, verbose = FALSE, withDisconnectedParts = TRUE)
 #' pathwayAsGraph # should have 23 nodes, 24 edges
 #' plotRegulatoryGraph(pathwayAsGraph)
@@ -201,9 +200,12 @@ pathway2Graph <- function (biopax, pwid, expandSubpathways = TRUE, splitComplexM
 #' This function is used internally by pathway2Graph to obtain physical entities participating in an interaction.
 #'  
 #' @author Nirupama Benis
-#' @export
+#' @param pwComponentList List of pathway components
+#' @param instance Biopax instance id
+#' @param biopaxlevel integer. Set the biopax level here if you supply a data.table directly.
+#' @param splitComplexMolecules logical. If TRUE complexes are split up into their components and the annotation of the components is added.
+#' @param useIDasNodenames logical. If TRUE nodes of the graph are named by their molecule IDs instead of using the NAME property. This can help with badly annotated/formatted databases.
 #' @import data.table
-#' @examples
 
 getParticipants <- function(pwComponentList, instance, biopaxlevel, splitComplexMolecules = FALSE, useIDasNodenames = TRUE) { 
   
@@ -232,9 +234,8 @@ getParticipants <- function(pwComponentList, instance, biopaxlevel, splitComplex
 #' This function is used internally by pathway2Graph to remove the smaller disconnected parts of the pathway graph.
 #'  
 #' @author Nirupama Benis
-#' @export
+#' @param mygraph a graph object
 #' @import data.table
-#' @examples
 
 removeDisconnectedParts <- function(mygraph) { 
   mygraph <- mygraph
@@ -242,26 +243,14 @@ removeDisconnectedParts <- function(mygraph) {
     message(paste("Retrieving only the largest connected component needs the igraph library installed, albeit it cannot be found.", "\n"))
     return(NULL)
   }
-  graphClusters <- clusters(igraph.from.graphNEL(mygraph))
+  graphClusters <- igraph::clusters(igraph::igraph.from.graphNEL(mygraph))
   if(graphClusters$no > 1) { 
     for(j in 1:(graphClusters$no - 1)) { 
       smallestClust <- which.min(graphClusters$csize)
       smallestClustMembs <- names(graphClusters$membership)[graphClusters$membership == smallestClust]
       mygraph <- removeNode(smallestClustMembs, mygraph)
-      graphClusters <- clusters(igraph.from.graphNEL(mygraph))
+      graphClusters <- igraph::clusters(igraph::igraph.from.graphNEL(mygraph))
     }
   }
   return(mygraph)
-}
-
-###############################################################################
-#' This function is used internally to remove the hash symbol.
-#'  
-#' @author Frank Kramer
-#' @export
-#' @import data.table
-#' @examples
-
-striphash <- function (x) {
-  return(gsub("#", "", x))
 }

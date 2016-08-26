@@ -1,3 +1,10 @@
+rBiopaxParser 2.12
+===========
+
+* Integrated functionality writen by Nirupama Benis (nirupama.benis@wur.nl). Added function pathway2Graph which creates a graph object containing all the interactions within a pathway. This is in contrast to pathway2RegulatoryGraph which only honors regulatory controls like activations and inhibitions.
+* BUGFIX: fixed download link for Reactome Homo Sapiens data
+* BUGFIX: fixed DESCRIPTION file. URL of the GitHub Repo is now: https://github.com/frankkramer-lab/rBiopaxParser
+
 rBiopaxParser 2.1.7
 ===========
 

@@ -1,7 +1,6 @@
 # rBiopaxParser
 
-Parses BioPax files of Level 2 and Level 3 and represents them in R.  
-https://github.com/frankkramer-lab/rBiopaxParser  
+Parses BioPax files of Level 2 and Level 3 and represents them in R. 
   
 More concretely, `rBiopaxParser`:
 
@@ -23,7 +22,11 @@ http://bioinformatics.oxfordjournals.org/content/29/4/520.abstract
 
 You can retrieve rBiopaxParser from Bioconductor or GitHub:
 http://www.bioconductor.org/packages/devel/bioc/html/rBiopaxParser.html
+<<<<<<< HEAD
+https://github.com/frankkramer/rBiopaxParser  
+=======
 https://github.com/frankkramer-lab/rBiopaxParser  
+>>>>>>> master
 
   
 ### Prerequisites:  
@@ -34,7 +37,7 @@ This package suggests package Rgraphviz to visualize networks.
 To install directly from github you need package devtools.  
   
 Installation or running certain functions MIGHT fail if these are not met. Please read carefully through the following instructions.   
-  
+
 ### Installing prerequisites for Linux users:  
 XML:   
 Make sure your linux has library libxml2 installed. This is almost always the case. Otherwise run in your shell  
@@ -145,7 +148,11 @@ Finally:
 ## Installing rBiopaxParser from Bioconductor:  
 <code>
 	source("http://bioconductor.org/biocLite.R") 
+<<<<<<< HEAD
+	biocLite("rBiopaxParser", siteRepos="http://bioconductor.org/packages/2.12/bioc")
+=======
 	biocLite("rBiopaxParser")
+>>>>>>> master
 </code>
 
 ## Installing rBiopaxParser from GitHub:  

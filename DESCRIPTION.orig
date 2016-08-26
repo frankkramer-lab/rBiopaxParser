@@ -1,0 +1,34 @@
+Package: rBiopaxParser
+Type: Package
+Title: Parses BioPax files and represents them in R
+<<<<<<< HEAD
+Version: 2.11.0
+=======
+Version: 2.1.7
+>>>>>>> master
+Date: 2014-03-25
+Author: Frank Kramer
+Maintainer: Frank Kramer <dev@frankkramer.de>
+Description:  Parses BioPAX files and represents them in R, at the moment BioPAX level 2 and level 3 are supported.
+License: GPL (>= 2)
+<<<<<<< HEAD
+Depends: R (>= 3.0.0), data.table
+Imports: XML
+Suggests: Rgraphviz, RCurl, graph, RUnit, BiocGenerics, nem, RBGL 
+=======
+Depends:
+    R (>= 3.0.0),
+    data.table
+Imports:
+    XML
+Suggests:
+    Rgraphviz,
+    RCurl,
+    graph,
+    RUnit,
+    BiocGenerics,
+    nem,
+    RBGL
+>>>>>>> master
+URL: https://github.com/frankkramer/rBiopaxParser
+biocViews: DataRepresentation

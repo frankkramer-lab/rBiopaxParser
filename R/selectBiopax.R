@@ -639,7 +639,10 @@ getInstanceProperty <- function(biopax, id, property="NAME", includeAllNames=TRU
 	
 	#value
 	if(dim(data)[1]>0) {
-		if(grepl("string",data$property_attr_value) || grepl("double",data$property_attr_value) || grepl("float",data$property_attr_value) || grepl("integer",data$property_attr_value)) {
+	  if (any(grepl("string", data$property_attr_value)) || 
+	      any(grepl("double", data$property_attr_value)) || 
+	      any(grepl("float", data$property_attr_value)) || 
+	      any(grepl("integer", data$property_attr_value))) {
 			return(as.character(data$property_value))
 		} else {
 			return(as.character(data$property_attr_value))

@@ -57,7 +57,9 @@ pathway2Graph <- function (biopax, pwid, expandSubpathways = TRUE, splitComplexM
     instance = pwInteraction[id == i, ]
     nestedInteraction <- FALSE
     type <- NULL
-    if (any(isOfClass(instance, c("Conversion", "conversion"), considerInheritance = TRUE, biopaxlevel = biopaxlevel) || grepl("Degradation", instance$class, ignore.case = TRUE) || grepl("degradation", instance$class, ignore.case = TRUE))){ 
+    if (any(isOfClass(instance, c("Conversion", "conversion"), considerInheritance = TRUE, biopaxlevel = biopaxlevel)) || 
+        any(grepl("Degradation", instance$class, ignore.case = TRUE)) || 
+        any(grepl("degradation", instance$class, ignore.case = TRUE))) { 
       if (biopaxlevel == 2) {
         type <- "left-right"
       } else { 
@@ -66,7 +68,9 @@ pathway2Graph <- function (biopax, pwid, expandSubpathways = TRUE, splitComplexM
       leftParticipantIds <- striphash(as.character(unique(instance[property == "left"]$property_attr_value)))
       rightParticipantIds <- striphash(as.character(unique(instance[property == "right"]$property_attr_value)))
     }
-    if (any(isOfClass(instance, c("Control", "control"), considerInheritance = TRUE, biopaxlevel = biopaxlevel) || grepl("TemplateReactionRegulation", instance$class, ignore.case = TRUE) || grepl("templatereactionregulation", instance$class, ignore.case = TRUE))){ 
+    if (any(isOfClass(instance, c("Control", "control"), considerInheritance = TRUE, biopaxlevel = biopaxlevel)) ||
+        any(grepl("TemplateReactionRegulation", instance$class, ignore.case = TRUE)) || 
+        any(grepl("templatereactionregulation", instance$class, ignore.case = TRUE))){ 
       if (biopaxlevel == 2) {
         type <- as.character(instance[property == "control-type"]$property_value)
       } else { 

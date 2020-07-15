@@ -4,8 +4,13 @@
 \alias{addControl}
 \title{This function adds a new control to the biopax model.}
 \usage{
-addControl(biopax, CONTROL_TYPE = c("ACTIVATION", "INHIBITION"),
-  CONTROLLER = "", CONTROLLED = c(), id = NULL)
+addControl(
+  biopax,
+  CONTROL_TYPE = c("ACTIVATION", "INHIBITION"),
+  CONTROLLER = "",
+  CONTROLLED = c(),
+  id = NULL
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -40,4 +45,3 @@ biopax$dt
 \author{
 fkramer
 }
-

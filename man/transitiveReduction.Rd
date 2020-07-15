@@ -13,10 +13,18 @@ transitiveReduction(mygraph)
 Returns the transitive reduction of the supplied graph.
 }
 \description{
+This function is deprecated due to nem dropping out of Bioconductor in BioC 4.0.
 This function generates the transitive reduction of the supplied graph. In short: if A->B->C AND A->C then edge A->C is removed.
 This is a simple convenience wrapper for the NEM function transitive.reduction. Be aware of implications on the edge weights!
+}
+\examples{
+# load data
+data(biopaxexample)
+pwid1 = "pid_p_100002_wntpathway"
+pwid2 = "pid_p_100146_hespathway"
+mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+tr = transitiveReduction(mygraph)
 }
 \author{
 Frank Kramer
 }
-

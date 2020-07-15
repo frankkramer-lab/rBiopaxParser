@@ -15,4 +15,3 @@ This function is used internally by pathway2Graph to remove the smaller disconne
 \author{
 Nirupama Benis
 }
-

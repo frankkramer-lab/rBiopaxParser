@@ -4,10 +4,15 @@
 \alias{layoutRegulatoryGraph}
 \title{This function generates a (more or less) beautiful layout for a regulatory graph.}
 \usage{
-layoutRegulatoryGraph(mygraph, label = "", node.fixedsize = FALSE,
-  edge.weights = c("green", "black", "red"), edge.arrowheads = c("normal",
-  "tee"), subgraphs = list(), subgraphs.colors = c("#B3E2CD", "#FDCDAC",
-  "#F4CAE4", "#E6F5C9", "#FFF2AE"))
+layoutRegulatoryGraph(
+  mygraph,
+  label = "",
+  node.fixedsize = FALSE,
+  edge.weights = c("green", "black", "red"),
+  edge.arrowheads = c("normal", "tee"),
+  subgraphs = list(),
+  subgraphs.colors = c("#B3E2CD", "#FDCDAC", "#F4CAE4", "#E6F5C9", "#FFF2AE")
+)
 }
 \arguments{
 \item{mygraph}{graphNEL}
@@ -36,7 +41,15 @@ If you want to specifically paint subgraphs in different colors use lists of vec
 The output can be further tweaked by setting layout options using nodeRenderInfo(mygraph) <- list() ...
 See the Rgraphviz and Graphviz documentations.
 }
+\examples{
+ # load data
+ data(biopaxexample)
+ pwid1 = "pid_p_100002_wntpathway"
+ pwid2 = "pid_p_100146_hespathway"
+ mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+ mygraph = layoutRegulatoryGraph(mygraph)
+ plotRegulatoryGraph(mygraph)
+}
 \author{
 Frank Kramer
 }
-

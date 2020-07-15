@@ -4,8 +4,13 @@
 \alias{addBiopaxInstance}
 \title{This function adds a new instance to an existing biopax model.}
 \usage{
-addBiopaxInstance(biopax, class, id, properties = list(NAME = c()),
-  verbose = TRUE)
+addBiopaxInstance(
+  biopax,
+  class,
+  id,
+  properties = list(NAME = c()),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -34,4 +39,3 @@ biopax$dt
 \author{
 Frank Kramer
 }
-

@@ -171,8 +171,7 @@ distribution when calling install.packages("graph").
 Check out \url{http://bioconductor.org/packages/release/bioc/html/graph.html} or
 call:
 \begin{verbatim}
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("graph")
+    Biocmanager::install("graph")
 \end{verbatim}
 to install it right away.
 
@@ -182,8 +181,7 @@ layout and plot these yourself if you want to. Since version 2.1 Rgraphviz now
 includes graphviz!  
 You will now be able to install R package Rgraphviz using:
 \begin{verbatim}
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("Rgraphviz")
+    Biocmanager::install("Rgraphviz")
 \end{verbatim}
 If you are forced to use an earlier version of Rgraphviz you have to make sure
 your Linux has package graphviz installed.
@@ -218,8 +216,7 @@ distribution when calling install.packages("graph").
 Check out \url{http://bioconductor.org/packages/release/bioc/html/graph.html} or
 run:
 \begin{verbatim}
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("graph")
+    Biocmanager::install("graph")
 \end{verbatim}
 to install it.
 
@@ -230,8 +227,7 @@ Since version 2.1 Rgraphviz now
 includes graphviz!  
 You will now be able to install R package Rgraphviz using:
 \begin{verbatim}
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("Rgraphviz")
+    Biocmanager::install("Rgraphviz")
 \end{verbatim}
 If you are forced to use an earlier version of Rgraphviz you have to make sure
 your your machine has graphviz installed, it can be found at:
@@ -253,8 +249,7 @@ To install R package devtools call:
 If everything went well you will be able to install the rBiopaxParser package,
 either from Bioconductor:
 \begin{verbatim}
-	source("http://bioconductor.org/biocLite.R") 
-	biocLite("rBiopaxParser", siteRepos="http://bioconductor.org/packages/2.12/bioc")
+	Biocmanager::install("rBiopaxParser")
 \end{verbatim}
 or via GitHub using devtools:
 \begin{verbatim}

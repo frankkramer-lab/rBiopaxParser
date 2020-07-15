@@ -18,4 +18,3 @@ This function checks if the supplied input string starts with "http:"
 \author{
 Frank Kramer
 }
-

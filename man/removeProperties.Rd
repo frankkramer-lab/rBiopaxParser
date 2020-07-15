@@ -19,7 +19,11 @@ Returns the supplied biopax model with properties removed from this instance.
 \description{
 This function removes a property fram an existing biopax instance.
 }
+\examples{
+ # load data
+ data(biopaxexample)
+ biopax2 = removeProperties(biopax, 1, "name") 
+}
 \author{
 Frank Kramer
 }
-

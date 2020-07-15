@@ -4,8 +4,13 @@
 \alias{getInstanceProperty}
 \title{This function returns all properties of the specified type for an instance.}
 \usage{
-getInstanceProperty(biopax, id, property = "NAME", includeAllNames = TRUE,
-  biopaxlevel = 3)
+getInstanceProperty(
+  biopax,
+  id,
+  property = "NAME",
+  includeAllNames = TRUE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -34,4 +39,3 @@ This function returns all properties of the specified type for an instance. By d
 \author{
 fkramer
 }
-

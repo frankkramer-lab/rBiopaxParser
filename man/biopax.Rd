@@ -3,10 +3,14 @@
 \docType{data}
 \name{biopax}
 \alias{biopax}
-\alias{biopaxLevel3Example}
 \alias{biopaxexample}
+\alias{biopaxLevel3Example}
 \title{Biopax example data set}
-\format{An example biopax model parsed in via readBiopax.}
+\format{
+An example biopax model parsed in via readBiopax.
+
+An example biopax model parsed in via readBiopax.
+}
 \description{
 A dataset containing two regulatory pathways encoded in Biopax Level 2 and parsed in via readBiopax().
 
@@ -19,4 +23,3 @@ data(biopaxLevel3Example)
 biopax
 }
 \keyword{datasets}
-

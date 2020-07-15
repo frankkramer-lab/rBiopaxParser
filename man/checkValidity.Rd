@@ -19,4 +19,3 @@ Not yet implemented. Called internally by writeBiopax.
 \author{
 Frank Kramer
 }
-

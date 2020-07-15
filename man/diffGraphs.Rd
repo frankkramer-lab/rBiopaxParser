@@ -4,8 +4,7 @@
 \alias{diffGraphs}
 \title{This function returns the different nodes and edges between graph1 and graph2.}
 \usage{
-diffGraphs(graph1, graph2, colorNodes = TRUE, colors = c("#B3E2CD",
-  "#FDCDAC"))
+diffGraphs(graph1, graph2, colorNodes = TRUE, colors = c("#B3E2CD", "#FDCDAC"))
 }
 \arguments{
 \item{graph1}{graphNEL}
@@ -36,4 +35,3 @@ Coloring currently not implemented.
 \author{
 Frank Kramer
 }
-

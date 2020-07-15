@@ -249,6 +249,13 @@ pathway2RegulatoryGraph  <- function(biopax, pwid, expandSubpathways=TRUE, split
 #' @return Returns the transitive closure of the supplied graph.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#' # load data
+#' data(biopaxexample)
+#' pwid1 = "pid_p_100002_wntpathway"
+#' pwid2 = "pid_p_100146_hespathway"
+#' mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+#' tc = transitiveClosure(mygraph)
 transitiveClosure <- function(mygraph) {
 	
 	if(!require(graph)) {
@@ -277,6 +284,7 @@ transitiveClosure <- function(mygraph) {
 
 #' This function generates the transitive reduction of the supplied graph.
 #' 
+#' This function is deprecated due to nem dropping out of Bioconductor in BioC 4.0.
 #' This function generates the transitive reduction of the supplied graph. In short: if A->B->C AND A->C then edge A->C is removed.
 #' This is a simple convenience wrapper for the NEM function transitive.reduction. Be aware of implications on the edge weights!
 #' 
@@ -284,44 +292,18 @@ transitiveClosure <- function(mygraph) {
 #' @return Returns the transitive reduction of the supplied graph.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#' # load data
+#' data(biopaxexample)
+#' pwid1 = "pid_p_100002_wntpathway"
+#' pwid2 = "pid_p_100146_hespathway"
+#' mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+#' tr = transitiveReduction(mygraph)
 transitiveReduction <- function(mygraph) {
 
-	if(!require(graph)) {
-		message(paste("This functions needs the graph library installed, albeit it cannot be found. Check out the installation instructions!","\n"))
-		return(NULL)
-	}
-	
-	if(!require(nem)) {
-		message(paste("This functions needs the nem package installed, albeit it cannot be found.","\n"))
-		return(NULL)
-	}
-	
-	as(nem::transitive.reduction(g=mygraph),"graphNEL")
-	
-#	temp=mygraph
-#	#remove temps wedge weights
-#	for(e in names(graph::edges(temp))) {
-#		for(t in graph::edges(temp)[[e]]) {
-#			graph::edgeData(temp,e,t,attr="weight") <-  1
-#		}
-#	}
-#	
-#	#enumarte pathws and remove all paths that have longer equivalents and same end node
-#	
-##	ttt = as(mygraph,"graphAM")
-##	as(ttt,"matrix")
-##	# order by outdegree
-##	# check crossing between every 2 edges?
-##	
-##	accessibles = acc(mygraph,nodes(mygraph))
-##	for(n in names(accessibles)) {
-##		for(c in names(accessibles[[n]])) {
-##			if(accessibles[[n]][[c]]>1) {
-##				graph::removeEdge(from=n,to=c, mygraph)
-##			}
-##		}
-##	}
-#	mygraph
+  warning("This function is deprecated due to nem dropping out of Bioconductor. Returning NULL.")
+
+  return(NULL)
 	
 }
 
@@ -345,6 +327,14 @@ transitiveReduction <- function(mygraph) {
 #' @return Returns the supplied graph in a layouted form with several parameters set for regulatory graph plotting.
 #' @author Frank Kramer
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopaxexample)
+#'  pwid1 = "pid_p_100002_wntpathway"
+#'  pwid2 = "pid_p_100146_hespathway"
+#'  mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+#'  mygraph = layoutRegulatoryGraph(mygraph)
+#'  plotRegulatoryGraph(mygraph)
 layoutRegulatoryGraph <- function(mygraph, label="", node.fixedsize=FALSE, edge.weights=c("green","black","red"), edge.arrowheads=c("normal","tee"),
 		subgraphs=list(), subgraphs.colors=c("#B3E2CD","#FDCDAC","#F4CAE4","#E6F5C9","#FFF2AE")) {
 
@@ -853,77 +843,5 @@ combineNodes <- function(nodes, graph, newName) {
 
 	return(graph::combineNodes(nodes, graph, newName, collapseFunction=max))
 }
-
-
-	
-#	
-#	
-#	
-#	
-#	
-#	########## OLD STUFF ################
-#	graph::graphRenderInfo(temp)$laidout <- FALSE
-#	
-#	
-#	#shape size and fill of nodes
-#	nodevector = as.vector(rep(1,length(graph::nodes(graph1))))
-#	names(nodevector) = graph::nodes(graph1)
-#	
-#	node.fill = nodevector
-#	if(nodes == NA)	{
-#		node.fill[TRUE] = colors
-#		graph::nodeRenderInfo(graph)$fill <- node.fill
-#	} else {
-#		
-#	}
-#	
-#	graph::nodeRenderInfo(temp)$shape <- node.shape
-#	graph::nodeRenderInfo(temp)$fill <- node.fill
-#	graph::nodeRenderInfo(temp)$height <- node.height
-#	graph::nodeRenderInfo(temp)$width <- node.width
-#	graph::nodeRenderInfo(temp)$fontsize <- node.fontsize
-#	graph::nodeRenderInfo(temp)$labelfontsize <- node.labelfontsize
-#	graph::nodeRenderInfo(temp)$fixedsize <- node.fixedsize
-#	
-#	#COLOR SUBGRAPHS
-#	#only graph1
-#	for(n in setdiff(graph::nodes(graph1), graph::nodes(graph2))) {
-#		graph::nodeRenderInfo(temp)$fill[n] <- colors[2]
-#	}
-#	#only graph2
-#	for(n in setdiff(graph::nodes(graph2), graph::nodes(graph1))) {
-#		graph::nodeRenderInfo(temp)$fill[n] <- colors[3]
-#	}
-#	
-#	#EDGES	
-#	e1 = strsplit(graph::edgeNames(graph1), split="~")
-#	e2 = strsplit(graph::edgeNames(graph2), split="~")
-#	i  = setdiff(e2,e1)
-#	for(x in 1:length(i)) {
-#		temp = graph::addEdge(i[[x]][1],i[[x]][2], temp, as.numeric(graph::edgeData(graph2,i[[x]][1],i[[x]][2], "weight")))
-#	}
-#	# generate a list of all edges, preinitialized with the weights
-#	edge.weights=c("green","black","red")
-#	x = unlist(graph::edgeData(temp))
-#	names(x) = gsub(".weight","",names(x))
-#	names(x) = gsub("|","~",names(x), fixed=TRUE)
-#	
-#	#set edge arrowheads
-#	edge.arrowheads=c("normal","tee")
-#	arrowhead = x
-#	arrowhead[TRUE] = rep(edge.arrowheads[1],length(x))
-#	arrowhead[x==1] = edge.arrowheads[1]
-#	arrowhead[x==-1] = edge.arrowheads[2]
-#	graph::edgeRenderInfo(temp) <- list(arrowhead=arrowhead)
-#	
-#	#set edge colors
-#	color = x
-#	color[TRUE] = rep(edge.weights[2],length(x))
-#	color[x==1] = edge.weights[1]
-#	color[x==-1] = edge.weights[3]
-#	graph::edgeRenderInfo(temp) <- list(col=color)
-#	
-#	Rgraphviz::layoutGraph(temp)	
-#}
 
 

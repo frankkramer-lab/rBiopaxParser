@@ -25,4 +25,3 @@ This function returns the class name of the instance.
 \author{
 fkramer
 }
-

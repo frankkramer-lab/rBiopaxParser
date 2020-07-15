@@ -4,8 +4,12 @@
 \alias{downloadBiopaxData}
 \title{This function downloads Biopax data from online databases}
 \usage{
-downloadBiopaxData(database = "NCI", model = c("pid", "biocarta",
-  "reactome", "kegg"), outputfile = "", version = "biopax2")
+downloadBiopaxData(
+  database = "NCI",
+  model = c("pid", "biocarta", "reactome", "kegg"),
+  outputfile = "",
+  version = "biopax2"
+)
 }
 \arguments{
 \item{database}{string. Select which database you want to download from. Currently only NCI links have been stored.}
@@ -33,4 +37,3 @@ You can easily skip this step by downloading the exported file yourself and cont
 \author{
 fkramer
 }
-

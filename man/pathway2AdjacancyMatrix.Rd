@@ -7,8 +7,14 @@
 This function internally first calls pathway2RegulatoryGraph, then converts the regulatory graph to an adjacency matrix.
 See pathway2RegulatoryGraph for more details.}
 \usage{
-pathway2AdjacancyMatrix(biopax, pwid, expandSubpathways = TRUE,
-  splitComplexMolecules = TRUE, useIDasNodenames = FALSE, verbose = TRUE)
+pathway2AdjacancyMatrix(
+  biopax,
+  pwid,
+  expandSubpathways = TRUE,
+  splitComplexMolecules = TRUE,
+  useIDasNodenames = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -42,4 +48,3 @@ See pathway2RegulatoryGraph for more details.
 \author{
 Frank Kramer
 }
-

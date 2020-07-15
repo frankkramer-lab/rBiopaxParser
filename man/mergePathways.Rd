@@ -4,8 +4,15 @@
 \alias{mergePathways}
 \title{This function merges two given pathways}
 \usage{
-mergePathways(biopax, pwid1, pwid2, NAME, id = NULL, ORGANISM = "",
-  COMMENT = NULL)
+mergePathways(
+  biopax,
+  pwid1,
+  pwid2,
+  NAME,
+  id = NULL,
+  ORGANISM = "",
+  COMMENT = NULL
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -33,4 +40,3 @@ the organism property of the first pathway is re-used. If ORGANISM is NULL the p
 \author{
 fkramer
 }
-

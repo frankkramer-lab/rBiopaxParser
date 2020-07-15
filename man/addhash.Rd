@@ -18,4 +18,3 @@ Adds a hash in front of a string
 \author{
 Frank Kramer
 }
-

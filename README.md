@@ -68,8 +68,7 @@ graph:
 Package graph has moved from CRAN to Bioconductor recently, you might encounter an error saying that package graph is not available for your distribution when calling install.packages("graph").  
 Check out http://bioconductor.org/packages/release/bioc/html/graph.html or call
 <code>
-	source("http://bioconductor.org/biocLite.R")  
-    biocLite("graph")
+	Biocmanager::install("graph")
 </code>  
 to install it.  
   
@@ -79,8 +78,7 @@ Rgraphviz is used to layout the graphs generated in this package. You can layout
 Since version 2.1 Rgraphviz now includes graphviz!
 You will now be able to install R package Rgraphviz using:  
 <code>
-	source("http://bioconductor.org/biocLite.R")  
-    biocLite("Rgraphviz")
+	Biocmanager::install("Rgraphviz")
 </code>    
 If you are forced to use an earlier version of Rgraphviz you have to make sure
 your Linux has package graphviz installed.
@@ -111,8 +109,7 @@ graph:
 Package graph has moved from CRAN to Bioconductor recently, you might encounter an error saying that package graph is not available for your distribution when calling install.packages("graph").  
 Check out http://bioconductor.org/packages/release/bioc/html/graph.html or call
 <code>
-	source("http://bioconductor.org/biocLite.R")  
-    biocLite("graph")
+	Biocmanager::install("graph")
 </code>  
 to install it.  
   
@@ -122,8 +119,7 @@ Rgraphviz is used to layout the graphs generated in this package. You can layout
 Since version 2.1 Rgraphviz now includes graphviz!
 You will now be able to install R package Rgraphviz (including graphviz) using:  
 <code>
-	source("http://bioconductor.org/biocLite.R")  
-    biocLite("Rgraphviz")
+	Biocmanager::install("Rgraphviz")
 </code>
 If you are forced to use an earlier version of Rgraphviz you have to make sure
 your your machine has graphviz installed, it can be found at: http://www.graphviz.org  
@@ -144,8 +140,7 @@ To install R package devtools call
 Finally:   
 ## Installing rBiopaxParser from Bioconductor:  
 <code>
-	source("http://bioconductor.org/biocLite.R") 
-	biocLite("rBiopaxParser")
+	Biocmanager::install("rBiopaxParser") 
 </code>
 
 ## Installing rBiopaxParser from GitHub:  

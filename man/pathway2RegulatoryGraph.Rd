@@ -9,8 +9,14 @@ Only instances of class 'control' are considered, this leads a functinal graph w
 If desired complexes can be split up into several nodes, this can sometimes lead to a more complex and cluttered graph.
 There can not be multiple edges between 2 nodes. Whenever duplicated edges are generated (especially by splitting up complexes) a warning is thrown.}
 \usage{
-pathway2RegulatoryGraph(biopax, pwid, expandSubpathways = TRUE,
-  splitComplexMolecules = TRUE, useIDasNodenames = FALSE, verbose = TRUE)
+pathway2RegulatoryGraph(
+  biopax,
+  pwid,
+  expandSubpathways = TRUE,
+  splitComplexMolecules = TRUE,
+  useIDasNodenames = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -47,4 +53,3 @@ There can not be multiple edges between 2 nodes. Whenever duplicated edges are g
 \author{
 Frank Kramer
 }
-

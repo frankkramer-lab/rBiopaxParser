@@ -491,6 +491,10 @@ mergePathways <- function(biopax, pwid1, pwid2, NAME, id=NULL, ORGANISM="", COMM
 #' @return Returns the supplied biopax model with the instance removed from it.
 #' @author Frank Kramer
 #' @import data.table
+#' @examples
+#'  # load data
+#'  data(biopaxexample)
+#'  biopax2 = removeInstance(biopax, 1)
 #' @export
 removeInstance <- function(biopax, id) {
 	var_id = id
@@ -509,6 +513,10 @@ removeInstance <- function(biopax, id) {
 #' @return Returns the supplied biopax model with properties removed from this instance.
 #' @author Frank Kramer
 #' @import data.table
+#' @examples
+#'  # load data
+#'  data(biopaxexample)
+#'  biopax2 = removeProperties(biopax, 1, "name") 
 #' @export
 removeProperties <- function(biopax, id, properties) {
 	var_id = id

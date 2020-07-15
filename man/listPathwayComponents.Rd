@@ -4,8 +4,13 @@
 \alias{listPathwayComponents}
 \title{This function lists all pathway components of a given pathway.}
 \usage{
-listPathwayComponents(biopax, id, includeSubPathways = TRUE,
-  returnIDonly = FALSE, biopaxlevel = 3)
+listPathwayComponents(
+  biopax,
+  id,
+  includeSubPathways = TRUE,
+  returnIDonly = FALSE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -32,4 +37,3 @@ This function returns a (unique) data.frame listing all component IDs, names and
 \author{
 Frank Kramer
 }
-

@@ -4,8 +4,12 @@
 \alias{uniteGraphs}
 \title{This function unites two graphs.}
 \usage{
-uniteGraphs(graph1, graph2, colorNodes = TRUE, colors = c("#B3E2CD",
-  "#FDCDAC", "#F4CAE4"))
+uniteGraphs(
+  graph1,
+  graph2,
+  colorNodes = TRUE,
+  colors = c("#B3E2CD", "#FDCDAC", "#F4CAE4")
+)
 }
 \arguments{
 \item{graph1}{graphNEL}
@@ -35,4 +39,3 @@ If colorNodes==TRUE the returned graph has different colors for overlapping node
 \author{
 Frank Kramer
 }
-

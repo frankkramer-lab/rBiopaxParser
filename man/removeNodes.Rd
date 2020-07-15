@@ -36,4 +36,3 @@ The weight of the new direct edge is the product of multiplying the incomming an
 \author{
 Frank Kramer
 }
-

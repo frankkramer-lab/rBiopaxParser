@@ -4,7 +4,9 @@
 \name{DATABASE_BIOPAX}
 \alias{DATABASE_BIOPAX}
 \title{DATABASE_BIOPAX}
-\format{A data frame with 46 rows and 4 columns}
+\format{
+A data frame with 46 rows and 4 columns
+}
 \usage{
 DATABASE_BIOPAX
 }
@@ -23,4 +25,3 @@ The variables are as follows:
 }
 }
 \keyword{datasets}
-

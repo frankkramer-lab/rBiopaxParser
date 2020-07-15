@@ -100,8 +100,10 @@ createBiopax <- function(level = 3)  {
 #' @export
 #' @import data.table
 #' @examples
-#'  \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
-#'  \dontrun{biopax} 
+#' \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
+#' \dontrun{biopax} 
+#' #'  # load data and retrieve wnt pathway
+#' data(biopaxexample)
 #' 
 readBiopax <- function(file, verbose=TRUE)  {
 	

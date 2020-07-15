@@ -27,4 +27,3 @@ If there are duplicated edges for the nodes, the maximum edgeweight will be used
 \author{
 Frank Kramer
 }
-

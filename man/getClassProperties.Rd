@@ -24,4 +24,3 @@ Every class inhertis the properties of its super classes. A table listing all av
 \author{
 Frank Kramer
 }
-

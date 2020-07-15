@@ -23,4 +23,3 @@ This function returns the subclasses of the supplied biopax class.
 \author{
 Frank Kramer
 }
-

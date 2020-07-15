@@ -22,4 +22,3 @@ This internal function parses the Biopax XML of the supplied biopax model and re
 \author{
 Frank Kramer
 }
-

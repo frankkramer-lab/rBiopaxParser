@@ -18,4 +18,3 @@ This function is an internal function to count the Number of nodes and child nod
 \author{
 Frank Kramer
 }
-

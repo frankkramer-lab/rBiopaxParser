@@ -30,4 +30,3 @@ Layout and weights of graph1 are kept.
 \author{
 Frank Kramer
 }
-

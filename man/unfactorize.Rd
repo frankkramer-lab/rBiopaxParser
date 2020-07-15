@@ -18,4 +18,3 @@ This function takes a data.frame as argument and returns it with strings instead
 \author{
 Frank Kramer
 }
-

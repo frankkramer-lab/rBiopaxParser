@@ -20,4 +20,3 @@ This function checks if the supplied input string starts with a supplied namespa
 \author{
 Frank Kramer
 }
-

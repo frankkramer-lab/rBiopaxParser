@@ -4,8 +4,13 @@
 \alias{getParticipants}
 \title{This function is used internally by pathway2Graph to obtain physical entities participating in an interaction.}
 \usage{
-getParticipants(pwComponentList, instance, biopaxlevel,
-  splitComplexMolecules = FALSE, useIDasNodenames = TRUE)
+getParticipants(
+  pwComponentList,
+  instance,
+  biopaxlevel,
+  splitComplexMolecules = FALSE,
+  useIDasNodenames = TRUE
+)
 }
 \arguments{
 \item{pwComponentList}{List of pathway components}
@@ -24,4 +29,3 @@ This function is used internally by pathway2Graph to obtain physical entities pa
 \author{
 Nirupama Benis
 }
-

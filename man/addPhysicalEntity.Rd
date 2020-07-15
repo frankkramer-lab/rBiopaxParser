@@ -4,8 +4,14 @@
 \alias{addPhysicalEntity}
 \title{This function adds a new physical entity.}
 \usage{
-addPhysicalEntity(biopax, class = c("dna", "rna", "protein", "smallMolecule",
-  "complex")[1], NAME, id = NULL, ORGANISM = NULL, COMMENT = NULL)
+addPhysicalEntity(
+  biopax,
+  class = c("dna", "rna", "protein", "smallMolecule", "complex")[1],
+  NAME,
+  id = NULL,
+  ORGANISM = NULL,
+  COMMENT = NULL
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -37,4 +43,3 @@ biopax$dt
 \author{
 fkramer
 }
-

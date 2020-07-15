@@ -4,7 +4,9 @@
 \name{CLASS_PROPERTIES_BP3}
 \alias{CLASS_PROPERTIES_BP3}
 \title{CLASS_PROPERTIES_BP3}
-\format{A data frame with 106 rows and 4 columns}
+\format{
+A data frame with 106 rows and 4 columns
+}
 \usage{
 CLASS_PROPERTIES_BP3
 }
@@ -25,4 +27,3 @@ The variables are as follows:
 }
 }
 \keyword{datasets}
-

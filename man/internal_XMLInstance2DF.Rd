@@ -24,4 +24,3 @@ This function is an internal function that parses a Biopax XMLNode. Do not call 
 \author{
 Frank Kramer
 }
-

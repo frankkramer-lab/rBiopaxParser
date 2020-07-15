@@ -20,4 +20,3 @@ This function resolves physicalEntityParticipantIDs to their corresponding physi
 \author{
 fkramer
 }
-

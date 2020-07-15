@@ -29,4 +29,3 @@ This function returns a (unique) data.frame listing all component IDs, names and
 \author{
 Frank Kramer
 }
-

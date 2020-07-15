@@ -20,4 +20,3 @@ This function generates a new unique id for a biopax model. Pass it an startin g
 \author{
 fkramer
 }
-

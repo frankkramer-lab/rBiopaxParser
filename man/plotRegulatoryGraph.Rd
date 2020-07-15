@@ -32,4 +32,3 @@ Subgraphs can be painted with different colors. This can be done by passing para
 \author{
 Frank Kramer
 }
-

@@ -4,8 +4,14 @@
 \alias{addPathway}
 \title{This function adds a new pathway to the biopax model.}
 \usage{
-addPathway(biopax, NAME, PATHWAY_COMPONENTS = c(), id = NULL,
-  ORGANISM = NULL, COMMENT = NULL)
+addPathway(
+  biopax,
+  NAME,
+  PATHWAY_COMPONENTS = c(),
+  id = NULL,
+  ORGANISM = NULL,
+  COMMENT = NULL
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -42,4 +48,3 @@ biopax$dt
 \author{
 fkramer
 }
-

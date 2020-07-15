@@ -22,7 +22,10 @@ Returns TRUE for every row in the data.frame which is of the supplied class
 This function checks if instances in the supplied biopax data.table are of a given class. 
 If considerInheritance is set to TRUE it also checks if instances are of a given class or any of its inherited classes.
 }
+\examples{
+ # load data
+ data(biopaxexample)
+}
 \author{
 Frank Kramer
 }
-

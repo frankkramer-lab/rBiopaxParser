@@ -28,11 +28,12 @@ Returns a biopax model, which is a list with named elements:
 }
 }
 \examples{
- \dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
- \dontrun{biopax} 
+\dontrun{biopax = readBiopax(file="biopaxmodel.owl")}
+\dontrun{biopax} 
+#'  # load data and retrieve wnt pathway
+data(biopaxexample)
 
 }
 \author{
 Frank Kramer
 }
-

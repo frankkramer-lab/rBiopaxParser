@@ -4,8 +4,13 @@
 \alias{splitComplex}
 \title{This functions splits up a complex into its components.}
 \usage{
-splitComplex(biopax, complexid, recursive = TRUE, returnIDonly = FALSE,
-  biopaxlevel = 3)
+splitComplex(
+  biopax,
+  complexid,
+  recursive = TRUE,
+  returnIDonly = FALSE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -35,4 +40,3 @@ This function looks up the supplied Complex ID and returns the names of all its 
 \author{
 Frank Kramer
 }
-

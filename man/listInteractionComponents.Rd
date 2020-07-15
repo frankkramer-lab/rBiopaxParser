@@ -4,8 +4,13 @@
 \alias{listInteractionComponents}
 \title{This function lists all components of a given interaction.}
 \usage{
-listInteractionComponents(biopax, id, splitComplexes = TRUE,
-  returnIDonly = FALSE, biopaxlevel = 3)
+listInteractionComponents(
+  biopax,
+  id,
+  splitComplexes = TRUE,
+  returnIDonly = FALSE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -32,4 +37,3 @@ This function returns a (unique) data.frame listing IDs, names and classes of al
 \author{
 Frank Kramer
 }
-

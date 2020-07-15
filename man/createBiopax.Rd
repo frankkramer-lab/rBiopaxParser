@@ -30,4 +30,3 @@ Returns a biopax model, which is a list with named elements:
 \author{
 Frank Kramer
 }
-

@@ -40,4 +40,3 @@ or add a color hue correlating with the expression level or fold change to the m
 \author{
 Frank Kramer
 }
-

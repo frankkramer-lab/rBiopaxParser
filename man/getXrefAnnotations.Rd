@@ -4,8 +4,13 @@
 \alias{getXrefAnnotations}
 \title{This function returns the annotations of the supplied instances.}
 \usage{
-getXrefAnnotations(biopax, id, splitComplexes = FALSE,
-  followPhysicalEntityParticipants = TRUE, biopaxlevel = 3)
+getXrefAnnotations(
+  biopax,
+  id,
+  splitComplexes = FALSE,
+  followPhysicalEntityParticipants = TRUE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -37,4 +42,3 @@ getXrefAnnotations(biopax, id="ex_m_100650", splitComplexes=TRUE)
 \author{
 fkramer
 }
-

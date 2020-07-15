@@ -2,8 +2,8 @@
 % Please edit documentation in R/rBiopaxParser-package.R
 \docType{package}
 \name{rBiopaxParser-package}
-\alias{rBiopaxParser}
 \alias{rBiopaxParser-package}
+\alias{rBiopaxParser}
 \title{Parses BioPax level files and represents them in R}
 \description{
 Parses BioPax files and represents them in R
@@ -26,4 +26,3 @@ License: \tab GPL (>= 2)\cr
 Frank Kramer \email{dev@frankkramer.de}
 }
 \keyword{package}
-

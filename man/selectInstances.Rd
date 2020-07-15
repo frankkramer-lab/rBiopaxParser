@@ -4,9 +4,18 @@
 \alias{selectInstances}
 \title{Returns all instances that conform to the selection criteria.}
 \usage{
-selectInstances(biopax, id = NULL, class = NULL, property = NULL,
-  name = NULL, returnValues = TRUE, includeSubClasses = FALSE,
-  includeReferencedInstances = FALSE, returnCopy = TRUE, biopaxlevel = 3)
+selectInstances(
+  biopax,
+  id = NULL,
+  class = NULL,
+  property = NULL,
+  name = NULL,
+  returnValues = TRUE,
+  includeSubClasses = FALSE,
+  includeReferencedInstances = FALSE,
+  returnCopy = TRUE,
+  biopaxlevel = 3
+)
 }
 \arguments{
 \item{biopax}{A biopax model or a compatible internal data.table}
@@ -54,4 +63,3 @@ If includeReferencedInstances is set to TRUE all instances that are being refere
 \author{
 Frank Kramer
 }
-

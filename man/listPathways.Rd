@@ -25,4 +25,3 @@ This function returns a vector of all pathway ids.
 \author{
 Frank Kramer
 }
-

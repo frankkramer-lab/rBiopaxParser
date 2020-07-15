@@ -116,6 +116,9 @@ striphash <- function(x) {
 #' @author Frank Kramer
 #' @import data.table
 #' @export
+#' @examples
+#'  # load data
+#'  data(biopaxexample)
 isOfClass <- function (df, class, considerInheritance=FALSE, biopaxlevel=2) {
 	class = stripns(class)
 	if(considerInheritance) {
@@ -133,6 +136,9 @@ isOfClass <- function (df, class, considerInheritance=FALSE, biopaxlevel=2) {
 #' @return Returns TRUE for every row in the data.frame with contains the supplied property. Logical vector with length corresponding to the number of rows in the data.frame.
 #' @author Frank Kramer
 #' @import data.table
+#' @examples
+#'  # load data
+#'  data(biopaxexample)
 #' @export
 hasProperty <- function (df, property) {
 	tolower(as.character(df$property)) %chin% stripns(tolower(property))

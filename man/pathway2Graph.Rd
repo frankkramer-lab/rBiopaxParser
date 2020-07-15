@@ -4,9 +4,15 @@
 \alias{pathway2Graph}
 \title{This function generates a directed graph from all the interactions of a specified pathway in a biopax model. Edges with no direction are indicated by a 0 weight.}
 \usage{
-pathway2Graph(biopax, pwid, expandSubpathways = TRUE,
-  splitComplexMolecules = FALSE, useIDasNodenames = TRUE, verbose = FALSE,
-  withDisconnectedParts = TRUE)
+pathway2Graph(
+  biopax,
+  pwid,
+  expandSubpathways = TRUE,
+  splitComplexMolecules = FALSE,
+  useIDasNodenames = TRUE,
+  verbose = FALSE,
+  withDisconnectedParts = TRUE
+)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -45,4 +51,3 @@ plotRegulatoryGraph(pathwayAsGraph)
 \author{
 Nirupama Benis
 }
-

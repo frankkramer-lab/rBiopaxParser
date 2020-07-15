@@ -34,4 +34,3 @@ This function generates a gene set of all physicalEntity's of a pathway. First a
 \author{
 Frank Kramer
 }
-

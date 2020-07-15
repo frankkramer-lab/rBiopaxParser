@@ -17,7 +17,10 @@ Returns TRUE for every row in the data.frame with contains the supplied property
 \description{
 Checks if instances in the biopax data.table have a given property
 }
+\examples{
+ # load data
+ data(biopaxexample)
+}
 \author{
 Frank Kramer
 }
-

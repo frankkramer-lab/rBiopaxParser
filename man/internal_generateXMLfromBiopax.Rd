@@ -4,8 +4,7 @@
 \alias{internal_generateXMLfromBiopax}
 \title{This function generates the xmlTree from the supplied biopax model.}
 \usage{
-internal_generateXMLfromBiopax(biopax, namespaces = namespaces,
-  verbose = TRUE)
+internal_generateXMLfromBiopax(biopax, namespaces = namespaces, verbose = TRUE)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -24,4 +23,3 @@ It can also be called directly with a fitting dataframe in list(df=data.frame())
 \author{
 Frank Kramer
 }
-

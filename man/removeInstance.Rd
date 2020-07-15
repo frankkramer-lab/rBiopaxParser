@@ -17,7 +17,11 @@ Returns the supplied biopax model with the instance removed from it.
 \description{
 This function removes an instance from an existing biopax model.
 }
+\examples{
+ # load data
+ data(biopaxexample)
+ biopax2 = removeInstance(biopax, 1)
+}
 \author{
 Frank Kramer
 }
-

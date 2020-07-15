@@ -29,4 +29,3 @@ biopax$dt
 \author{
 Frank Kramer
 }
-

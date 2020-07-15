@@ -4,7 +4,9 @@
 \name{CLASS_INHERITANCE_BP2}
 \alias{CLASS_INHERITANCE_BP2}
 \title{CLASS_INHERITANCE_BP2}
-\format{A data frame with 46 rows and 2 columns}
+\format{
+A data frame with 46 rows and 2 columns
+}
 \usage{
 CLASS_INHERITANCE_BP2
 }
@@ -21,4 +23,3 @@ The variables are as follows:
 }
 }
 \keyword{datasets}
-

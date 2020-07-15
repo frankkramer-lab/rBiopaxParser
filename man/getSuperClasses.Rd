@@ -23,4 +23,3 @@ This function returns the superclasses of the supplied biopax class.
 \author{
 Frank Kramer
 }
-

@@ -18,4 +18,3 @@ Print a biopax object.
  data(biopaxexample)
  print(biopax) 
 }
-

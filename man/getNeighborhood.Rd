@@ -4,8 +4,7 @@
 \alias{getNeighborhood}
 \title{This function returns the neighborhood of a physicalEntity}
 \usage{
-getNeighborhood(biopax, id, depth = 1, onlyInPathways = c(),
-  biopaxlevel = 3)
+getNeighborhood(biopax, id, depth = 1, onlyInPathways = c(), biopaxlevel = 3)
 }
 \arguments{
 \item{biopax}{A biopax model}
@@ -27,4 +26,3 @@ This function searches the supplied biopax for interactions that are connected t
 \author{
 fkramer
 }
-

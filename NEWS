@@ -1,3 +1,8 @@
+rBiopaxParser 2.29.1
+===========
+
+* Removed functionality for transitive reduction, which was imported from nem package (dropped out of Bioconductor).
+
 rBiopaxParser 2.12
 ===========
 

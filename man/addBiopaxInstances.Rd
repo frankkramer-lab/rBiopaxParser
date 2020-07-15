@@ -28,4 +28,3 @@ This function adds new instances (supplied as a compatible data.table) to an exi
 \author{
 Frank Kramer
 }
-

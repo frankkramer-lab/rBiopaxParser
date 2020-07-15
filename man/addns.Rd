@@ -20,4 +20,3 @@ This function takes the input classname, checks if it already has a namespace, a
 \author{
 Frank Kramer
 }
-

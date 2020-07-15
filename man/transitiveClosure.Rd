@@ -16,7 +16,14 @@ Returns the transitive closure of the supplied graph.
 This function generates the transitive closure of the supplied graph. In short: if A->B->C then an edge A->C is added.
 Edge weights are conserved if possible (in a hopefully smart way). This is a simple convenience wrapper for the RBGL function transitive.closure.
 }
+\examples{
+# load data
+data(biopaxexample)
+pwid1 = "pid_p_100002_wntpathway"
+pwid2 = "pid_p_100146_hespathway"
+mygraph = pathway2RegulatoryGraph(biopax, pwid1)
+tc = transitiveClosure(mygraph)
+}
 \author{
 Frank Kramer
 }
-
